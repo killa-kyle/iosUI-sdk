@@ -62,7 +62,7 @@ public struct Selection<ID: Hashable & Sendable>: Sendable, Equatable {
     }
   }
 
-  /// External state changes reset the range anchor; removed IDs are discarded.
+  /// Discards removed IDs and resets the anchor when its item is removed.
   public mutating func reconcile(order: [ID]) {
     selected.formIntersection(order)
     if let anchor, !order.contains(anchor) {
