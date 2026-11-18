@@ -22,7 +22,7 @@ jobs:
         run: >-
           xcodebuild -quiet -project Examples/BehaviorCatalog.xcodeproj
           -scheme BehaviorCatalog
-          -destination 'generic/platform=iOS Simulator' -arch "$(uname -m)"
+          -destination 'generic/platform=iOS Simulator'
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
           CODE_SIGNING_ALLOWED=NO build-for-testing
       - name: Await simulator startup
