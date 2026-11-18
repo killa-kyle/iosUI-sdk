@@ -40,9 +40,14 @@ native sheet open/close. It does not yet cover every adapter or accessibility mo
 
 ## Extended behavior work
 
-The expanded core suite currently passes 34 tests, including invalid civil dates,
+The expanded core suite currently passes 37 tests, including invalid civil dates,
 disabled date ranges, sRGB/HSV/alpha contrast, tree/grid focus and ranges, nested
 drop hit-testing, all resize handles/aspect bounds/cancellation, crop rotations,
 carousel timing, menu/overlay rules, UTF-16 editing and agent authority/redaction.
 The extended iOS catalog and UIKit/TextKit adapters compile in a local unsigned
 build. Final simulator/device replay for the new stories is still pending.
+
+Documentation browser replay passes all 29 pages and 22 interactive illustrations,
+including keyboard code tabs, clipboard, grid/date ranges, nested dialogs, stale
+agent rejection and desktop/mobile layouts in both themes. Screenshots were
+inspected locally. This browser replay does not establish native UI acceptance.

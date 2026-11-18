@@ -6,6 +6,8 @@ An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/verc
 
 The package includes foundational and extended native behavior families. It does not claim feature-complete parity with every web recipe. See [coverage and differences](docs/coverage.md).
 
+[Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
+
 ## Install
 
 Requires Swift 6 / Xcode 16 or newer and iOS 17+. The core and SwiftUI products also support macOS 14+. UIKit is iOS-only.

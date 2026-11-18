@@ -5,7 +5,7 @@ permissions:
 jobs:
   native:
     runs-on: macos-26
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - run: swift test
@@ -29,7 +29,9 @@ jobs:
         timeout-minutes: 8
         run: xcrun simctl bootstatus "$SIMULATOR_ID" -b
       - name: Simulator replay
-        timeout-minutes: 5
+        # Cold test-runner startup can take four minutes before the first test.
+        # Each test function retains the 60-second limit below.
+        timeout-minutes: 10
         run: >-
           xcodebuild -project Examples/BehaviorCatalog.xcodeproj
           -scheme BehaviorCatalog
@@ -45,4 +47,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - run: node --check site/demo.js
+      - name: Check website scripts
+        run: |
+          for source in site/demo.js site/docs/*.js; do node --check "$source"; done
+      - name: Install isolated browser tooling
+        run: |
+          npm install --prefix "$RUNNER_TEMP/docs-browser" --no-package-lock --ignore-scripts playwright@1.63.0
+          node "$RUNNER_TEMP/docs-browser/node_modules/playwright/cli.js" install --with-deps chromium --only-shell
+      - name: Replay documentation interactions
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/docs-browser/node_modules/playwright/index.mjs" node site/tests/browser.mjs

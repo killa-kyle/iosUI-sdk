@@ -686,7 +686,7 @@ footer p a {
     gap: 17px;
     font-size: 12px;
   }
-  nav a:first-child {
+  nav a[href="#playground"] {
     display: none;
   }
   .hero {
