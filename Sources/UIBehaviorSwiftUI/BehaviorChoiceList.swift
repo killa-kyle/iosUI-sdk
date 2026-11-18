@@ -37,6 +37,7 @@ public struct BehaviorChoiceList<ID: Hashable & Sendable, Row: View>: View {
           }
         } label: {
           row(id, selection.selected.contains(id))
+            .contentShape(Rectangle())
         }
         // Form/List automatic styling can dispatch a row tap to sibling buttons.
         // Keep each choice independent, including when embedded inside a form.
