@@ -5,14 +5,14 @@ permissions:
 jobs:
   native:
     runs-on: macos-26
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - run: swift test
       - run: brew install xcodegen
       - run: xcodegen generate --spec Examples/project.yml
       - name: Boot simulator
-        timeout-minutes: 4
+        timeout-minutes: 8
         run: |
           DEVICE=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for a in d["devices"].values() for x in a if x["name"].startswith("iPhone")))')
           echo "SIMULATOR_ID=$DEVICE" >> "$GITHUB_ENV"
