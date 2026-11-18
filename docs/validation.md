@@ -37,3 +37,12 @@ The catalog uses real package adapters. Native adapter unit tests exercise table
 selection/disabled state/external reconciliation and slider callbacks. The UI
 replay covers selecting/deselecting choices, disabled options, disclosure and
 native sheet open/close. It does not yet cover every adapter or accessibility mode.
+
+## Extended behavior work
+
+The expanded core suite currently passes 34 tests, including invalid civil dates,
+disabled date ranges, sRGB/HSV/alpha contrast, tree/grid focus and ranges, nested
+drop hit-testing, all resize handles/aspect bounds/cancellation, crop rotations,
+carousel timing, menu/overlay rules, UTF-16 editing and agent authority/redaction.
+The extended iOS catalog and UIKit/TextKit adapters compile in a local unsigned
+build. Final simulator/device replay for the new stories is still pending.

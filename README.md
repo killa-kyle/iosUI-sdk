@@ -4,7 +4,7 @@
 
 An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/vercel-labs/ui)'s behavior-driven approach for SwiftUI and UIKit. Compose interaction rules instead of copying custom controls between apps. No JavaScript runtime, network services, or third-party package dependencies.
 
-This is an initial native port of selected foundational behaviors, not feature-complete parity with the web library. See [coverage and differences](docs/coverage.md).
+The package includes foundational and extended native behavior families. It does not claim feature-complete parity with every web recipe. See [coverage and differences](docs/coverage.md).
 
 ## Install
 
@@ -82,11 +82,15 @@ UIKit also includes `BehaviorValueBinding` for UISlider/UIStepper. Retain it for
 
 ## Package structure
 
-- **UIBehaviorCore**: selection/ranges, focus navigation, typeahead, disclosure, bounded values, reorder, validation, viewport transforms and fixed-size virtual windows. Deterministic Swift values with no UI imports.
-- **UIBehaviorSwiftUI**: choice list, disclosure group, native sheet modifier, slider, stepper, validated field, viewport and accessible reorder actions.
-- **UIBehaviorUIKit**: native table choice controller and slider/stepper binding. Other behaviors are available as core models for your own UIKit adapters.
+- **UIBehaviorCore**: selection, focus, typeahead, disclosure, values, validation, viewport/virtual windows, calendar/date, color, tree/grid navigation, drag/drop, resize/crop, carousel, menus, overlay stacks, rich text and opt-in agent contracts. Deterministic Swift state with no UI imports.
+- **UIBehaviorSwiftUI**: native adapters for the behavior families, including calendar, color picker, tree/grid, drag/drop, resize handles, cropper, carousel, rich text, menus, nested sheets and point-space measurement.
+- **UIBehaviorUIKit**: native table choice/value bindings, TextKit editor, oriented UIImage crop export, measurement and UIKit hosting/factories for the shared production adapters.
 
 These are behavior building blocks, not a complete styled design system. Native controls supply platform semantics. VoiceOver, keyboard and device validation are ongoing; see [validation](docs/validation.md) for what has actually run.
+
+## Let an agent inspect and replay behaviors
+
+`BehaviorAgent` exposes only controls you explicitly register. Agents receive stable references, accessible names, native measurements and allowed actions; the host authorizes every action. Snapshots carry revisions so stale actions fail. The catalog demonstrates an agent action changing the same carousel a person uses. See [the integration guide](docs/agents.md). No provider, credentials or network server is included.
 
 ## Run the catalog
 

@@ -5,7 +5,18 @@ import UIBehaviorUIKit
 
 @main
 struct CatalogApp: App {
-  var body: some Scene { WindowGroup { Catalog() } }
+  var body: some Scene {
+    WindowGroup {
+      if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "--story"),
+        ProcessInfo.processInfo.arguments.indices.contains(index + 1),
+        let story = ExtendedStory(rawValue: ProcessInfo.processInfo.arguments[index + 1])
+      {
+        NavigationStack { BehaviorDemo(story: story) }
+      } else {
+        Catalog()
+      }
+    }
+  }
 }
 
 struct Catalog: View {
@@ -52,6 +63,7 @@ struct Catalog: View {
         }
         Section("UIKit adapter") {
           NavigationLink("Open UIKit choices") { UIKitChoices().ignoresSafeArea(edges: .bottom) }
+          NavigationLink("All behavior demos") { ExtendedCatalog() }
         }
       }
       .navigationTitle("iosUI-sdk")
