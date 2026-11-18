@@ -38,6 +38,9 @@ public struct BehaviorChoiceList<ID: Hashable & Sendable, Row: View>: View {
         } label: {
           row(id, selection.selected.contains(id))
         }
+        // Form/List automatic styling can dispatch a row tap to sibling buttons.
+        // Keep each choice independent, including when embedded inside a form.
+        .buttonStyle(.plain)
         .disabled(disabled.contains(id))
         .focused($focused, equals: id)
         .accessibilityLabel(label(id))
