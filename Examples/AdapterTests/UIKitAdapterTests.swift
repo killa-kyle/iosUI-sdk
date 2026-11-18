@@ -34,10 +34,11 @@ final class UIKitAdapterTests: XCTestCase {
     slider.value = 57
     slider.sendActions(for: .valueChanged)
     XCTAssertEqual(binding.state.value, 60)
-    XCTAssertEqual(slider.value, 60)
+    // UISlider normalizes through Float; its readback may differ by one ULP.
+    XCTAssertEqual(slider.value, 60, accuracy: Float(60).ulp * 2)
     XCTAssertEqual(changes, 1)
     binding.set(20)
-    XCTAssertEqual(slider.value, 20)
+    XCTAssertEqual(slider.value, 20, accuracy: Float(20).ulp * 2)
     XCTAssertEqual(changes, 1)
   }
 }

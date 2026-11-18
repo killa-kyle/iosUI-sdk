@@ -16,6 +16,23 @@
   acceptance have not been completed. No claim of exhaustive accessibility
   or full web feature parity is made.
 
+## Native simulator observations
+
+The iOS 26.4 hosted simulator completed the real SwiftUI interaction replay:
+independent choice taps, selected accessibility traits, disabled options,
+deselecting, disclosure and sheet open/close. This caught and verified the
+Form-row choice-button isolation fix. The native slider's Float readback differs
+from its exact core Double state by about one ULP on that runtime; adapter tests
+allow two Float ULPs for control readback while keeping core state and callback
+counts exact. The current Quality run is the authority for the release head.
+
+An additional local existing-simulator attempt installed the catalog but did
+not finish its test session; Xcode reported SDK/build-version parsing and test
+log finalization diagnostics. Simulator screenshot export to the SSD was also
+denied by the host. Local native runtime/visual approval is not claimed. The
+existing simulator was returned to its initial shutdown state and only the
+temporary catalog/test-runner apps were removed.
+
 The catalog uses real package adapters. Native adapter unit tests exercise table
 selection/disabled state/external reconciliation and slider callbacks. The UI
 replay covers selecting/deselecting choices, disabled options, disclosure and
