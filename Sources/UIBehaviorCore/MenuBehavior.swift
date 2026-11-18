@@ -83,7 +83,7 @@ public struct MenuBehavior: Sendable {
       return
     }
     if direction == .right, let focused {
-      _ = activate(focused)
+      if item(focused)?.kind == .submenu { _ = activate(focused) }
       return
     }
     let index = eligible.firstIndex { $0.id == focused }

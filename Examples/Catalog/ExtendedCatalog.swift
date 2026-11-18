@@ -159,6 +159,7 @@ struct BehaviorDemo: View {
               _ = overlays.present(
                 BehaviorOverlay("confirmation", parent: entry.id, restoreFocus: "nested"))
             }
+            .accessibilityFocused($restored, equals: "nested")
           }
           Button("Close " + entry.id) { overlays.dismiss(entry.id) }
         }.padding()

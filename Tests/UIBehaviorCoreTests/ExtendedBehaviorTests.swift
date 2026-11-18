@@ -3,6 +3,25 @@ import XCTest
 @testable import UIBehaviorCore
 
 final class ExtendedBehaviorTests: XCTestCase {
+  func testCalendarKeyboardSkipsDisabledWithoutChangingSelection() throws {
+    var calendar = CalendarSelection(
+      month: try CalendarDate("2026-11-01"),
+      disabled: [try CalendarDate("2026-11-03")])
+    calendar.focus(try CalendarDate("2026-11-02"))
+    calendar.moveFocus(days: 1)
+    XCTAssertEqual(calendar.focused.description, "2026-11-04")
+    XCTAssertNil(calendar.selected)
+    calendar.moveFocus(days: 0)
+    XCTAssertEqual(calendar.focused.description, "2026-11-04")
+  }
+  func testMenuRightArrowDoesNotActivateAnOrdinaryItem() {
+    var menu = MenuBehavior([BehaviorMenuItem("toggle", title: "Toggle", kind: .toggle)])
+    menu.move(.first)
+    menu.move(.right)
+    XCTAssertTrue(menu.checked.isEmpty)
+    XCTAssertEqual(menu.activate("toggle"), "toggle")
+    XCTAssertEqual(menu.checked, ["toggle"])
+  }
   func testCivilDateLeapCenturyMonthClampingAndBounds() throws {
     XCTAssertThrowsError(try CalendarDate("1900-02-29"))
     XCTAssertThrowsError(try CalendarDate("2026-2-01"))
@@ -28,6 +47,16 @@ final class ExtendedBehaviorTests: XCTestCase {
     XCTAssertEqual(model.visibleMonth.description, "2026-12-01")
   }
   func testColorHexHSVARoundTripAndAlphaContrast() throws {
+    let decoder = JSONDecoder()
+    decoder.nonConformingFloatDecodingStrategy = .convertFromString(
+      positiveInfinity: "Infinity", negativeInfinity: "-Infinity", nan: "NaN")
+    XCTAssertThrowsError(
+      try decoder.decode(
+        ColorValue.self, from: Data(#"{"red":"NaN","green":0,"blue":0,"alpha":1}"#.utf8)))
+    XCTAssertEqual(
+      try decoder.decode(
+        ColorValue.self, from: Data(#"{"red":2,"green":0,"blue":0,"alpha":1}"#.utf8)
+      ).red, 1)
     XCTAssertNil(ColorValue(hex: "#GG0000"))
     XCTAssertEqual(ColorValue(hex: "#f008")?.hex(includeAlpha: true), "#FF000088")
     for rgb in ["#4F46E5", "#FFFFFF", "#000000", "#05A180"] {

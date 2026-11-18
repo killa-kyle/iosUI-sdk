@@ -97,7 +97,7 @@ public struct CalendarSelection: Sendable, Equatable {
   }
   @discardableResult public mutating func select(_ date: CalendarDate) -> Bool {
     guard isEnabled(date) else { return false }
-    if mode == .range, let start = anchor {
+    if mode == .range, let start = anchor, isEnabled(start) {
       let range = min(start, date)...max(start, date)
       guard !disabled.contains(where: { range.contains($0) }) else { return false }
       selected = range
@@ -106,13 +106,30 @@ public struct CalendarSelection: Sendable, Equatable {
       selected = date...date
       anchor = mode == .range ? date : nil
     }
-    focused = date
+    focus(date)
     return true
   }
-  public mutating func moveFocus(days: Int) {
-    guard let date = focused.addingDays(days), isEnabled(date) else { return }
+  public mutating func focus(_ date: CalendarDate) {
+    guard isEnabled(date) else { return }
     focused = date
     visibleMonth = try! CalendarDate(year: date.year, month: date.month, day: 1)
+  }
+  public mutating func moveFocus(days: Int) {
+    guard days != 0 else { return }
+    var candidate = focused.addingDays(days)
+    if let bounds, let date = candidate {
+      if days > 0 && date < bounds.lowerBound { candidate = bounds.lowerBound }
+      if days < 0 && date > bounds.upperBound { candidate = bounds.upperBound }
+    }
+    for _ in 0...disabled.count {
+      guard let date = candidate, bounds?.contains(date) ?? true else { return }
+      if isEnabled(date) {
+        focused = date
+        visibleMonth = try! CalendarDate(year: date.year, month: date.month, day: 1)
+        return
+      }
+      candidate = date.addingDays(days)
+    }
   }
   public mutating func page(months: Int) {
     guard let date = visibleMonth.addingMonths(months) else { return }

@@ -3,6 +3,32 @@ import XCTest
 @testable import UIBehaviorCore
 
 final class AgentProtocolTests: XCTestCase {
+  @MainActor func testAuthorizationCannotReenterOrChangeRevisionBeforeDispatch() throws {
+    var agent: BehaviorAgent!
+    var reentryRejected = false
+    var calls = 0
+    agent = BehaviorAgent { _, step in
+      do { try agent.act(step, revision: agent.snapshot().revision) } catch AgentProtocolError
+        .reentrant
+      { reentryRejected = true } catch {}
+      return true
+    }
+    let read = { AgentComponent(ref: "one", component: "button", label: "One", actions: ["press"]) }
+    try agent.register(ref: "one", read: read, perform: { _ in calls += 1 })
+    try agent.act(AgentStep(ref: "one", action: "press"), revision: agent.snapshot().revision)
+    XCTAssertTrue(reentryRejected)
+    XCTAssertEqual(calls, 1)
+    var changing: BehaviorAgent!
+    changing = BehaviorAgent { _, _ in
+      changing.invalidate()
+      return true
+    }
+    try changing.register(ref: "one", read: read, perform: { _ in calls += 1 })
+    XCTAssertThrowsError(
+      try changing.act(
+        AgentStep(ref: "one", action: "press"), revision: changing.snapshot().revision))
+    XCTAssertEqual(calls, 1)
+  }
   @MainActor func testOptionalWebArgumentsAndExplicitHostAuthority() throws {
     let step = try JSONDecoder().decode(
       AgentStep.self, from: Data(#"{"ref":"next","action":"press"}"#.utf8))

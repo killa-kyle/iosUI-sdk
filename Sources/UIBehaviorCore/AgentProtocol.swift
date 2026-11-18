@@ -149,12 +149,13 @@ public enum AgentProtocolError: Error {
     guard labels.count == 1 else { throw AgentProtocolError.ambiguousLabel }
     guard component.actions.contains(step.action), let entry = entries[component.ref]
     else { throw AgentProtocolError.unavailableAction }
-    guard authorize(component, step) else { throw AgentProtocolError.denied }
     dispatching = true
     defer {
       dispatching = false
       invalidate()
     }
+    guard authorize(component, step) else { throw AgentProtocolError.denied }
+    guard expected == revision else { throw AgentProtocolError.staleSnapshot }
     try entry.perform(AgentStep(ref: component.ref, action: step.action, args: step.args))
   }
 }

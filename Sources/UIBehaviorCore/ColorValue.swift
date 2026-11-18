@@ -1,10 +1,23 @@
 import Foundation
 
 public struct ColorValue: Hashable, Sendable, Codable {
+  private enum CodingKeys: String, CodingKey { case red, green, blue, alpha }
   public let red: Double
   public let green: Double
   public let blue: Double
   public let alpha: Double
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let r = try container.decode(Double.self, forKey: .red)
+    let g = try container.decode(Double.self, forKey: .green)
+    let b = try container.decode(Double.self, forKey: .blue)
+    let a = try container.decode(Double.self, forKey: .alpha)
+    guard [r, g, b, a].allSatisfy(\.isFinite) else {
+      throw DecodingError.dataCorrupted(
+        .init(codingPath: decoder.codingPath, debugDescription: "Color channels must be finite"))
+    }
+    self.init(red: r, green: g, blue: b, alpha: a)
+  }
   public init(red: Double, green: Double, blue: Double, alpha: Double = 1) {
     precondition([red, green, blue, alpha].allSatisfy(\.isFinite))
     self.red = min(1, max(0, red))

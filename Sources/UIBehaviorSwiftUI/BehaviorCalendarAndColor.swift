@@ -10,6 +10,7 @@ import UIBehaviorCore
 public struct BehaviorCalendar: View {
   @Binding private var model: CalendarSelection
   private let firstWeekday: Int
+  @FocusState private var focused: CalendarDate?
   public init(
     _ model: Binding<CalendarSelection>, firstWeekday: Int = Calendar.current.firstWeekday
   ) {
@@ -43,6 +44,7 @@ public struct BehaviorCalendar: View {
                     ? Color.accentColor.opacity(0.2) : .clear,
                   in: RoundedRectangle(cornerRadius: 8))
             }.buttonStyle(.plain).disabled(!model.isEnabled(date))
+              .focused($focused, equals: date)
               .opacity(date.month == model.visibleMonth.month ? 1 : 0.5)
               .accessibilityLabel(date.description)
               .accessibilityValue(model.selected?.contains(date) == true ? "Selected" : "")
@@ -53,6 +55,8 @@ public struct BehaviorCalendar: View {
         }
       }
     }
+    .onChange(of: model.focused) { _, date in focused = date }
+    .onChange(of: focused) { _, date in if let date { model.focus(date) } }
     .onKeyPress(.leftArrow) {
       model.moveFocus(days: -1)
       return .handled
