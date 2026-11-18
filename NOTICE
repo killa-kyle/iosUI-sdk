@@ -1,0 +1,9 @@
+iosUI-sdk
+An independent native Swift adaptation of behavior-driven UI concepts from
+UI SDK (https://github.com/vercel-labs/ui), Apache License 2.0.
+Upstream reference: 63df19ae09452fb185d54275404da044f0addda2.
+
+This project is not affiliated with or endorsed by Vercel or Apple.
+Native implementation copyright 2026 iosUI-sdk contributors.
+The Swift implementation is new code; this is a semantic port, not a
+source-compatible fork or an upstream-supported platform binding.
