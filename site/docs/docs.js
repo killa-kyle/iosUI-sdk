@@ -178,7 +178,7 @@ function render(initial = false) {
     page?.description ||
     "Choose a page from the navigation, or search for a behavior.";
   $("badge").textContent = current.extended
-    ? "Extended native API · preview"
+    ? "Extended native API · 0.2.0"
     : "Native Swift";
   $("badge").dataset.status = current.extended ? "extended" : "stable";
   $("guide-content").replaceChildren();
@@ -223,7 +223,7 @@ function render(initial = false) {
     ? `Sources/${current.source}`
     : current.source;
   $("source-link").href =
-    `https://github.com/killa-kyle/iosUI-sdk/blob/codex/expanded-native-behaviors/${path}`;
+    `https://github.com/killa-kyle/iosUI-sdk/blob/0.2.0/${path}`;
   const index = pages.indexOf(current);
   for (const [direction, offset] of [
     ["previous", -1],
