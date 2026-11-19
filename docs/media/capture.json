@@ -1,0 +1,20 @@
+{
+  "productionRevision": "c1d80d93e56e742a176651dfeb2870ba25540462",
+  "capture": "ReadmeCaptureTests, iOS simulator",
+  "playback": "Animated native checkpoints; not real-time video",
+  "crop": "1140:2034:0:0",
+  "examples": {
+    "calendar": {
+      "checkpoints": 5,
+      "bytes": 26262
+    },
+    "drag": {
+      "checkpoints": 3,
+      "bytes": 11967
+    },
+    "crop": {
+      "checkpoints": 3,
+      "bytes": 18210
+    }
+  }
+}

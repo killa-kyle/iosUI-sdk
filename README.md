@@ -8,6 +8,17 @@ The package includes foundational and extended native behavior families. It does
 
 [Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
 
+## Native examples
+
+Animated checkpoints from the actual iOS catalog, captured by XCTest. These show
+native state changes rather than real-time gesture video.
+
+| Calendar ranges                                                            | Native drag/drop                                                                             | Crop, rotate & export                                                                        |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| ![Select and change a native calendar date range](docs/media/calendar.gif) | ![Two native drops each produce one receipt and clear the drag session](docs/media/drag.gif) | ![Rotate the native crop selection and export a 200 by 200 pixel image](docs/media/crop.gif) |
+
+[Run the catalog and reproduce these captures](docs/media/README.md).
+
 ## Install
 
 Requires Swift 6 / Xcode 16 or newer and iOS 17+. The core and SwiftUI products also support macOS 14+. UIKit is iOS-only.
