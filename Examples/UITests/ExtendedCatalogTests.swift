@@ -23,24 +23,32 @@ import XCTest
     let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
     XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 5), .completed)
   }
-  func testCalendarTreeAndGridUseRealAdapters() {
-    var app = launch("calendar")
+  func testCalendarRangeAndDisabledDates() {
+    let app = launch("calendar")
+    defer { app.terminate() }
     XCTAssertTrue(app.buttons["calendar-2026-11-05"].waitForExistence(timeout: 5))
     XCTAssertFalse(app.buttons["calendar-2026-11-03"].isEnabled)
     app.buttons["calendar-2026-11-05"].tap()
     app.buttons["calendar-2026-11-07"].tap()
     expect(app.staticTexts["calendar-result"], label: "2026-11-05…2026-11-07")
-    app = launch("tree")
+  }
+  func testTreeNavigation() {
+    let app = launch("tree")
+    defer { app.terminate() }
     app.buttons["Expand Library"].tap()
     app.buttons["Photos"].tap()
     expect(app.staticTexts["tree-result"], label: "Selected: Photos")
-    app = launch("grid")
+  }
+  func testGridRangeSelection() {
+    let app = launch("grid")
+    defer { app.terminate() }
     app.buttons["R1 C1"].tap()
     app.buttons["Extend to R3 C4"].tap()
     expect(app.staticTexts["grid-result"], label: "Selected cells: 11")
   }
   func testColorHexBinding() {
     let app = launch("color")
+    defer { app.terminate() }
     let field = app.textFields["Hex color"]
     XCTAssertTrue(field.waitForExistence(timeout: 5))
     field.tap()
@@ -52,6 +60,7 @@ import XCTest
   }
   func testUIKitCalendarHosting() {
     let app = launch("calendar")
+    defer { app.terminate() }
     let link = app.buttons["UIKit calendar controller"]
     if !link.isHittable { app.swipeUp() }
     XCTAssertTrue(link.waitForExistence(timeout: 5))
@@ -63,6 +72,7 @@ import XCTest
   }
   func testNativeDragDrop() {
     let app = launch("drag")
+    defer { app.terminate() }
     let card = app.descendants(matching: .any).matching(identifier: "drag-card").firstMatch
     let zone = app.descendants(matching: .any).matching(identifier: "drop-archive").firstMatch
     XCTAssertTrue(card.waitForExistence(timeout: 5))
@@ -80,6 +90,7 @@ import XCTest
   }
   func testNativeDragCancellation() {
     let app = launch("drag")
+    defer { app.terminate() }
     let card = app.descendants(matching: .any).matching(identifier: "drag-card").firstMatch
     XCTAssertTrue(card.waitForExistence(timeout: 5))
     let start = card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -90,6 +101,7 @@ import XCTest
   }
   func testResizeAndActualImageExport() {
     var app = launch("resize")
+    defer { app.terminate() }
     let handle = app.descendants(matching: .any).matching(
       NSPredicate(format: "label == %@", "Resize bottom right")
     ).firstMatch
@@ -104,6 +116,7 @@ import XCTest
   }
   func testCropResizeHandleAccessibility() {
     let app = launch("crop")
+    defer { app.terminate() }
     let corner = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Resize bottom right")).firstMatch
     XCTAssertTrue(corner.waitForExistence(timeout: 5))
     XCTAssertTrue(corner.isHittable)
@@ -114,6 +127,7 @@ import XCTest
   }
   func testCarouselAndMenu() {
     var app = launch("carousel")
+    defer { app.terminate() }
     app.buttons["Next slide"].tap()
     expect(app.staticTexts["carousel-position"], label: "2 of 3")
     app = launch("menu")
@@ -124,6 +138,7 @@ import XCTest
   }
   func testNestedPresentation() {
     let app = launch("overlays")
+    defer { app.terminate() }
     app.buttons["Open inspector"].tap()
     XCTAssertTrue(app.buttons["Open nested overlay"].waitForExistence(timeout: 5))
     app.buttons["Open nested overlay"].tap()
@@ -135,6 +150,7 @@ import XCTest
   }
   func testEditorNativeTypingAndFormatting() {
     let app = launch("editor")
+    defer { app.terminate() }
     let editor = app.textViews["Rich text"]
     XCTAssertTrue(editor.waitForExistence(timeout: 5))
     editor.tap()
@@ -145,12 +161,14 @@ import XCTest
   }
   func testNativeMeasurements() {
     let app = launch("measurements")
+    defer { app.terminate() }
     let measured = app.staticTexts["measurement-result"]
     XCTAssertTrue(measured.waitForExistence(timeout: 5))
     XCTAssertFalse(measured.label.hasPrefix("0 × 0"))
   }
   func testRegisteredAgentAction() {
     let app = launch("agent")
+    defer { app.terminate() }
     app.buttons["Agent next"].tap()
     expect(app.staticTexts["agent-result"], label: "Agent moved to slide 2")
     expect(app.staticTexts["carousel-position"], label: "2 of 3")
