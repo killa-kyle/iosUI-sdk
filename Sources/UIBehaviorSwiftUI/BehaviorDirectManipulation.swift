@@ -103,6 +103,7 @@ public struct BehaviorCropper: View {
       let scale = min(geometry.size.width / bounds.width, geometry.size.height / bounds.height)
       ZStack(alignment: .topLeading) {
         image.resizable()
+          .accessibilityHidden(true)
           .frame(
             width: selection.rotation % 180 == 0 ? bounds.width : bounds.height,
             height: selection.rotation % 180 == 0 ? bounds.height : bounds.width
@@ -113,7 +114,7 @@ public struct BehaviorCropper: View {
           Color.clear
         }
       }.scaleEffect(scale, anchor: .topLeading)
-    }.accessibilityLabel("Image crop selection")
+    }.accessibilityElement(children: .contain).accessibilityLabel("Image crop selection")
   }
 }
 

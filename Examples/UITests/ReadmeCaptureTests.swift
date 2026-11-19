@@ -36,6 +36,11 @@ import XCTest
   }
   func testCropVideo() {
     let app = launch("crop")
+    checkpoint(app, "README-launched")
+    let hierarchy = XCTAttachment(string: app.debugDescription)
+    hierarchy.name = "Crop accessibility"
+    hierarchy.lifetime = .keepAlways
+    add(hierarchy)
     let handle = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Resize bottom right")).firstMatch
     XCTAssertTrue(handle.waitForExistence(timeout: 5))
     checkpoint(app, "README-start")
@@ -43,7 +48,9 @@ import XCTest
     from.press(forDuration: 0.2, thenDragTo: from.withOffset(CGVector(dx: -35, dy: -35)), withVelocity: XCUIGestureVelocity(rawValue: 35), thenHoldForDuration: 0.5)
     app.buttons["Rotate crop"].tap()
     app.buttons["Export crop"].tap()
-    XCTAssertTrue(app.staticTexts["crop-result"].exists)
+    let exported = app.staticTexts["crop-result"]
+    if !exported.isHittable { app.swipeUp() }
+    XCTAssertTrue(exported.isHittable)
     checkpoint(app, "README-end")
   }
 }

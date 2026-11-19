@@ -12,6 +12,10 @@ jobs:
   capture:
     runs-on: macos-26
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [Calendar, Crop, Drag]
     steps:
       - uses: actions/checkout@v4
       - run: brew install xcodegen
@@ -38,7 +42,7 @@ jobs:
           -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE,arch=$(uname -m)"
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
           -resultBundlePath "$RUNNER_TEMP/ReadmeNative.xcresult"
-          -only-testing:BehaviorCatalogUITests/ReadmeCaptureTests
+          -only-testing:BehaviorCatalogUITests/ReadmeCaptureTests/test${{ matrix.example }}Video
           -parallel-testing-enabled NO -test-timeouts-enabled YES
           -maximum-test-execution-time-allowance 60
           CODE_SIGNING_ALLOWED=NO test-without-building
@@ -49,12 +53,12 @@ jobs:
           git rev-parse HEAD > "$RUNNER_TEMP/native-examples/source-revision.txt"
       - uses: actions/upload-artifact@v4
         with:
-          name: native-examples
+          name: native-examples-${{ matrix.example }}
           path: ${{ runner.temp }}/native-examples
           retention-days: 2
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: native-capture-failure
+          name: native-capture-failure-${{ matrix.example }}
           path: ${{ runner.temp }}/ReadmeNative.xcresult
           retention-days: 2

@@ -39,15 +39,19 @@ import XCTest
     app.buttons["Extend to R3 C4"].tap()
     expect(app.staticTexts["grid-result"], label: "Selected cells: 11")
   }
-  func testColorHexBindingAndUIKitCalendarHosting() {
-    var app = launch("color")
+  func testColorHexBinding() {
+    let app = launch("color")
     let field = app.textFields["Hex color"]
     XCTAssertTrue(field.waitForExistence(timeout: 5))
     field.tap()
-    field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 7) + "#000000")
+    field.typeKey("a", modifierFlags: .command)
+    field.typeText("#000000")
+    XCTAssertEqual(field.value as? String, "#000000")
     app.buttons["Apply hex"].tap()
     expect(app.staticTexts["color-result"], label: "#000000FF")
-    app = launch("calendar")
+  }
+  func testUIKitCalendarHosting() {
+    let app = launch("calendar")
     let link = app.buttons["UIKit calendar controller"]
     if !link.isHittable { app.swipeUp() }
     XCTAssertTrue(link.waitForExistence(timeout: 5))
@@ -98,6 +102,16 @@ import XCTest
     app.buttons["Export crop"].tap()
     expect(app.staticTexts["crop-result"], label: "Exported 200 × 200")
   }
+  func testCropResizeHandleAccessibility() {
+    let app = launch("crop")
+    let corner = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Resize bottom right")).firstMatch
+    XCTAssertTrue(corner.waitForExistence(timeout: 5))
+    XCTAssertTrue(corner.isHittable)
+    XCTAssertEqual(corner.value as? String, "200 by 200")
+    let from = corner.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+    from.press(forDuration: 0.1, thenDragTo: from.withOffset(CGVector(dx: -30, dy: -30)))
+    XCTAssertNotEqual(corner.value as? String, "200 by 200")
+  }
   func testCarouselAndMenu() {
     var app = launch("carousel")
     app.buttons["Next slide"].tap()
@@ -119,8 +133,8 @@ import XCTest
     app.buttons["Close inspector"].tap()
     expect(app.staticTexts["overlay-result"], label: "Overlay count: 0")
   }
-  func testEditorMeasurementAndRegisteredAgentAction() {
-    var app = launch("editor")
+  func testEditorNativeTypingAndFormatting() {
+    let app = launch("editor")
     let editor = app.textViews["Rich text"]
     XCTAssertTrue(editor.waitForExistence(timeout: 5))
     editor.tap()
@@ -128,11 +142,15 @@ import XCTest
     app.buttons["Bold first word"].tap()
     expect(app.staticTexts["editor-format"], label: "Bold runs: 1")
     XCTAssertTrue(app.staticTexts["editor-result"].label.contains("!"))
-    app = launch("measurements")
+  }
+  func testNativeMeasurements() {
+    let app = launch("measurements")
     let measured = app.staticTexts["measurement-result"]
     XCTAssertTrue(measured.waitForExistence(timeout: 5))
     XCTAssertFalse(measured.label.hasPrefix("0 × 0"))
-    app = launch("agent")
+  }
+  func testRegisteredAgentAction() {
+    let app = launch("agent")
     app.buttons["Agent next"].tap()
     expect(app.staticTexts["agent-result"], label: "Agent moved to slide 2")
     expect(app.staticTexts["carousel-position"], label: "2 of 3")
