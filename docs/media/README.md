@@ -1,36 +1,24 @@
-# Native README examples
+# README examples
 
-These GIFs animate actual iOS simulator checkpoints from the production adapters.
-They are step-by-step captures, not recordings of gesture timing. Calendar shows
-range selection and replacement; drag shows two successful native drops with a
-cleared session and one receipt each; crop shows rotation and real pixel export.
+These GIFs capture the actual documentation previews using the site's own CSS.
+Playwright drives the pointer and takes intermediate browser frames; ffmpeg
+encodes them into looping GIFs. Drag/drop visibly moves the card into its target,
+and crop visibly resizes the aspect-constrained selection. No synthetic motion
+frames or separate visual mockups are inserted.
 
-The source behavior revision is recorded in [capture.json](capture.json). Captures
-used iOS 27.1, the existing 466 × 678 point simulator and default text size. The
-right-side system status region was cropped; component pixels were not changed.
-Each GIF is under 30 KiB. Browser illustrations and these simulator captures do not
-establish physical-device or exhaustive accessibility acceptance.
+These are browser illustrations of behavior contracts. They do not execute Swift
+or establish native, physical-device or accessibility acceptance. Native replay
+coverage and its limits are recorded in [validation](../validation.md).
 
-To regenerate, use the existing catalog scheme and a simulator supported by your
-Xcode. Keep DerivedData and result bundles outside the repository:
+To regenerate, use Node 24, ffmpeg and an isolated Playwright 1.63.0 installation.
+Pass an external staging directory so PNG frames stay outside the repository:
 
 ```sh
-xcodegen generate --spec Examples/project.yml
-xcodebuild -project Examples/BehaviorCatalog.xcodeproj \
-  -scheme BehaviorCatalog -destination 'platform=iOS Simulator,id=YOUR_SIMULATOR_ID' \
-  -derivedDataPath "$OUTPUT_ROOT/DerivedData" \
-  -resultBundlePath "$OUTPUT_ROOT/ReadmeCaptures.xcresult" \
-  -only-testing:BehaviorCatalogUITests/ReadmeCaptureTests \
-  CODE_SIGNING_ALLOWED=NO test
-xcrun xcresulttool export attachments \
-  --path "$OUTPUT_ROOT/ReadmeCaptures.xcresult" \
-  --output-path "$OUTPUT_ROOT/readme-frames"
-python3 scripts/render-readme-gifs.py "$OUTPUT_ROOT/readme-frames" \
-  --revision "$(git rev-parse HEAD)"
+PLAYWRIGHT_MODULE=/path/to/isolated/playwright/index.mjs \
+  node scripts/capture-readme-gifs.mjs "$OUTPUT_ROOT/readme-frames"
 ```
 
-The renderer needs Python 3 and ffmpeg. Its optional `--crop width:height:x:y`
-argument crops system chrome; choose bounds from your fresh screenshots and keep
-all behavior content. It preserves frame order, pauses on each checkpoint and
-loops without inserting synthetic interaction frames. Inspect every checkpoint
-before committing regenerated examples.
+The script serves the existing site on loopback, verifies the resulting date
+range/drop/geometry state, captures real interactions, and writes the final GIFs
+and compact [capture receipt](capture.json) here. Inspect the full animation and
+its intermediate frames before committing regenerated examples.

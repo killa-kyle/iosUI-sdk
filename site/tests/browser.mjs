@@ -129,9 +129,38 @@ try {
     /Selected: Photos/,
   );
   await visit("drag");
-  await page
-    .getByRole("button", { name: "Move to archive", exact: true })
-    .click();
+  const card = page.locator(".drag-card"),
+    zone = page.locator(".drop-zone");
+  const initialCard = await card.boundingBox(),
+    targetZone = await zone.boundingBox();
+  await page.mouse.move(
+    initialCard.x + initialCard.width / 2,
+    initialCard.y + initialCard.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    initialCard.x + initialCard.width / 2 + 20,
+    initialCard.y + initialCard.height / 2 + 8,
+  );
+  assert.match(await card.getAttribute("style"), /translate/);
+  await page.keyboard.press("Escape");
+  await page.mouse.up();
+  assert.ok(!(await card.getAttribute("style")).includes("translate"));
+  assert.equal(await page.locator("#preview output").textContent(), "No drop");
+  await page.mouse.move(
+    initialCard.x + initialCard.width / 2,
+    initialCard.y + initialCard.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    targetZone.x + targetZone.width / 2,
+    targetZone.y + targetZone.height / 2,
+    { steps: 12 },
+  );
+  assert.match(await card.getAttribute("style"), /translate/);
+  assert.equal(await zone.getAttribute("data-targeted"), "true");
+  await page.mouse.up();
+  assert.equal(await zone.locator(".drag-card").count(), 1);
   assert.match(
     await page.locator("#preview output").textContent(),
     /Moved card to archive/,

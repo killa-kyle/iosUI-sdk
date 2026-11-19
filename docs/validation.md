@@ -49,7 +49,9 @@ build. Hosted simulator adapter tests pass for TextKit trait/selection bridging,
 pixel crop export and UIKit containment/state/measurement. The extended native
 interaction suite replays calendar/tree/grid, color/UIKit hosting, drag/drop,
 resize/crop, carousel/menu, nested presentation and editor/measurement/agent actions.
-The exact release head's Quality run is the authority for simulator acceptance;
+Local iOS 27.1 XCTest replay also passes actual drag/repeated drop/cancellation,
+resize/pixel crop export and nested overlays. The exact release head's Quality
+run is the authority for simulator acceptance;
 physical-device and exhaustive accessibility acceptance remain pending.
 
 Documentation browser replay passes all 29 pages and 22 interactive illustrations,

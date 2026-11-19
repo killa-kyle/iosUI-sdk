@@ -224,28 +224,60 @@ export function advancedPreview(kind, host) {
   }
   if (kind === "drag") {
     host.innerHTML =
-      '<div class="drag-card" draggable="true">Drag this card</div><div class="drop-zone">Archive drop zone</div><button>Move to archive</button><output aria-live="polite">No drop</output>';
-    let admitted = false;
+      '<div class="drag-card" tabindex="0" role="button" aria-label="Draggable card">Drag this card</div><div class="drop-zone">Archive drop zone</div><button>Move to archive</button><output aria-live="polite">No drop</output>';
     const card = host.querySelector(".drag-card"),
       zone = host.querySelector(".drop-zone");
+    let start;
+    const cancel = () => {
+      start = null;
+      card.style.transform = "";
+      card.classList.remove("is-dragging");
+      delete zone.dataset.targeted;
+    };
     const commit = () => {
+      cancel();
+      zone.append(card);
       out().textContent = "Moved card to archive";
-      admitted = false;
     };
-    card.ondragstart = (e) => {
-      admitted = true;
-      e.dataTransfer.setData("text/plain", "card");
+    card.onpointerdown = (e) => {
+      if (e.button !== 0) return;
+      start = { x: e.clientX, y: e.clientY, pointer: e.pointerId };
+      card.setPointerCapture(e.pointerId);
+      card.classList.add("is-dragging");
     };
-    card.ondragend = () => (admitted = false);
-    zone.ondragover = (e) => {
-      if (admitted) e.preventDefault();
+    card.onpointermove = (e) => {
+      if (!start || start.pointer !== e.pointerId) return;
+      card.style.transform = `translate(${e.clientX - start.x}px, ${e.clientY - start.y}px)`;
+      const bounds = zone.getBoundingClientRect();
+      zone.dataset.targeted = String(
+        e.clientX >= bounds.left &&
+          e.clientX <= bounds.right &&
+          e.clientY >= bounds.top &&
+          e.clientY <= bounds.bottom,
+      );
     };
-    zone.ondrop = (e) => {
-      e.preventDefault();
-      if (admitted && e.dataTransfer.getData("text/plain") === "card") commit();
+    card.onpointerup = (e) => {
+      if (!start || start.pointer !== e.pointerId) return;
+      const bounds = zone.getBoundingClientRect();
+      if (
+        e.clientX >= bounds.left &&
+        e.clientX <= bounds.right &&
+        e.clientY >= bounds.top &&
+        e.clientY <= bounds.bottom
+      )
+        commit();
+      else cancel();
+    };
+    card.onpointercancel = card.onlostpointercapture = cancel;
+    card.onkeydown = (e) => {
+      if (e.key === "Escape") cancel();
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        commit();
+      }
     };
     host.querySelector("button").onclick = commit;
-    return () => {};
+    return cancel;
   }
   if (kind === "carousel" || kind === "agent") {
     host.innerHTML = `<div class="slide-preview">Mountains</div><div class="demo-row"><button>Previous slide</button><output aria-live="polite"></output><button>Next slide</button></div>${kind === "agent" ? '<div class="demo-row"><button>Capture snapshot</button><button>Agent next</button><label><input type="checkbox" checked> Host allows action</label></div><pre class="agent-json" aria-live="polite">Capture a snapshot to begin.</pre>' : ""}`;

@@ -560,6 +560,22 @@ footer {
   border: 1px solid var(--accent);
   border-radius: 7px;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
+  position: relative;
+}
+.drag-card.is-dragging {
+  cursor: grabbing;
+  z-index: 2;
+  box-shadow: 0 8px 24px #25282326;
+}
+.drop-zone[data-targeted="true"] {
+  background: var(--selection);
+  border-color: var(--accent);
+}
+.drop-zone .drag-card {
+  width: fit-content;
+  margin: 12px auto 0;
 }
 .resize-stage {
   width: 100%;

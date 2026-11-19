@@ -1,20 +1,20 @@
 {
-  "productionRevision": "c1d80d93e56e742a176651dfeb2870ba25540462",
-  "capture": "ReadmeCaptureTests, iOS simulator",
-  "playback": "Animated native checkpoints; not real-time video",
-  "crop": "1140:2034:0:0",
+  "source": "Actual site/docs previews",
+  "styling": "Unmodified site CSS, light theme",
+  "capture": "Playwright pointer input and browser screenshots; ffmpeg GIF encoding",
+  "semantics": "Browser illustrations, not Swift execution or native recordings",
   "examples": {
     "calendar": {
-      "checkpoints": 5,
-      "bytes": 26262
+      "frames": 5,
+      "motion": false
     },
     "drag": {
-      "checkpoints": 3,
-      "bytes": 11967
+      "frames": 20,
+      "motion": true
     },
     "crop": {
-      "checkpoints": 3,
-      "bytes": 18210
+      "frames": 20,
+      "motion": true
     }
   }
 }
