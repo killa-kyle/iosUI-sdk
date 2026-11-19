@@ -50,6 +50,7 @@ struct BehaviorDemo: View {
   @State private var grid = GridNavigation(rows: 3, columns: 4, disabled: [GridCell(0, 1)])
   @State private var drag = DragDropBehavior()
   @State private var dropped = "No drop"
+  @State private var dropCount = 0
   @State private var resize = ResizeBehavior(
     rect: BehaviorRect(x: 40, y: 40, width: 120, height: 100),
     bounds: BehaviorRect(width: 300, height: 220))
@@ -111,10 +112,12 @@ struct BehaviorDemo: View {
         .accessibilityIdentifier("drop-archive")
         .behaviorDropTarget("archive", acceptedTypes: ["card"], session: $drag) { receipt in
           dropped = "Moved \(receipt.payload.id) to \(receipt.target)"
+          dropCount += 1
         }
       Button("Move to archive") { accessibleDrop() }
       Text(dropped).accessibilityIdentifier("drop-result")
       Text("Session: " + (drag.payload?.id ?? "none")).accessibilityIdentifier("drag-session")
+      Text("Drops: \(dropCount)").accessibilityIdentifier("drop-count")
     case .resize:
       BehaviorResizable($resize) { Color.blue.opacity(0.15) }.frame(height: 220)
       Text("\(Int(resize.rect.width)) × \(Int(resize.rect.height))").accessibilityIdentifier(

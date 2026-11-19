@@ -122,11 +122,15 @@ extension View {
   public func behaviorDraggable(_ payload: DragPayload, session: Binding<DragDropBehavior>)
     -> some View
   {
+    #if os(iOS)
+    NativeBehaviorDraggable(content: self, payload: payload, session: session)
+    #else
     onDrag {
       session.wrappedValue.cancel()
       _ = session.wrappedValue.begin(payload, at: BehaviorPoint(0, 0))
       return NSItemProvider(object: payload.id as NSString)
     }
+    #endif
   }
   /// Only accepts a payload already admitted by this local session. Revalidates at drop time.
   public func behaviorDropTarget(

@@ -68,6 +68,21 @@ import XCTest
     capture(app, name: "drag-after")
     print("Native drag session: " + app.staticTexts["drag-session"].label)
     expect(app.staticTexts["drop-result"], label: "Moved card to archive")
+    expect(app.staticTexts["drag-session"], label: "Session: none")
+    expect(app.staticTexts["drop-count"], label: "Drops: 1")
+    card.press(forDuration: 1, thenDragTo: zone, withVelocity: .slow, thenHoldForDuration: 1)
+    expect(app.staticTexts["drag-session"], label: "Session: none")
+    expect(app.staticTexts["drop-count"], label: "Drops: 2")
+  }
+  func testNativeDragCancellation() {
+    let app = launch("drag")
+    let card = app.descendants(matching: .any).matching(identifier: "drag-card").firstMatch
+    XCTAssertTrue(card.waitForExistence(timeout: 5))
+    let start = card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+    let outside = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+    start.press(forDuration: 1, thenDragTo: outside, withVelocity: .slow, thenHoldForDuration: 1)
+    expect(app.staticTexts["drag-session"], label: "Session: none")
+    expect(app.staticTexts["drop-count"], label: "Drops: 0")
   }
   func testResizeAndActualImageExport() {
     var app = launch("resize")
