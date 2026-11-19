@@ -45,9 +45,9 @@ export const guides = [
       "Add the Swift package in Xcode and choose the products your target uses.",
     body: [
       "In Xcode, choose File → Add Package Dependencies and enter https://github.com/killa-kyle/iosUI-sdk. Select UIBehaviorCore, UIBehaviorSwiftUI and/or UIBehaviorUIKit.",
-      "Version 0.2.0 includes the foundations and extended native behaviors. Choose the products your app uses; no application service or model provider is required.",
+      "Version 0.2.1 includes the foundations and extended native behaviors. Choose the products your app uses; no application service or model provider is required.",
     ],
-    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.2.0"\n)',
+    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.2.1"\n)',
     notes: [
       "Choose a version or revision intentionally. Do not assume a released tag includes unreleased APIs.",
       "UIBehaviorUIKit can host every shared SwiftUI adapter through BehaviorController; direct UIKit APIs also cover choices, values, TextKit, image crop export and measurement.",
@@ -161,7 +161,7 @@ export const guides = [
     links: [
       [
         "Read agent integration",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.0/docs/agents.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/agents.md",
       ],
     ],
     kind: "guide",
@@ -244,7 +244,7 @@ export const guides = [
     links: [
       [
         "Full coverage map",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.0/docs/coverage.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/coverage.md",
       ],
     ],
     kind: "guide",
@@ -292,7 +292,7 @@ export const guides = [
       ],
       [
         "Validation record",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.0/docs/validation.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/validation.md",
       ],
     ],
     kind: "guide",

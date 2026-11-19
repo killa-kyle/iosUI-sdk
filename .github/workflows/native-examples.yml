@@ -35,6 +35,8 @@ jobs:
       - name: Await simulator
         timeout-minutes: 8
         run: xcrun simctl bootstatus "$CAPTURE_DEVICE" -b
+      # Recording includes a cold app launch and deliberately slow real gestures.
+      # Hosted launches can take 50s; functional Quality retains its 60s limit.
       - name: Record actual native gestures with XCTest
         timeout-minutes: 10
         run: >-
@@ -44,7 +46,7 @@ jobs:
           -resultBundlePath "$RUNNER_TEMP/ReadmeNative.xcresult"
           -only-testing:BehaviorCatalogUITests/ReadmeCaptureTests/test${{ matrix.example }}Video
           -parallel-testing-enabled NO -test-timeouts-enabled YES
-          -maximum-test-execution-time-allowance 60
+          -maximum-test-execution-time-allowance 120
           CODE_SIGNING_ALLOWED=NO test-without-building
       - name: Export native media and validation receipt
         run: |

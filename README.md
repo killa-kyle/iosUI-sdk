@@ -54,7 +54,7 @@ https://github.com/killa-kyle/iosUI-sdk
 Or add this to Package.swift:
 
 ```swift
-.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.2.0")
+.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.2.1")
 ```
 
 Choose the products your target needs:

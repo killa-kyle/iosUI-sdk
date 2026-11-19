@@ -39,6 +39,8 @@ targets:
         product: UIBehaviorUIKit
       - package: iosUI-sdk
         product: UIBehaviorCore
+      - package: iosUI-sdk
+        product: UIBehaviorSwiftUI
   BehaviorCatalogUITests:
     type: bundle.ui-testing
     platform: iOS

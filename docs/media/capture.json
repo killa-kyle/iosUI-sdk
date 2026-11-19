@@ -4,31 +4,31 @@
   "processing": "Align real checkpoint pixels to the recording, trim to the verified interaction, reduce to 12 fps, scale, palette encode; no synthetic motion",
   "examples": {
     "drag": {
-      "sourceRevision": "4d04a7ac6a71e785a3aac865ee03fbdd54d75680",
+      "sourceRevision": "b8119d4770850ac9b1fcf8aeda1e800bf6ba7f98",
       "test": "ReadmeCaptureTests/testDragVideo()",
       "device": "iPhone 17 Pro",
-      "videoFrames": 319,
-      "trimStart": 5.567,
-      "duration": 5.4,
-      "bytes": 293637
+      "videoFrames": 317,
+      "trimStart": 14.233,
+      "duration": 5.113,
+      "bytes": 229243
     },
     "calendar": {
-      "sourceRevision": "48cea3b65076dec23b9e8fabb5d2a0e0d6c06971",
+      "sourceRevision": "b8119d4770850ac9b1fcf8aeda1e800bf6ba7f98",
       "test": "ReadmeCaptureTests/testCalendarVideo()",
       "device": "iPhone 17 Pro",
-      "videoFrames": 211,
-      "trimStart": 36.567,
-      "duration": 2.453,
-      "bytes": 116596
+      "videoFrames": 288,
+      "trimStart": 23.067,
+      "duration": 4.015,
+      "bytes": 106490
     },
     "crop": {
-      "sourceRevision": "48cea3b65076dec23b9e8fabb5d2a0e0d6c06971",
+      "sourceRevision": "b8119d4770850ac9b1fcf8aeda1e800bf6ba7f98",
       "test": "ReadmeCaptureTests/testCropVideo()",
       "device": "iPhone 17 Pro",
-      "videoFrames": 323,
-      "trimStart": 35.9,
-      "duration": 4.733,
-      "bytes": 132869
+      "videoFrames": 160,
+      "trimStart": 22.067,
+      "duration": 4.835,
+      "bytes": 107009
     }
   }
 }
