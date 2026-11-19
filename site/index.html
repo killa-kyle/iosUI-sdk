@@ -8,7 +8,7 @@
       content="iosUI-sdk — composable native behaviors for SwiftUI and UIKit. Independent, open-source Swift package."
     />
     <meta name="theme-color" content="#f8f7ef" />
-    <title>iosUI-sdk — Make it behave.</title>
+    <title>iosUI-sdk — SwiftUI and UIKit behaviors</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,32 +37,28 @@
             <span class="dot"></span> OPEN SOURCE · SWIFTUI + UIKIT
           </p>
           <h1>
-            Looks like you.<br /><span>Behaves like<br />it should.</span>
+            UI behavior for<br /><span>SwiftUI<br />and UIKit.</span>
           </h1>
           <p class="lede">
-            Selection. Focus. That little interaction that makes everything
-            click. Compose the behaviors. Make the interface your own.
+            Shared state and interaction rules for custom controls. Use them for
+            selection, focus, drag and drop, resizing, cropping and more.
           </p>
           <a class="cta" href="#playground"
-            >Go on, play with it <span aria-hidden="true">↘</span></a
+            >Try the examples <span aria-hidden="true">↘</span></a
           >
-          <p class="small">
-            Native Swift. Zero package dependencies. Apache 2.0.
-          </p>
+          <p class="small">Swift 6 · iOS 17+ · Apache 2.0</p>
         </div>
         <div class="hero-toy" aria-label="Interactive behavior illustration">
-          <div class="toy-caption">
-            A FEW SMALL PIECES. A LOT OF POSSIBILITIES.
-          </div>
+          <div class="toy-caption">SELECTION, FOCUS AND DISCLOSURE</div>
           <div class="chip chip-focus">focus <span>↗</span></div>
           <div class="chip chip-select">selection <span>✓</span></div>
           <div class="chip chip-disclose">disclosure <span>＋</span></div>
           <div class="toy-result">
-            <span class="toy-kicker">PUT THEM TOGETHER</span
-            ><strong>Your next<br />great control.</strong>
+            <span class="toy-kicker">COMPONENT STATE</span
+            ><strong>Selection and<br />keyboard focus.</strong>
             <div class="toy-dots"><i></i><i></i><i></i></div>
           </div>
-          <div class="scribble">Less reinventing.<br />More making.</div>
+          <div class="scribble">Works with your views.</div>
         </div>
       </section>
       <div class="ticker" aria-label="Package foundations">
@@ -73,12 +69,12 @@
       <section id="playground" class="playground">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">01 / THE BEHAVIOR PLAYGROUND</p>
-            <h2>Give it a little nudge.</h2>
+            <p class="eyebrow">01 / EXAMPLES</p>
+            <h2>Try the behaviors.</h2>
           </div>
           <p>
-            Same rules. Different possibilities.<br />These browser demos
-            illustrate the native models.
+            These browser examples show how selection, bounded values and
+            disclosure work.
           </p>
         </div>
         <div class="demos">
@@ -86,7 +82,7 @@
             <div class="demo-top">
               <span>01 — SELECTION</span><span class="pill">Tap a few</span>
             </div>
-            <h3>A choice.<br />Or a few choices.</h3>
+            <h3>Single or multiple<br />selection</h3>
             <fieldset>
               <legend class="sr-only">Selection mode</legend>
               <label
@@ -104,14 +100,14 @@
               ><button type="button" data-choice="Haptics" aria-pressed="false">
                 <span>✳</span> Haptics <i aria-hidden="true">＋</i></button
               ><button type="button" disabled>
-                <span>◌</span> Telepathy <i>soon-ish</i>
+                <span>◌</span> Unavailable <i>disabled</i>
               </button>
             </div>
             <output id="selection-output" aria-live="polite"
-              >Nothing selected. A clean slate.</output
+              >Nothing selected.</output
             >
             <p class="demo-foot">
-              Selection ≠ focus. Use Tab and arrow keys to explore.
+              Use Tab and arrow keys to move between choices.
             </p>
           </article>
           <article class="demo value-demo">
@@ -119,7 +115,7 @@
               <span>02 — BOUNDED VALUE</span
               ><span class="pill">Slide or step</span>
             </div>
-            <h3>One value.<br />Many ways to move.</h3>
+            <h3>Slider and<br />stepper</h3>
             <div class="value-orbit">
               <span aria-hidden="true">✳</span
               ><output id="value-output" for="energy">40</output>
@@ -138,44 +134,48 @@
               ><span>Energy</span
               ><button id="more" aria-label="Increase energy">＋</button>
             </div>
-            <p class="demo-foot">Clamped. Stepped. Shared across controls.</p>
+            <p class="demo-foot">
+              Both controls update the same value in steps of 10.
+            </p>
           </article>
           <article class="demo disclosure-demo">
             <div class="demo-top">
-              <span>03 — DISCLOSURE</span><span class="pill">Open sesame</span>
+              <span>03 — DISCLOSURE</span><span class="pill">Expand</span>
             </div>
-            <h3>A little mystery.<br />A sensible reveal.</h3>
+            <h3>Show and<br />hide content</h3>
             <button
               class="reveal"
               id="reveal"
               aria-expanded="false"
               aria-controls="secret"
             >
-              <span>What's in the box?</span
+              <span>Details</span
               ><span id="reveal-icon" aria-hidden="true">＋</span>
             </button>
             <div id="secret" hidden>
               <span class="surprise" aria-hidden="true">✺</span>
-              <p>Small behaviors.<br />Big main-character energy.</p>
+              <p>This section is visible while its disclosure state is open.</p>
             </div>
-            <p class="demo-foot">Explicit state. Predictable open and close.</p>
+            <p class="demo-foot">
+              Open and close the section with the same state model.
+            </p>
           </article>
         </div>
         <p class="honesty">
-          The demos above are JavaScript illustrations, not Swift running in
-          your browser. The package uses native SwiftUI and UIKit controls.
+          These examples run in JavaScript. The README has recordings of the
+          SwiftUI adapters running in an iOS simulator.
         </p>
       </section>
       <section class="architecture">
-        <p class="eyebrow">02 / BUILT FROM THE INSIDE OUT</p>
-        <h2>Bring your own look.<br />Borrow the tricky bits.</h2>
+        <p class="eyebrow">02 / PACKAGE STRUCTURE</p>
+        <h2>How the package<br />is split up</h2>
         <div class="layers">
           <div>
             <span>01</span>
             <h3>Behavior core</h3>
             <p>
-              Small Swift values. Deterministic transitions. Selection,
-              navigation, disclosure and more.
+              Swift value types for selection, navigation, disclosure, geometry
+              and other interaction state.
             </p>
             <code>UIBehaviorCore</code>
           </div>
@@ -183,29 +183,25 @@
             <span>02</span>
             <h3>Native adapters</h3>
             <p>
-              SwiftUI bindings or UIKit controllers. Native controls do the
-              platform-specific work.
+              SwiftUI views and UIKit controllers that connect state to native
+              input and presentation.
             </p>
             <code>UIBehaviorSwiftUI · UIBehaviorUIKit</code>
           </div>
           <div>
             <span>03</span>
             <h3>Your interface</h3>
-            <p>
-              Your colors, your rows, your app. No theme, provider or singleton
-              to work around.
-            </p>
-            <code>You make it yours.</code>
+            <p>Use your app’s views, colors and layout.</p>
+            <code>Your app</code>
           </div>
         </div>
       </section>
       <section id="install" class="install">
         <div>
-          <p class="eyebrow">03 / YOUR NEXT BUILD</p>
-          <h2>Less boilerplate.<br />More “what if?”</h2>
+          <p class="eyebrow">03 / INSTALL</p>
+          <h2>Add it to<br />your app.</h2>
           <p>
-            Add the package in Xcode. Choose your adapters.<br />Compose your
-            first behavior.
+            Add the Swift package in Xcode and select the products you need.
           </p>
           <p class="requirements">Swift 6 · iOS 17+ · Swift Package Manager</p>
           <a
@@ -226,7 +222,7 @@
     from: "0.2.1"
 )</code></pre>
           <div class="code-divider"></div>
-          <pre><code><span class="code-comment">// A choice list, with your own row.</span>
+          <pre><code><span class="code-comment">// A choice list with a custom row.</span>
 @State private var choice =
     Selection&lt;String&gt;(mode: .multiple)
 
@@ -244,14 +240,13 @@ BehaviorChoiceList(
       </section>
       <section class="scope">
         <div>
-          <p class="eyebrow">SMALL BEGINNINGS. HONEST BOUNDARIES.</p>
-          <h2>A native starting point,<br />with room to grow.</h2>
+          <p class="eyebrow">AVAILABLE BEHAVIORS</p>
+          <h2>What’s included</h2>
         </div>
         <div>
           <p>
-            The package now includes an extended native behavior catalog. Browse
-            interactive illustrations, SwiftUI/UIKit usage and explicit platform
-            differences.
+            The docs include API references, SwiftUI and UIKit examples, and
+            browser previews for each behavior.
           </p>
           <p>
             Explore calendar/date, color, tree/grid navigation, drag/drop,
@@ -268,9 +263,8 @@ BehaviorChoiceList(
     <footer>
       <a class="wordmark" href="#">iosUI-sdk <span>↗</span></a>
       <p>
-        Independent native adaptation of
-        <a href="https://ui-sdk.dev/">UI SDK</a>.<br />Apache 2.0. Not
-        affiliated with Vercel or Apple.
+        Inspired by <a href="https://ui-sdk.dev/">UI SDK</a>.<br />
+        Independent project · Apache 2.0.
       </p>
       <a href="https://github.com/killa-kyle/iosUI-sdk"
         >Make something. Share it. ↗</a
