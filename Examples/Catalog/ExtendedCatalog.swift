@@ -114,6 +114,7 @@ struct BehaviorDemo: View {
         }
       Button("Move to archive") { accessibleDrop() }
       Text(dropped).accessibilityIdentifier("drop-result")
+      Text("Session: " + (drag.payload?.id ?? "none")).accessibilityIdentifier("drag-session")
     case .resize:
       BehaviorResizable($resize) { Color.blue.opacity(0.15) }.frame(height: 220)
       Text("\(Int(resize.rect.width)) × \(Int(resize.rect.height))").accessibilityIdentifier(

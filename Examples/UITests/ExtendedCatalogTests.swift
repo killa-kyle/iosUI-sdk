@@ -8,6 +8,16 @@ import XCTest
     app.launch()
     return app
   }
+  private func capture(_ app: XCUIApplication, name: String) {
+    let image = XCTAttachment(screenshot: app.screenshot())
+    image.name = name
+    image.lifetime = .keepAlways
+    add(image)
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = name + "-accessibility"
+    tree.lifetime = .keepAlways
+    add(tree)
+  }
   private func expect(_ element: XCUIElement, label: String) {
     let predicate = NSPredicate(format: "label == %@", label)
     let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
@@ -47,15 +57,20 @@ import XCTest
     date.tap()
     XCTAssertEqual(date.value as? String, "Selected")
   }
-  func testDragResizeAndActualImageExport() {
-    var app = launch("drag")
+  func testNativeDragDrop() {
+    let app = launch("drag")
     let card = app.descendants(matching: .any).matching(identifier: "drag-card").firstMatch
     let zone = app.descendants(matching: .any).matching(identifier: "drop-archive").firstMatch
     XCTAssertTrue(card.waitForExistence(timeout: 5))
     XCTAssertTrue(card.isHittable && zone.isHittable)
-    card.press(forDuration: 1, thenDragTo: zone)
+    capture(app, name: "drag-before")
+    card.press(forDuration: 1, thenDragTo: zone, withVelocity: .slow, thenHoldForDuration: 1)
+    capture(app, name: "drag-after")
+    print("Native drag session: " + app.staticTexts["drag-session"].label)
     expect(app.staticTexts["drop-result"], label: "Moved card to archive")
-    app = launch("resize")
+  }
+  func testResizeAndActualImageExport() {
+    var app = launch("resize")
     let handle = app.descendants(matching: .any).matching(
       NSPredicate(format: "label == %@", "Resize bottom right")
     ).firstMatch
@@ -68,7 +83,7 @@ import XCTest
     app.buttons["Export crop"].tap()
     expect(app.staticTexts["crop-result"], label: "Exported 200 × 200")
   }
-  func testCarouselMenuAndNestedPresentation() {
+  func testCarouselAndMenu() {
     var app = launch("carousel")
     app.buttons["Next slide"].tap()
     expect(app.staticTexts["carousel-position"], label: "2 of 3")
@@ -77,7 +92,9 @@ import XCTest
     XCTAssertTrue(app.buttons["Favorite"].waitForExistence(timeout: 5))
     app.buttons["Favorite"].tap()
     expect(app.staticTexts["menu-result"], label: "Action: favorite")
-    app = launch("overlays")
+  }
+  func testNestedPresentation() {
+    let app = launch("overlays")
     app.buttons["Open inspector"].tap()
     XCTAssertTrue(app.buttons["Open nested overlay"].waitForExistence(timeout: 5))
     app.buttons["Open nested overlay"].tap()

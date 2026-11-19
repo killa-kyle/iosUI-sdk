@@ -45,7 +45,12 @@ disabled date ranges, sRGB/HSV/alpha contrast, tree/grid focus and ranges, neste
 drop hit-testing, all resize handles/aspect bounds/cancellation, crop rotations,
 carousel timing, menu/overlay rules, UTF-16 editing and agent authority/redaction.
 The extended iOS catalog and UIKit/TextKit adapters compile in a local unsigned
-build. Final simulator/device replay for the new stories is still pending.
+build. Hosted simulator adapter tests pass for TextKit trait/selection bridging,
+pixel crop export and UIKit containment/state/measurement. The extended native
+interaction suite replays calendar/tree/grid, color/UIKit hosting, drag/drop,
+resize/crop, carousel/menu, nested presentation and editor/measurement/agent actions.
+The exact release head's Quality run is the authority for simulator acceptance;
+physical-device and exhaustive accessibility acceptance remain pending.
 
 Documentation browser replay passes all 29 pages and 22 interactive illustrations,
 including keyboard code tabs, clipboard, grid/date ranges, nested dialogs, stale
