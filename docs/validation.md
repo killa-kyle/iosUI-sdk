@@ -63,6 +63,13 @@ README examples use real XCTest screen recordings from an iPhone 17 Pro simulato
 running iOS 26.4.1. Calendar, drag and crop gesture outcomes are asserted by the
 capture cases. Native video frames were inspected, including the moving drag
 preview and accepted drop. Each GIF's actual source revision is recorded in
-docs/media/capture.json; the older drag capture has unchanged adapter/showcase
-source. Crop handle accessibility regression and hex text replacement also pass
+docs/media/capture.json. Crop handle accessibility regression and hex text replacement also pass
 on the local iOS 27.1 simulator. These are separate from physical-device acceptance.
+
+## Drag lifecycle correction
+
+Native provider preparation does not admit Core state. UIKit sessionWillBegin
+admits the confirmed drag, and native session identity scopes cancellation and
+transfer cleanup. Adapter regression covers an abandoned lift, stale cancellation
+and a fresh drag after cancellation. Documentary capture waits for the actual
+asynchronous drop receipt; it never substitutes a button or generated animation.
