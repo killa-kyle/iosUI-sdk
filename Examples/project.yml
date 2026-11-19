@@ -2,7 +2,7 @@ name: BehaviorCatalog
 options:
   bundleIdPrefix: dev.iosui
   deploymentTarget:
-    iOS: '17.0'
+    iOS: "17.0"
 packages:
   iosUI-sdk:
     path: ..
@@ -17,7 +17,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         PRODUCT_BUNDLE_IDENTIFIER: dev.iosui.catalog
-        SWIFT_VERSION: '6.0'
+        SWIFT_VERSION: "6.0"
     dependencies:
       - package: iosUI-sdk
         product: UIBehaviorSwiftUI
@@ -32,7 +32,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        SWIFT_VERSION: '6.0'
+        SWIFT_VERSION: "6.0"
     dependencies:
       - target: BehaviorCatalog
       - package: iosUI-sdk
@@ -46,7 +46,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        SWIFT_VERSION: '6.0'
+        SWIFT_VERSION: "6.0"
     dependencies:
       - target: BehaviorCatalog
 schemes:
@@ -55,4 +55,20 @@ schemes:
       targets:
         BehaviorCatalog: all
     test:
-      targets: [BehaviorAdapterTests, BehaviorCatalogUITests]
+      targets:
+        - BehaviorAdapterTests
+        - name: BehaviorCatalogUITests
+          skippedTests: [ReadmeCaptureTests]
+      captureScreenshotsAutomatically: true
+      deleteScreenshotsWhenEachTestSucceeds: true
+      preferredScreenCaptureFormat: screenshots
+
+  ReadmeCapture:
+    build:
+      targets:
+        BehaviorCatalog: all
+    test:
+      targets: [BehaviorCatalogUITests]
+      captureScreenshotsAutomatically: true
+      deleteScreenshotsWhenEachTestSucceeds: false
+      preferredScreenCaptureFormat: screenRecording

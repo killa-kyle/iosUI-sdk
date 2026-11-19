@@ -1,0 +1,4 @@
+interface:
+  display_name: "iosUI-sdk"
+  short_description: "Build native SwiftUI and UIKit behavior components"
+  default_prompt: "Use $iosui-sdk to compose and validate this native iOS component."

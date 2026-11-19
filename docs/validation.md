@@ -37,3 +37,32 @@ The catalog uses real package adapters. Native adapter unit tests exercise table
 selection/disabled state/external reconciliation and slider callbacks. The UI
 replay covers selecting/deselecting choices, disabled options, disclosure and
 native sheet open/close. It does not yet cover every adapter or accessibility mode.
+
+## Extended behavior work
+
+The expanded core suite currently passes 37 tests, including invalid civil dates,
+disabled date ranges, sRGB/HSV/alpha contrast, tree/grid focus and ranges, nested
+drop hit-testing, all resize handles/aspect bounds/cancellation, crop rotations,
+carousel timing, menu/overlay rules, UTF-16 editing and agent authority/redaction.
+The extended iOS catalog and UIKit/TextKit adapters compile in a local unsigned
+build. Hosted simulator adapter tests pass for TextKit trait/selection bridging,
+pixel crop export and UIKit containment/state/measurement. The extended native
+interaction suite replays calendar/tree/grid, color/UIKit hosting, drag/drop,
+resize/crop, carousel/menu, nested presentation and editor/measurement/agent actions.
+Local iOS 27.1 XCTest replay also passes actual drag/repeated drop/cancellation,
+resize/pixel crop export and nested overlays. The exact release head's Quality
+run is the authority for simulator acceptance;
+physical-device and exhaustive accessibility acceptance remain pending.
+
+Documentation browser replay passes all 30 pages and 22 interactive illustrations,
+including keyboard code tabs, clipboard, grid/date ranges, nested dialogs, stale
+agent rejection and desktop/mobile layouts in both themes. Screenshots were
+inspected locally. This browser replay does not establish native UI acceptance.
+
+README examples use real XCTest screen recordings from an iPhone 17 Pro simulator
+running iOS 26.4.1. Calendar, drag and crop gesture outcomes are asserted by the
+capture cases. Native video frames were inspected, including the moving drag
+preview and accepted drop. Each GIF's actual source revision is recorded in
+docs/media/capture.json; the older drag capture has unchanged adapter/showcase
+source. Crop handle accessibility regression and hex text replacement also pass
+on the local iOS 27.1 simulator. These are separate from physical-device acceptance.

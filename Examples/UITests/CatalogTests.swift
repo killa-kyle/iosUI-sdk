@@ -6,6 +6,7 @@ final class CatalogTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launch()
+    defer { app.terminate() }
     let status = app.staticTexts["selection-status"]
     XCTAssertTrue(status.waitForExistence(timeout: 3))
     app.buttons["SwiftUI"].tap()

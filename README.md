@@ -4,7 +4,42 @@
 
 An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/vercel-labs/ui)'s behavior-driven approach for SwiftUI and UIKit. Compose interaction rules instead of copying custom controls between apps. No JavaScript runtime, network services, or third-party package dependencies.
 
-This is an initial native port of selected foundational behaviors, not feature-complete parity with the web library. See [coverage and differences](docs/coverage.md).
+The package includes foundational and extended native behavior families. It does not claim feature-complete parity with every web recipe. See [coverage and differences](docs/coverage.md).
+
+[Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
+
+## Native examples
+
+Real iOS simulator recordings of the package's SwiftUI adapters, styled with the
+same palette as the documentation site. Drag/drop and crop retain actual gesture
+motion; these are not browser previews or animated mockups.
+
+**Calendar ranges**
+
+![Select and change a native SwiftUI calendar range](docs/media/calendar.gif)
+
+**Drag and drop**
+
+![Native iOS drag preview moving into the archive target](docs/media/drag.gif)
+
+**Crop, rotate and export**
+
+![Resize and rotate a native crop selection, then export the selected pixels](docs/media/crop.gif)
+
+[Reproduce these recordings](docs/media/README.md).
+
+## Build with an agent
+
+Install the consumer skill:
+
+```sh
+npx skills@latest add killa-kyle/iosUI-sdk --skill iosui-sdk
+```
+
+The [iosui-sdk skill](skills/iosui-sdk/SKILL.md) teaches agents how to select and
+compose behaviors, bind SwiftUI/UIKit adapters, preserve native accessibility and
+validate actual iOS interactions. Agents without skill support can read it directly.
+Runtime agent observation/actions remain separately opt-in; see [the agent guide](docs/agents.md).
 
 ## Install
 
@@ -19,7 +54,7 @@ https://github.com/killa-kyle/iosUI-sdk
 Or add this to Package.swift:
 
 ```swift
-.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.1.0")
+.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.2.0")
 ```
 
 Choose the products your target needs:
@@ -82,11 +117,15 @@ UIKit also includes `BehaviorValueBinding` for UISlider/UIStepper. Retain it for
 
 ## Package structure
 
-- **UIBehaviorCore**: selection/ranges, focus navigation, typeahead, disclosure, bounded values, reorder, validation, viewport transforms and fixed-size virtual windows. Deterministic Swift values with no UI imports.
-- **UIBehaviorSwiftUI**: choice list, disclosure group, native sheet modifier, slider, stepper, validated field, viewport and accessible reorder actions.
-- **UIBehaviorUIKit**: native table choice controller and slider/stepper binding. Other behaviors are available as core models for your own UIKit adapters.
+- **UIBehaviorCore**: selection, focus, typeahead, disclosure, values, validation, viewport/virtual windows, calendar/date, color, tree/grid navigation, drag/drop, resize/crop, carousel, menus, overlay stacks, rich text and opt-in agent contracts. Deterministic Swift state with no UI imports.
+- **UIBehaviorSwiftUI**: native adapters for the behavior families, including calendar, color picker, tree/grid, drag/drop, resize handles, cropper, carousel, rich text, menus, nested sheets and point-space measurement.
+- **UIBehaviorUIKit**: native table choice/value bindings, TextKit editor, oriented UIImage crop export, measurement and UIKit hosting/factories for the shared production adapters.
 
 These are behavior building blocks, not a complete styled design system. Native controls supply platform semantics. VoiceOver, keyboard and device validation are ongoing; see [validation](docs/validation.md) for what has actually run.
+
+## Let an agent inspect and replay behaviors
+
+`BehaviorAgent` exposes only controls you explicitly register. Agents receive stable references, accessible names, native measurements and allowed actions; the host authorizes every action. Snapshots carry revisions so stale actions fail. The catalog demonstrates an agent action changing the same carousel a person uses. See [the integration guide](docs/agents.md). No provider, credentials or network server is included.
 
 ## Run the catalog
 

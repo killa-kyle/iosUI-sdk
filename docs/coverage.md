@@ -8,20 +8,40 @@ This is a semantic native adaptation, not a GitHub source fork or drop-in bindin
 | Selection          | `Selection`       | Choice list                          | Choice controller                                 | Stable Hashable IDs; no DOM events or cancellable change callbacks. `foundation/selection/selection-model.ts`                                 |
 | Roving focus       | `FocusNavigation` | Choice list key presses              | Native table focus; explicit logical movement API | No DOM tab-stop emulation. Disabled IDs skipped; wraps by default; web default differs. `foundation/focus/roving-focus.ts`                    |
 | Typeahead          | `Typeahead`       | Choice list                          | Explicit search API                               | Caller-supplied time; Foundation locale folding; no DOM label extraction. `foundation/text/typeahead.ts`                                      |
-| Popup / disclosure | `Disclosure`      | DisclosureGroup and native sheet     | Core model only                                   | Sheet uses native presentation rather than anchored web popup positioning. No nested modal stack abstraction.                                 |
+| Popup / disclosure | `Disclosure`      | DisclosureGroup and native sheet     | Core model only                                   | Sheet uses native presentation rather than anchored web popup positioning. Nested behavior is available through OverlayStack/BehaviorOverlayHost.                                 |
 | Numeric values     | `BoundedValue`    | Slider, stepper                      | UISlider, UIStepper binding                       | Clamp and snap relative to lower bound. Reject nonfinite updates. Can also model rating or one-axis resizing.                                 |
-| Reorder            | `Reorder`         | Accessibility actions                | Table row editing                                 | Final-index moves; disabled rows are barriers. SwiftUI drag preview/drop orchestration is not included. `foundation/drag-and-drop/reorder.ts` |
+| Reorder            | `Reorder`         | Accessibility actions                | Table row editing                                 | Final-index moves; disabled rows are barriers. Native local drag/drop is provided separately by DragDropBehavior. `foundation/drag-and-drop/reorder.ts` |
 | Field validation   | `FieldValidation` | BehaviorField                        | Core model only                                   | Caller provides validation; touched/submitted visibility; no form submission service.                                                         |
 | Pan / zoom         | `Viewport`        | BehaviorViewport                     | Core model only                                   | Anchored zoom and translation; no collision, inertia, fit-to-content or keyboard avoidance. `foundation/canvas/viewport.ts`                   |
 | Virtualization     | `VirtualWindow`   | Use native List, or custom rendering | Use native UITableView                            | Fixed row extents only. Variable-size measurement not ported. `foundation/lists/virtualizer.ts`                                               |
 
-## Not implemented in 0.1
+## Extended native behaviors
 
-Calendar/date logic, color picker, tree/grid range navigation, drag/drop engine,
-2D resize handles, cropper, carousel, rich text editing, menus, nested overlays,
-web agent protocols, DOM measurements and the web component catalog are not ported.
-Native List, Menu, Picker, Toggle, Button and platform presentation remain appropriate
-when they already cover the desired behavior. This package does not replace them.
+| Family | Core | Native adapter / upstream source |
+| --- | --- | --- |
+| Calendar/date | `CalendarDate`, `CalendarSelection` | `BehaviorCalendar`, `BehaviorUIKit.calendar`; Gregorian civil days, month paging, bounded/disabled single or range selection. `foundation/date/plain-date.ts` |
+| Color | `ColorValue` | `BehaviorColorPicker`, `BehaviorUIKit.color`; sRGB hex/RGBA/HSV conversion, alpha composition and contrast. `foundation/color/*` |
+| Tree/grid | `TreeNavigation`, `GridNavigation` | `BehaviorTree`, `BehaviorGrid`, UIKit factories; visible preorder, expansion, disabled nodes, rectangular/range selection and hardware arrows. `foundation/lists/tree-collection.ts`, `foundation/focus/grid-focus.ts` |
+| Drag/drop | `DragDropBehavior` | `behaviorDraggable`, `behaviorDropTarget`; local native ID transfer, accepted types, nested hit testing, final revalidation, cancellation and auto-scroll velocity. `foundation/drag-and-drop/*` |
+| 2D resize | `ResizeBehavior` | `BehaviorResizable`; eight edges/corners plus movement, bounded min/max/aspect geometry, drag cancellation, keyboard and accessibility adjustments. `foundation/direct-manipulation/resize.ts` |
+| Cropper | `CropSelection` | `BehaviorCropper`, UIKit `BehaviorImageCrop`; pixel-space crop, quarter turns, oriented UIImage export. `foundation/image/crop.ts`, `components/image-cropper/*` |
+| Carousel | `CarouselBehavior` | `BehaviorCarousel`; bounded/looping pages, native gestures, keyboard/accessibility adjustment, caller-owned autoplay clock and Reduce Motion. `components/carousel/*` |
+| Rich text | `RichTextDocument` | `BehaviorRichTextEditor`, UIKit `BehaviorRichTextView`; TextKit editing, native composition/selection/undo and bold/italic/underline/link spans. `foundation/text/text-editor.ts` |
+| Menus | `MenuBehavior` | `BehaviorMenu` uses native Menu; action/toggle/radio/submenu state and disabled ancestor admission. `components/menu/*` |
+| Nested overlays | `OverlayStack` | `BehaviorOverlayHost`; native nested sheets, parent/child dismissal, interactive-dismiss policy and host focus-restoration callback. `foundation/popups/*` |
+| Agent protocol | `BehaviorAgent`, `AgentStep`, `AgentSnapshot` | Upstream-compatible ref/action/args step shape; opt-in native snapshots/query and host-authorized registered action dispatch. Stale revisions, ambiguous labels, private/read-only/disabled controls fail closed. `page/agent/agent.ts` |
+| Measurements | `BehaviorRect` | `behaviorMeasure` and UIKit `BehaviorMeasurement.frame`; explicit native logical-point coordinates, using GeometryReader or UIView-to-window conversion. No DOM emulation. |
+| Catalog | Actual production adapters | `Examples/Catalog/ExtendedCatalog.swift` covers every extended family, including a live local agent-to-carousel action. This is a native counterpart to the web catalog, not its HTML/CSS renderer. |
+
+UIKit can embed **all** SwiftUI behavior adapters through `BehaviorController(state:onChange:content:)` using standard view-controller containment. Calendar/color/tree/grid additionally have UIKit factories; rich text and image export have direct UIKit APIs. No application code or services are imported.
+
+Native List, Menu, Picker, Toggle, Button and platform presentation remain appropriate when they already cover the desired behavior. These adapters compose those APIs rather than replacing them.
+
+### Deliberate platform boundaries
+
+This is coverage of every requested behavior family, not every upstream recipe or browser API. Color math is sRGB/HSV, not CSS parsing, named colors, OKLCH or wide-gamut management. Calendar logic is Gregorian, not an alternate-calendar engine. Drag/drop transfers local IDs and never arbitrary files or app objects. Crop export supports quarter turns, not arbitrary-angle perspective correction. Rich text is native attributed text, not a collaborative HTML editor or web plugin system. Overlay positioning/focus trapping and text input/undo remain owned by native presentation/TextKit. Autoplay clocks and persistence belong to the host.
+
+The agent **step** shape is compatible with upstream; native snapshots add revision and point-space metadata. This package does not inject the web observer, install a network listener, infer host authorization or reproduce DOM measurements. Use a transport adapter in the host and an explicit authorization callback. See [agent integration](agents.md).
 
 ## Contract boundaries
 

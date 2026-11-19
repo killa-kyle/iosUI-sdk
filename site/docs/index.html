@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="iosUI-sdk documentation: native behavior models, SwiftUI and UIKit examples, interactive previews and agent integration."
+    />
+    <meta name="theme-color" content="#fafaf8" />
+    <title>Documentation — iosUI-sdk</title>
+    <link rel="stylesheet" href="docs.css" />
+    <script type="module" src="docs.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#article">Skip to documentation</a>
+    <header class="docs-header">
+      <a class="brand" href="../"
+        ><span aria-hidden="true">↗</span> iosUI-sdk</a
+      >
+      <a class="header-current" href="#introduction">Docs</a>
+      <div class="header-spacer"></div>
+      <a class="github-link" href="https://github.com/killa-kyle/iosUI-sdk"
+        >GitHub ↗</a
+      >
+      <button
+        id="theme"
+        type="button"
+        aria-label="Use dark theme"
+        aria-pressed="false"
+      >
+        ◐
+      </button>
+      <button
+        id="navigation-toggle"
+        type="button"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        Browse
+      </button>
+    </header>
+    <aside id="sidebar" class="sidebar" aria-label="Documentation navigation">
+      <label class="search-label" for="search"
+        >Find a behavior <kbd>/</kbd></label
+      >
+      <input
+        id="search"
+        type="search"
+        placeholder="Search documentation…"
+        autocomplete="off"
+      />
+      <nav id="navigation" aria-label="Documentation"></nav>
+      <p id="search-empty" hidden>No matching pages.</p>
+      <a
+        class="sidebar-bottom"
+        href="https://github.com/killa-kyle/iosUI-sdk/tree/main/Examples"
+        >Open native catalog ↗</a
+      >
+    </aside>
+    <div class="docs-layout">
+      <main id="article" tabindex="-1">
+        <p class="breadcrumb">
+          Documentation <span aria-hidden="true">/</span>
+          <span id="breadcrumb">Introduction</span>
+        </p>
+        <div class="page-heading">
+          <h1 id="title">Native behaviors. Your interface.</h1>
+          <span id="badge" class="badge">SwiftUI + UIKit</span>
+        </div>
+        <p id="description" class="description">
+          Compose native interaction rules from small, testable Swift state
+          models.
+        </p>
+        <div id="guide-content"></div>
+        <section id="preview-section" aria-labelledby="preview-heading">
+          <div class="section-top">
+            <h2 id="preview-heading">Preview</h2>
+            <button id="reset-preview" type="button">Reset ↺</button>
+          </div>
+          <div id="preview" class="preview"></div>
+          <p class="preview-note">
+            Interactive browser illustration. The Swift package uses native
+            controls; these previews do not execute Swift or establish on-device
+            acceptance.
+          </p>
+        </section>
+        <section id="usage" aria-labelledby="usage-heading">
+          <h2 id="usage-heading">Usage</h2>
+          <p class="usage-note">
+            Place the state and view calls inside your SwiftUI View. UIKit
+            snippets run in a view controller.
+          </p>
+          <div class="code-card">
+            <div class="code-toolbar">
+              <div
+                id="code-tabs"
+                role="tablist"
+                aria-label="Code platform"
+              ></div>
+              <button id="copy-code" type="button">Copy code</button>
+            </div>
+            <pre
+              id="code-panel"
+              role="tabpanel"
+              tabindex="0"
+            ><code id="code"></code></pre>
+          </div>
+          <p id="copy-status" role="status" class="copy-status"></p>
+        </section>
+        <section id="api" aria-labelledby="api-heading">
+          <h2 id="api-heading">API notes</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Behavior</th>
+                </tr>
+              </thead>
+              <tbody id="api-body"></tbody>
+            </table>
+          </div>
+        </section>
+        <section id="platform" aria-labelledby="platform-heading">
+          <h2 id="platform-heading">Native behavior</h2>
+          <ul id="notes"></ul>
+          <a
+            id="source-link"
+            class="source-link"
+            href="https://github.com/killa-kyle/iosUI-sdk"
+            >View Swift source ↗</a
+          >
+        </section>
+        <nav class="page-pagination" aria-label="Adjacent documentation pages">
+          <a id="previous" href="#">← Previous</a
+          ><a id="next" href="#">Next →</a>
+        </nav>
+        <footer>
+          Independent native adaptation. Apache-2.0. No application dependencies
+          or services.
+        </footer>
+      </main>
+      <aside class="toc" aria-label="On this page">
+        <p>On this page</p>
+        <a href="#usage" data-anchor="usage">Usage</a
+        ><a href="#api" data-anchor="api">API notes</a
+        ><a href="#platform" data-anchor="platform">Native behavior</a>
+        <hr />
+        <a href="#coverage">Coverage</a><a href="#validation">Validation</a>
+      </aside>
+    </div>
+    <noscript
+      ><p>
+        JavaScript powers the interactive docs.
+        <a href="https://github.com/killa-kyle/iosUI-sdk#readme"
+          >Read the package README and native examples on GitHub.</a
+        >
+      </p></noscript
+    >
+  </body>
+</html>
