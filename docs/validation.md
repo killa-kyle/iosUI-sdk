@@ -54,7 +54,15 @@ resize/pixel crop export and nested overlays. The exact release head's Quality
 run is the authority for simulator acceptance;
 physical-device and exhaustive accessibility acceptance remain pending.
 
-Documentation browser replay passes all 29 pages and 22 interactive illustrations,
+Documentation browser replay passes all 30 pages and 22 interactive illustrations,
 including keyboard code tabs, clipboard, grid/date ranges, nested dialogs, stale
 agent rejection and desktop/mobile layouts in both themes. Screenshots were
 inspected locally. This browser replay does not establish native UI acceptance.
+
+README examples use real XCTest screen recordings from an iPhone 17 Pro simulator
+running iOS 26.4.1. Calendar, drag and crop gesture outcomes are asserted by the
+capture cases. Native video frames were inspected, including the moving drag
+preview and accepted drop. Each GIF's actual source revision is recorded in
+docs/media/capture.json; the older drag capture has unchanged adapter/showcase
+source. Crop handle accessibility regression and hex text replacement also pass
+on the local iOS 27.1 simulator. These are separate from physical-device acceptance.

@@ -1,20 +1,34 @@
 {
-  "source": "Actual site/docs previews",
-  "styling": "Unmodified site CSS, light theme",
-  "capture": "Playwright pointer input and browser screenshots; ffmpeg GIF encoding",
-  "semantics": "Browser illustrations, not Swift execution or native recordings",
+  "capture": "Actual SwiftUI adapters in an iOS simulator; XCTest screen recordings",
+  "styling": "Native CatalogShowcase using the documentation site's palette",
+  "processing": "Align real checkpoint pixels to the recording, trim to the verified interaction, reduce to 12 fps, scale, palette encode; no synthetic motion",
   "examples": {
-    "calendar": {
-      "frames": 5,
-      "motion": false
-    },
     "drag": {
-      "frames": 20,
-      "motion": true
+      "sourceRevision": "4d04a7ac6a71e785a3aac865ee03fbdd54d75680",
+      "test": "ReadmeCaptureTests/testDragVideo()",
+      "device": "iPhone 17 Pro",
+      "videoFrames": 319,
+      "trimStart": 5.567,
+      "duration": 5.4,
+      "bytes": 293637
+    },
+    "calendar": {
+      "sourceRevision": "48cea3b65076dec23b9e8fabb5d2a0e0d6c06971",
+      "test": "ReadmeCaptureTests/testCalendarVideo()",
+      "device": "iPhone 17 Pro",
+      "videoFrames": 211,
+      "trimStart": 36.567,
+      "duration": 2.453,
+      "bytes": 116596
     },
     "crop": {
-      "frames": 20,
-      "motion": true
+      "sourceRevision": "48cea3b65076dec23b9e8fabb5d2a0e0d6c06971",
+      "test": "ReadmeCaptureTests/testCropVideo()",
+      "device": "iPhone 17 Pro",
+      "videoFrames": 323,
+      "trimStart": 35.9,
+      "duration": 4.733,
+      "bytes": 132869
     }
   }
 }

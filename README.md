@@ -8,25 +8,25 @@ The package includes foundational and extended native behavior families. It does
 
 [Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
 
-## Interactive examples
+## Native examples
 
-The same styled browser previews as the [documentation site](https://killa-kyle.github.io/iosUI-sdk/docs/).
-Drag/drop and crop examples show continuous pointer motion. These illustrate the
-behavior contracts; the Swift package uses native controls.
+Real iOS simulator recordings of the package's SwiftUI adapters, styled with the
+same palette as the documentation site. Drag/drop and crop retain actual gesture
+motion; these are not browser previews or animated mockups.
 
 **Calendar ranges**
 
-![Select and change a calendar range in the styled documentation preview](docs/media/calendar.gif)
+![Select and change a native SwiftUI calendar range](docs/media/calendar.gif)
 
 **Drag and drop**
 
-![Drag a card into the highlighted archive target](docs/media/drag.gif)
+![Native iOS drag preview moving into the archive target](docs/media/drag.gif)
 
-**Crop selection**
+**Crop, rotate and export**
 
-![Drag a resize handle to grow an aspect-constrained crop selection](docs/media/crop.gif)
+![Resize and rotate a native crop selection, then export the selected pixels](docs/media/crop.gif)
 
-[Reproduce these captures](docs/media/README.md).
+[Reproduce these recordings](docs/media/README.md).
 
 ## Build with an agent
 

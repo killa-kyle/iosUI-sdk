@@ -59,6 +59,9 @@ schemes:
         - BehaviorAdapterTests
         - name: BehaviorCatalogUITests
           skippedTests: [ReadmeCaptureTests]
+      captureScreenshotsAutomatically: true
+      deleteScreenshotsWhenEachTestSucceeds: true
+      preferredScreenCaptureFormat: screenshots
 
   ReadmeCapture:
     build:
