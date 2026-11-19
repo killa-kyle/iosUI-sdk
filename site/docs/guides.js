@@ -75,6 +75,34 @@ export const guides = [
     ],
   },
   {
+    id: "agent-skill",
+    title: "Build with an agent",
+    group: "Get started",
+    description:
+      "Give your coding agent the native package's composition and validation workflow.",
+    body: [
+      "Install the iosui-sdk skill to help an agent choose behaviors, integrate real SwiftUI/UIKit adapters, preserve native focus and accessibility, and replay actual interactions.",
+      "The skill reads the installed package revision's declarations and coverage notes. It prefers native controls when they already fit, and avoids inventing web or DOM APIs in Swift.",
+      "Coding guidance is separate from runtime agent authority. Using this skill does not register tools, start a service, expose application data or authorize actions.",
+    ],
+    code: "npx skills@latest add killa-kyle/iosUI-sdk --skill iosui-sdk",
+    codeTitle: "Shell",
+    kind: "guide",
+    source: "skills/iosui-sdk/SKILL.md",
+    core: "Agent skill",
+    notes: [
+      "Agents without skill support can read the SKILL.md directly.",
+      "Use the native catalog and XCTest for iOS acceptance; browser illustrations are not native recordings.",
+    ],
+    api: [
+      [
+        "iosui-sdk",
+        "Consumer skill",
+        "Native component composition and validation guidance.",
+      ],
+    ],
+  },
+  {
     id: "accessibility",
     title: "Accessibility & input",
     group: "Get started",

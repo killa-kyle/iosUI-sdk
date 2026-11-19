@@ -73,10 +73,14 @@ struct BehaviorDemo: View {
   @AccessibilityFocusState private var restored: String?
   @State private var measurement = BehaviorRect(width: 0, height: 0)
   var body: some View {
-    ScrollView {
+    if ProcessInfo.processInfo.arguments.contains("--showcase") {
+      CatalogShowcase(title: story.title) { demo }
+    } else {
+      ScrollView {
       VStack(alignment: .leading, spacing: 20) { demo }
         .padding().frame(maxWidth: 600)
-    }.navigationTitle(story.title)
+      }.navigationTitle(story.title)
+    }
   }
   @ViewBuilder private var demo: some View {
     switch story {
@@ -106,7 +110,7 @@ struct BehaviorDemo: View {
       Button("Extend to R3 C4") { grid.focus(GridCell(2, 3), extending: true) }
       Text("Selected cells: \(grid.selected.count)").accessibilityIdentifier("grid-result")
     case .drag:
-      Text("Drag me").padding().background(.blue.opacity(0.15)).accessibilityIdentifier("drag-card")
+      Text("Drag me").padding().background(CatalogPalette.accent.opacity(0.1)).accessibilityIdentifier("drag-card")
         .behaviorDraggable(DragPayload(id: "card", type: "card"), session: $drag)
       Text("Archive drop zone").frame(maxWidth: .infinity, minHeight: 100).border(.secondary)
         .accessibilityIdentifier("drop-archive")
@@ -119,7 +123,7 @@ struct BehaviorDemo: View {
       Text("Session: " + (drag.payload?.id ?? "none")).accessibilityIdentifier("drag-session")
       Text("Drops: \(dropCount)").accessibilityIdentifier("drop-count")
     case .resize:
-      BehaviorResizable($resize) { Color.blue.opacity(0.15) }.frame(height: 220)
+      BehaviorResizable($resize) { CatalogPalette.accent.opacity(0.1) }.frame(height: 220)
       Text("\(Int(resize.rect.width)) × \(Int(resize.rect.height))").accessibilityIdentifier(
         "resize-result")
     case .crop:
@@ -134,7 +138,7 @@ struct BehaviorDemo: View {
     case .carousel:
       BehaviorCarousel($carousel) { index in
         Text(["Mountains", "Harbor", "Forest"][index]).font(.title)
-          .frame(maxWidth: .infinity, minHeight: 140).background(.blue.opacity(0.15))
+          .frame(maxWidth: .infinity, minHeight: 140).background(CatalogPalette.accent.opacity(0.1))
       }
     case .editor:
       BehaviorRichTextEditor("Rich text", document: $editor).frame(height: 220).border(.secondary)
@@ -172,7 +176,7 @@ struct BehaviorDemo: View {
       }
       Text("Overlay count: \(overlays.entries.count)").accessibilityIdentifier("overlay-result")
     case .measurements:
-      Text("Measured native view").padding().background(.blue.opacity(0.15))
+      Text("Measured native view").padding().background(CatalogPalette.accent.opacity(0.1))
         .behaviorMeasure { measurement = $0 }
       Text("\(Int(measurement.width)) × \(Int(measurement.height)) points")
         .accessibilityIdentifier("measurement-result")

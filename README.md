@@ -28,6 +28,19 @@ behavior contracts; the Swift package uses native controls.
 
 [Reproduce these captures](docs/media/README.md).
 
+## Build with an agent
+
+Install the consumer skill:
+
+```sh
+npx skills@latest add killa-kyle/iosUI-sdk --skill iosui-sdk
+```
+
+The [iosui-sdk skill](skills/iosui-sdk/SKILL.md) teaches agents how to select and
+compose behaviors, bind SwiftUI/UIKit adapters, preserve native accessibility and
+validate actual iOS interactions. Agents without skill support can read it directly.
+Runtime agent observation/actions remain separately opt-in; see [the agent guide](docs/agents.md).
+
 ## Install
 
 Requires Swift 6 / Xcode 16 or newer and iOS 17+. The core and SwiftUI products also support macOS 14+. UIKit is iOS-only.

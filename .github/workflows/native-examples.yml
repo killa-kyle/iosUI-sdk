@@ -1,0 +1,60 @@
+name: Native example recordings
+on:
+  push:
+    paths:
+      - .github/workflows/native-examples.yml
+      - Examples/Catalog/**
+      - Examples/UITests/ReadmeCaptureTests.swift
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: xcodegen generate --spec Examples/project.yml
+      - name: Boot standard iPhone simulator
+        run: |
+          CAPTURE_DEVICE=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; print(next(x["udid"] for a in json.load(sys.stdin)["devices"].values() for x in a if x["name"].startswith("iPhone")))')
+          echo "CAPTURE_DEVICE=$CAPTURE_DEVICE" >> "$GITHUB_ENV"
+          xcrun simctl boot "$CAPTURE_DEVICE"
+      - name: Compile actual native showcase
+        timeout-minutes: 8
+        run: >-
+          xcodebuild -quiet -project Examples/BehaviorCatalog.xcodeproj
+          -scheme ReadmeCapture -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath "$RUNNER_TEMP/DerivedData"
+          CODE_SIGNING_ALLOWED=NO build-for-testing
+      - name: Await simulator
+        timeout-minutes: 8
+        run: xcrun simctl bootstatus "$CAPTURE_DEVICE" -b
+      - name: Record actual native gestures with XCTest
+        timeout-minutes: 10
+        run: >-
+          xcodebuild -project Examples/BehaviorCatalog.xcodeproj -scheme ReadmeCapture
+          -destination "platform=iOS Simulator,id=$CAPTURE_DEVICE,arch=$(uname -m)"
+          -derivedDataPath "$RUNNER_TEMP/DerivedData"
+          -resultBundlePath "$RUNNER_TEMP/ReadmeNative.xcresult"
+          -only-testing:BehaviorCatalogUITests/ReadmeCaptureTests
+          -parallel-testing-enabled NO -test-timeouts-enabled YES
+          -maximum-test-execution-time-allowance 60
+          CODE_SIGNING_ALLOWED=NO test-without-building
+      - name: Export native media and validation receipt
+        run: |
+          xcrun xcresulttool export attachments --path "$RUNNER_TEMP/ReadmeNative.xcresult" --output-path "$RUNNER_TEMP/native-examples"
+          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/ReadmeNative.xcresult" --format json > "$RUNNER_TEMP/native-examples/summary.json"
+          git rev-parse HEAD > "$RUNNER_TEMP/native-examples/source-revision.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-examples
+          path: ${{ runner.temp }}/native-examples
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: native-capture-failure
+          path: ${{ runner.temp }}/ReadmeNative.xcresult
+          retention-days: 2
