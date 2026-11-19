@@ -30,7 +30,9 @@ import XCTest
     XCTAssertTrue(card.waitForExistence(timeout: 5))
     checkpoint(app, "README-start")
     card.press(forDuration: 1, thenDragTo: zone, withVelocity: XCUIGestureVelocity(rawValue: 80), thenHoldForDuration: 1)
-    XCTAssertEqual(app.staticTexts["drop-count"].label, "Drops: 1")
+    let dropped = expectation(for: NSPredicate(format: "label == %@", "Drops: 1"),
+      evaluatedWith: app.staticTexts["drop-count"])
+    wait(for: [dropped], timeout: 5)
     XCTAssertEqual(app.staticTexts["drag-session"].label, "Session: none")
     checkpoint(app, "README-end")
   }
