@@ -47,9 +47,16 @@ import XCTest
         })
     }
     let controller = UIHostingController(rootView: makeRoot(.compact, []))
+    let previous = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+      .flatMap(\.windows).first(where: \.isKeyWindow)
     window.rootViewController = controller
-    window.isHidden = false
-    defer { window.isHidden = true }
+    window.makeKeyAndVisible()
+    controller.loadViewIfNeeded()
+    controller.view.layoutIfNeeded()
+    defer {
+      window.isHidden = true
+      previous?.makeKey()
+    }
     for _ in 0..<50 {
       if latest?.context.bounds.width == 390 { break }
       try? await Task.sleep(for: .milliseconds(100))
@@ -58,6 +65,8 @@ import XCTest
     XCTAssertEqual(latest?.context.bounds.width, 390)
     let surface = latest?.context.surfaceID
     controller.rootView = makeRoot(.expanded, [BehaviorRect(x: 189, width: 12, height: 600)])
+    controller.view.setNeedsLayout()
+    controller.view.layoutIfNeeded()
     for _ in 0..<50 {
       if latest?.context.posture == .expanded { break }
       try? await Task.sleep(for: .milliseconds(100))

@@ -59,7 +59,7 @@ export const chatGuides = [
       "Supply reserved rectangles for a known hinge or unavailable area. Set posture only from explicit host information. Width alone does not identify a physical posture.",
       "Window, size and posture changes invalidate older callback contexts. Native focus and keyboard animation stay with the platform. The catalog's Compact, Expanded and Tabletop controls simulate layout inputs.",
     ],
-    code: "let observer = BehaviorKeyboardGuideView(frame: container.bounds)\nobserver.configure(\n    posture: .unspecified,\n    followsUndockedKeyboard: true\n)\nobserver.onChange = { snapshot in\n    let remainingOverlap = snapshot.bottomInset\n    let availableRegions = snapshot.availableRegions\n    // Update your existing layout from these container-local measurements.\n}\ncontainer.addSubview(observer)",
+    code: "let observer = BehaviorKeyboardGuideView(frame: container.bounds)\nobserver.autoresizingMask = [.flexibleWidth, .flexibleHeight]\nobserver.configure(\n    posture: .unspecified,\n    followsUndockedKeyboard: true\n)\nobserver.onChange = { snapshot in\n    let remainingOverlap = snapshot.bottomInset\n    let availableRegions = snapshot.availableRegions\n    // Update your existing layout from these container-local measurements.\n}\ncontainer.addSubview(observer)",
     source: "docs/chat-interactions.md",
     notes: [
       "UIKit and SwiftUI keyboard observers require iOS. The pure geometry model is also available in UIBehaviorCore.",

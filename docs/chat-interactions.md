@@ -71,7 +71,8 @@ visible rows. Only the host confirms completed, failed or cancelled status.
 ## Observe the keyboard and available regions
 
 Place `BehaviorKeyboardObserver` behind the container being measured. UIKit can
-use `BehaviorKeyboardGuideView`. Both observe the native keyboard layout guide,
+use `BehaviorKeyboardGuideView`, pinned with constraints or an autoresizing mask
+to its container. Both observe the native keyboard layout guide,
 report container-local logical points, and reject callbacks from an older
 window, size or posture. Native focus and keyboard animation remain platform-owned.
 
