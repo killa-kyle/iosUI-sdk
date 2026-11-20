@@ -14,6 +14,16 @@ import XCTest
       predicate: NSPredicate(format: "label == %@", label), object: element)
     XCTAssertEqual(XCTWaiter.wait(for: [expected], timeout: 5), .completed)
   }
+  private func capture(_ app: XCUIApplication, _ name: String) {
+    let image = XCTAttachment(screenshot: app.screenshot())
+    image.name = name
+    image.lifetime = .keepAlways
+    add(image)
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = name + "-accessibility"
+    tree.lifetime = .keepAlways
+    add(tree)
+  }
   private func expectRow(_ row: XCUIElement, y: CGFloat) async {
     for _ in 0..<50 {
       if row.exists && abs(row.frame.minY - y) <= 2 { return }
@@ -50,9 +60,12 @@ import XCTest
     let app = launch()
     defer { app.terminate() }
     app.buttons["chat-stream"].tap()
+    expect(app.buttons["chat-stream"], label: "Stop stream")
     let toggle = app.buttons["chat-activity-toggle"]
     XCTAssertTrue(toggle.waitForExistence(timeout: 5))
     toggle.tap()
+    capture(app, "chat-activity-after-toggle")
+    expect(app.staticTexts["chat-activity-actions"], label: "Activity actions: 1")
     XCTAssertEqual(toggle.value as? String, "Collapsed")
     app.buttons["chat-append"].tap()
     XCTAssertEqual(toggle.value as? String, "Collapsed")
@@ -71,6 +84,8 @@ import XCTest
     let app = launch()
     defer { app.terminate() }
     app.buttons["chat-layout-expanded"].tap()
+    capture(app, "chat-expanded-action")
+    expect(app.staticTexts["chat-layout-value"], label: "Layout: expanded")
     expect(app.staticTexts["chat-pane-count"], label: "Available panes: 2")
     app.buttons["chat-layout-tabletop"].tap()
     expect(app.staticTexts["chat-pane-count"], label: "Available panes: 2")

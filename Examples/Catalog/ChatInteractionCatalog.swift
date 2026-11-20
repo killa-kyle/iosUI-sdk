@@ -21,6 +21,7 @@ struct ChatInteractionCatalog: View {
   @State private var viewport = BehaviorRect(width: 1, height: 1)
   @State private var layoutRevision: UInt64 = 0
   @State private var activityRevision: UInt64 = 0
+  @State private var activityActions = 0
   @FocusState private var composerFocused: Bool
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -149,6 +150,9 @@ struct ChatInteractionCatalog: View {
         }
         Text("Chunks: \(chunkCount)").accessibilityIdentifier("chat-chunk-count")
         Text("Anchor: \(visibleAnchorID ?? "none")").accessibilityIdentifier("chat-anchor")
+        Text("Layout: \(posture.rawValue)").accessibilityIdentifier("chat-layout-value")
+        Text("Activity actions: \(activityActions)").accessibilityIdentifier(
+          "chat-activity-actions")
         Text("Available panes: \(keyboard?.availableRegions.count ?? 1)")
           .accessibilityIdentifier("chat-pane-count")
         Text(
@@ -169,6 +173,7 @@ struct ChatInteractionCatalog: View {
   @ViewBuilder private var activityView: some View {
     let id = "reply"
     Button {
+      activityActions += 1
       if activity[id].toggle(running: streaming) == .opened {
         scroll.beginReading(anchor: anchors.anchor)
         scrollTask?.cancel()
