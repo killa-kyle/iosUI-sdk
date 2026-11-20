@@ -288,7 +288,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
   background: var(--surface);
   position: relative;
@@ -547,7 +547,13 @@ footer {
   border-radius: 10px;
   border: 1px solid var(--line);
 }
+.drag-source {
+  display: grid;
+  place-items: center;
+  min-height: 3.4rem;
+}
 .drop-zone {
+  min-height: 9.5rem;
   padding: 22px;
   border: 1px dashed var(--muted);
   border-radius: 8px;

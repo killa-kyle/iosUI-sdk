@@ -30,8 +30,14 @@ export function geometryPreview(kind, host) {
     if (handle === "move") {
       rect = {
         ...from,
-        x: Math.max(0, Math.min(stage.clientWidth - from.w, from.x + dx)),
-        y: Math.max(0, Math.min(stage.clientHeight - from.h, from.y + dy)),
+        x: Math.max(
+          0,
+          Math.min((start?.width ?? stage.clientWidth) - from.w, from.x + dx),
+        ),
+        y: Math.max(
+          0,
+          Math.min((start?.height ?? stage.clientHeight) - from.h, from.y + dy),
+        ),
       };
       render();
       return;
@@ -42,8 +48,12 @@ export function geometryPreview(kind, host) {
       south = handle.includes("s");
     let w = from.w + (east ? dx : west ? -dx : 0),
       h = from.h + (south ? dy : north ? -dy : 0);
-    const maxW = west ? from.x + from.w : stage.clientWidth - from.x,
-      maxH = north ? from.y + from.h : stage.clientHeight - from.y;
+    const maxW = west
+        ? from.x + from.w
+        : (start?.width ?? stage.clientWidth) - from.x,
+      maxH = north
+        ? from.y + from.h
+        : (start?.height ?? stage.clientHeight) - from.y;
     if (kind === "crop") {
       w = east || west ? w : h;
       w = Math.max(30, Math.min(w, maxW, maxH));
@@ -68,18 +78,20 @@ export function geometryPreview(kind, host) {
     box.append(b);
     b.onpointerdown = (e) => {
       e.preventDefault();
-      b.focus();
+      b.focus({ preventScroll: true });
       start = {
         pointer: e.pointerId,
         x: e.clientX,
         y: e.clientY,
         rect: { ...rect },
         handle,
+        width: stage.clientWidth,
+        height: stage.clientHeight,
       };
       b.setPointerCapture(e.pointerId);
     };
     b.onpointermove = (e) => {
-      if (start && start.handle === handle)
+      if (start && start.handle === handle && start.pointer === e.pointerId)
         apply(handle, e.clientX - start.x, e.clientY - start.y, start.rect);
     };
     b.onpointerup = () => (start = null);
