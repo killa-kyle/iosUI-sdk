@@ -40,7 +40,7 @@ export const components = [
       source: "UIBehaviorCore/ColorValue.swift",
       notes: [
         "The adapter uses the native platform color picker.",
-        "Core math supports sRGB/HSV, not every CSS color space or named color.",
+        "Core color math supports sRGB and HSV.",
         "Composite translucent colors before evaluating contrast.",
       ],
       uikit:
@@ -113,7 +113,7 @@ export const components = [
       core: "DragDropBehavior",
       source: "UIBehaviorCore/DragDropBehavior.swift",
       notes: [
-        "Native transfer carries a local ID, not arbitrary objects or secrets.",
+        "Native drag sessions transfer a local ID. The host resolves it to application data.",
         "Smaller accepted targets win nested hit tests; disabled targets are rechecked.",
         "A receipt is an intent. The host performs and authorizes its data mutation.",
       ],
@@ -163,7 +163,7 @@ export const components = [
       core: "CropSelection",
       source: "UIBehaviorCore/ResizeBehavior.swift",
       notes: [
-        "Crop coordinates are image pixels, not screen points.",
+        "Crop coordinates use image pixels.",
         "UIImage export resolves image orientation before applying quarter-turn rotation.",
         "The browser preview illustrates the rectangle; use the native exporter for image pixels.",
       ],
@@ -216,7 +216,7 @@ export const components = [
       notes: [
         "iOS TextKit owns composition, selection, paste and native undo.",
         "Core edits reject ranges that split a UTF-16 surrogate pair.",
-        "Bold, italic, underline and safe native links are supported; this is not a collaborative HTML editor.",
+        "Supports bold, italic, underline and native links through attributed TextKit editing.",
       ],
       uikit:
         'let editor = BehaviorRichTextView(frame: .zero, textContainer: nil)\neditor.setDocument(RichTextDocument("Hello native editor"))\neditor.onDocumentChange = { print($0.text) }',
@@ -242,7 +242,7 @@ export const components = [
       notes: [
         "Native Menu handles presentation and platform interaction.",
         "Disabled ancestors block descendant actions.",
-        "A returned action ID is for the host to handle; the package does not execute application commands.",
+        "The host handles the returned action ID.",
       ],
       uikit: "",
       api: [
@@ -289,7 +289,7 @@ export const components = [
       source: "UIBehaviorSwiftUI/BehaviorMeasurement.swift",
       notes: [
         "SwiftUI uses an explicit coordinate space; UIKit converts to window points.",
-        "Bounds are not proof of hittability. Check the current display and accessibility tree.",
+        "Check hittability against the current display and accessibility tree.",
         "Keep orientation, scale and window identity with external computer-use captures.",
       ],
       uikit:

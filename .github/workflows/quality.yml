@@ -34,7 +34,8 @@ jobs:
         run: xcrun simctl bootstatus "$SIMULATOR_ID" -b
       - name: Simulator replay
         # Cold test-runner startup can take four minutes before the first test.
-        # Each test function has a bounded 120-second allowance for native launch and input.
+        # Bound native launch/input time and retry at most once in a fresh process.
+        # Original attempts remain in the result bundle.
         timeout-minutes: 15
         run: >-
           xcodebuild -project Examples/BehaviorCatalog.xcodeproj

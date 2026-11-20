@@ -10,7 +10,7 @@ function renderSelection() {
   });
   document.querySelector("#selection-output").textContent = selected.size
     ? `Selected: ${[...selected].join(", ")}`
-    : "Nothing selected. A clean slate.";
+    : "Nothing selected.";
 }
 choices.forEach((button, index) => {
   button.addEventListener("click", () => {
