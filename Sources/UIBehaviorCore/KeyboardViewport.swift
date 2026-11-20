@@ -92,7 +92,14 @@ public enum ViewportGeometry {
     var regions = [bounds]
     for occlusion in occlusions where occlusion.isValid {
       regions = regions.flatMap { region -> [BehaviorRect] in
-        guard let cut = intersection(region, occlusion) else { return [region] }
+        guard let overlap = intersection(region, occlusion) else { return [region] }
+        // SwiftUI and UIKit can round the same native edge differently. Keep a rounded shared edge from creating an extra region.
+        let tolerance = min(0.001, min(region.width, region.height) * 0.001)
+        let x = abs(overlap.x - region.x) < tolerance ? region.x : overlap.x
+        let y = abs(overlap.y - region.y) < tolerance ? region.y : overlap.y
+        let maxX = abs(overlap.maxX - region.maxX) < tolerance ? region.maxX : overlap.maxX
+        let maxY = abs(overlap.maxY - region.maxY) < tolerance ? region.maxY : overlap.maxY
+        let cut = BehaviorRect(x: x, y: y, width: maxX - x, height: maxY - y)
         let candidates = [
           BehaviorRect(x: region.x, y: region.y, width: region.width, height: cut.y - region.y),
           BehaviorRect(

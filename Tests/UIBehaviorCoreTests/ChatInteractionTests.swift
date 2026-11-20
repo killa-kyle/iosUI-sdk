@@ -188,6 +188,24 @@ final class ChatInteractionTests: XCTestCase {
     XCTAssertEqual(state.count, 0)
   }
 
+  func testNativeCoordinateRoundingDoesNotCreatePhantomPanes() throws {
+    var state = KeyboardViewport()
+    let hostHeight = 500.3333333333333
+    let nativeHeight = Double(Float(hostHeight))
+    XCTAssertGreaterThan(nativeHeight, hostHeight)
+    _ = state.updateContext(
+      surfaceID: "native", bounds: BehaviorRect(width: 400, height: nativeHeight),
+      posture: .expanded,
+      reservedRegions: [BehaviorRect(x: 195, width: 10, height: hostHeight)])
+    XCTAssertEqual(state.snapshot.availableRegions.count, 2)
+    XCTAssertTrue(state.snapshot.availableRegions.allSatisfy { $0.height == nativeHeight })
+    _ = state.updateContext(
+      surfaceID: "native", bounds: BehaviorRect(width: 400, height: nativeHeight),
+      posture: .expanded,
+      reservedRegions: [BehaviorRect(x: 195, width: 10, height: nativeHeight - 0.5)])
+    XCTAssertEqual(state.snapshot.availableRegions.count, 3, "Retain a real half-point region")
+  }
+
   func testKeyboardAndHingeProduceSeparateUnobscuredPanes() throws {
     var state = KeyboardViewport()
     let bounds = BehaviorRect(width: 400, height: 800)

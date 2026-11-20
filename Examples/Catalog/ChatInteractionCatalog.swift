@@ -66,7 +66,9 @@ struct ChatInteractionCatalog: View {
           let bounds = BehaviorRect(width: geometry.size.width, height: geometry.size.height)
           let reserved = reservedRegions(bounds)
           let measured = keyboard.flatMap { value -> [BehaviorRect]? in
-            value.context.bounds == bounds && value.context.posture == posture
+            abs(value.context.bounds.width - bounds.width) < 0.001
+              && abs(value.context.bounds.height - bounds.height) < 0.001
+              && value.context.posture == posture
               ? value.availableRegions : nil
           }
           let regions =

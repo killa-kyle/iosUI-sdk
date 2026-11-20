@@ -89,6 +89,9 @@ has no extra overlap to add. Set `followsUndockedKeyboard: true` to track floati
 `availableRegions` or `adjustment(toReveal:)` instead of treating every keyboard
 as a bottom inset.
 
+Shared edges within a thousandth of a logical point are normalized when cutting
+available regions, avoiding phantom panes from native coordinate rounding.
+
 Pass host-known reserved regions for a hinge or unavailable area, and an explicit
 `ViewportPosture` when the platform supplies it. Width alone does not identify a
 physical posture. The native catalog's Compact, Expanded and Tabletop controls

@@ -76,7 +76,7 @@ asynchronous drop receipt; it never substitutes a button or generated animation.
 
 ## Streaming and viewport qualification — 0.3.0
 
-The core suite contains 51 passing host tests. New cases cover coalesced and
+The core suite contains 52 passing host tests. New cases cover coalesced and
 fenced scrolling, two-pass reflow with a saved reading offset, frozen anchor
 measurement, per-activity revisions and explicit disclosure choice, keyboard
 context fencing, floating keyboards and reserved regions.
