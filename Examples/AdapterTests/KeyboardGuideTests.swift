@@ -1,4 +1,6 @@
+import SwiftUI
 import UIBehaviorCore
+import UIBehaviorSwiftUI
 import UIBehaviorUIKit
 import UIKit
 import XCTest
@@ -35,4 +37,34 @@ import XCTest
     XCTAssertEqual(observer.snapshot.context.posture, .expanded)
     XCTAssertEqual(observer.snapshot.availableRegions.count, 2)
   }
+  func testSwiftUIObserverUpdatesPostureWithoutRecreatingWindow() async {
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 700))
+    var latest: KeyboardViewportSnapshot?
+    let makeRoot: (ViewportPosture, [BehaviorRect]) -> AnyView = { posture, regions in
+      AnyView(
+        Color.clear.frame(width: 390, height: 600).background {
+          BehaviorKeyboardObserver(posture: posture, reservedRegions: regions) { latest = $0 }
+        })
+    }
+    let controller = UIHostingController(rootView: makeRoot(.compact, []))
+    window.rootViewController = controller
+    window.isHidden = false
+    defer { window.isHidden = true }
+    for _ in 0..<50 {
+      if latest?.context.bounds.width == 390 { break }
+      try? await Task.sleep(for: .milliseconds(100))
+    }
+    XCTAssertEqual(latest?.context.posture, .compact)
+    XCTAssertEqual(latest?.context.bounds.width, 390)
+    let surface = latest?.context.surfaceID
+    controller.rootView = makeRoot(.expanded, [BehaviorRect(x: 189, width: 12, height: 600)])
+    for _ in 0..<50 {
+      if latest?.context.posture == .expanded { break }
+      try? await Task.sleep(for: .milliseconds(100))
+    }
+    XCTAssertEqual(latest?.context.surfaceID, surface)
+    XCTAssertEqual(latest?.context.posture, .expanded)
+    XCTAssertEqual(latest?.availableRegions.count, 2)
+  }
+
 }

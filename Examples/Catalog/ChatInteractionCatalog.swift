@@ -61,6 +61,7 @@ struct ChatInteractionCatalog: View {
             .accessibilityIdentifier("chat-layout-" + value.rawValue)
           }
         }.font(.caption).buttonStyle(.bordered)
+        activityToggle
         GeometryReader { geometry in
           let bounds = BehaviorRect(width: geometry.size.width, height: geometry.size.height)
           let reserved = reservedRegions(bounds)
@@ -90,7 +91,7 @@ struct ChatInteractionCatalog: View {
                       "message-\(number)", in: .named("chat-viewport"), viewport: listBounds,
                       layoutRevision: layoutRevision, restorationTarget: scroll.restorationTarget)
                   }
-                  VStack(alignment: .leading) { activityView }
+                  VStack(alignment: .leading) { activityDetails }
                     .id("chat-activity")
                     .behaviorReadingAnchor(
                       "chat-activity", in: .named("chat-viewport"), viewport: listBounds,
@@ -170,7 +171,7 @@ struct ChatInteractionCatalog: View {
     }
   }
 
-  @ViewBuilder private var activityView: some View {
+  private var activityToggle: some View {
     let id = "reply"
     Button {
       activityActions += 1
@@ -184,6 +185,9 @@ struct ChatInteractionCatalog: View {
         systemImage: activity[id].expanded(running: streaming) ? "chevron.down" : "chevron.right")
     }.accessibilityIdentifier("chat-activity-toggle")
       .accessibilityValue(activity[id].expanded(running: streaming) ? "Expanded" : "Collapsed")
+  }
+  @ViewBuilder private var activityDetails: some View {
+    let id = "reply"
     if activity[id].expanded(running: streaming) {
       Text(
         "Received \(chunkCount) chunks. Phase: \(activity.phase(for: id)?.rawValue ?? "pending")"
