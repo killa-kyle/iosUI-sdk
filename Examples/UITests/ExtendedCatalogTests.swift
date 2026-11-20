@@ -52,7 +52,10 @@ import XCTest
     let field = app.textFields["Hex color"]
     XCTAssertTrue(field.waitForExistence(timeout: 5))
     field.tap()
-    field.typeKey("a", modifierFlags: .command)
+    let existing = field.value as? String ?? ""
+    field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+    let cleared = field.value as? String ?? ""
+    XCTAssertTrue(cleared.isEmpty || cleared == field.placeholderValue)
     field.typeText("#000000")
     XCTAssertEqual(field.value as? String, "#000000")
     app.buttons["Apply hex"].tap()
@@ -117,7 +120,9 @@ import XCTest
   func testCropResizeHandleAccessibility() {
     let app = launch("crop")
     defer { app.terminate() }
-    let corner = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Resize bottom right")).firstMatch
+    let corner = app.descendants(matching: .any).matching(
+      NSPredicate(format: "label == %@", "Resize bottom right")
+    ).firstMatch
     XCTAssertTrue(corner.waitForExistence(timeout: 5))
     XCTAssertTrue(corner.isHittable)
     XCTAssertEqual(corner.value as? String, "200 by 200")

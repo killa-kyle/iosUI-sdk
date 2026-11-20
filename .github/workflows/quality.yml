@@ -1,5 +1,9 @@
 name: Quality
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -30,8 +34,8 @@ jobs:
         run: xcrun simctl bootstatus "$SIMULATOR_ID" -b
       - name: Simulator replay
         # Cold test-runner startup can take four minutes before the first test.
-        # App launch can stall before assertions on a cold hosted runner.
-        # Preserve both attempts; retry at most once in a fresh test process.
+        # Bound native launch/input time and retry at most once in a fresh process.
+        # Original attempts remain in the result bundle.
         timeout-minutes: 15
         run: >-
           xcodebuild -project Examples/BehaviorCatalog.xcodeproj

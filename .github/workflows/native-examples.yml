@@ -1,6 +1,7 @@
 name: Native example recordings
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/native-examples.yml
       - Examples/Catalog/**
@@ -36,7 +37,7 @@ jobs:
         timeout-minutes: 8
         run: xcrun simctl bootstatus "$CAPTURE_DEVICE" -b
       # Recording includes a cold app launch and deliberately slow real gestures.
-      # Hosted launches can take 50s; functional Quality retains its 60s limit.
+      # Functional gesture replay runs on every PR; record media after merge.
       - name: Record actual native gestures with XCTest
         timeout-minutes: 10
         run: >-
