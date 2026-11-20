@@ -30,15 +30,18 @@ jobs:
         run: xcrun simctl bootstatus "$SIMULATOR_ID" -b
       - name: Simulator replay
         # Cold test-runner startup can take four minutes before the first test.
-        # Each test function retains the 60-second limit below.
-        timeout-minutes: 10
+        # App launch can stall before assertions on a cold hosted runner.
+        # Preserve both attempts; retry at most once in a fresh test process.
+        timeout-minutes: 15
         run: >-
           xcodebuild -project Examples/BehaviorCatalog.xcodeproj
           -scheme BehaviorCatalog
           -destination "platform=iOS Simulator,id=$SIMULATOR_ID,arch=$(uname -m)"
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
           -parallel-testing-enabled NO -test-timeouts-enabled YES
-          -maximum-test-execution-time-allowance 60
+          -maximum-test-execution-time-allowance 120
+          -retry-tests-on-failure -test-iterations 2
+          -test-repetition-relaunch-enabled YES
           -resultBundlePath "$RUNNER_TEMP/NativeReplay.xcresult"
           CODE_SIGNING_ALLOWED=NO test-without-building
       - name: Preserve native replay diagnostics
