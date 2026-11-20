@@ -171,7 +171,7 @@ struct ChatInteractionCatalog: View {
     }
   }
 
-  private var activityToggle: some View {
+  @ViewBuilder private var activityToggle: some View {
     let id = "reply"
     Button {
       activityActions += 1
@@ -279,6 +279,7 @@ struct ChatInteractionCatalog: View {
         scrollTask = nil
         if !scroll.isRestoringAnchor {
           anchors.resume(in: viewport, layoutRevision: layoutRevision)
+          visibleAnchorID = anchors.anchor?.id
         }
       }
     }

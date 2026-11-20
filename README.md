@@ -1,6 +1,6 @@
 # iosUI-sdk
 
-**Small behaviors. Native interfaces. Your design.**
+**Interaction state for SwiftUI and UIKit.**
 
 An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/vercel-labs/ui)'s behavior-driven approach for SwiftUI and UIKit. Compose interaction rules instead of copying custom controls between apps. No JavaScript runtime, network services, or third-party package dependencies.
 
@@ -27,6 +27,14 @@ motion; these are not browser previews or animated mockups.
 ![Resize and rotate a native crop selection, then export the selected pixels](docs/media/crop.gif)
 
 [Reproduce these recordings](docs/media/README.md).
+
+## Streaming chat
+
+The next release adds reading-position restoration, activity expansion state and
+native keyboard/reserved-region observations. The Streaming chat catalog story
+uses real ScrollView/TextField controls and a local cancellable stream. Read the
+[composition guide](docs/chat-interactions.md) and
+[reference interaction evidence](docs/reference-interactions.md).
 
 ## Build with an agent
 

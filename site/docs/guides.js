@@ -1,3 +1,4 @@
+import { chatGuides } from "./chat-guides.js";
 export const guides = [
   {
     id: "introduction",
@@ -317,4 +318,5 @@ export const guides = [
       ],
     ],
   },
+  ...chatGuides,
 ];

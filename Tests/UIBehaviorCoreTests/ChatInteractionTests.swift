@@ -137,6 +137,27 @@ final class ChatInteractionTests: XCTestCase {
     XCTAssertNil(memory.anchor)
   }
 
+  func testSettledScrollUsesLatestMeasuredAnchorWithoutLosingFrozenPosition() throws {
+    var memory = ReadingAnchorMemory<String>()
+    let viewport = BehaviorRect(width: 300, height: 500)
+    let before = try XCTUnwrap(ReadingAnchor(id: "before", top: -10, height: 60))
+    let after = try XCTUnwrap(ReadingAnchor(id: "after", top: -20, height: 100))
+    _ = memory.record(
+      try XCTUnwrap(ReadingAnchorMeasurement(anchor: before, viewport: viewport, layoutRevision: 1))
+    )
+    memory.freeze()
+    _ = memory.record(
+      try XCTUnwrap(ReadingAnchorMeasurement(anchor: after, viewport: viewport, layoutRevision: 2)))
+    _ = memory.record(
+      try XCTUnwrap(ReadingAnchorMeasurement(anchor: before, viewport: viewport, layoutRevision: 1))
+    )
+    XCTAssertEqual(memory.anchor, before, "Keep the saved reading position during the transition")
+    memory.resume(in: viewport, layoutRevision: 2)
+    XCTAssertEqual(
+      memory.anchor, after, "Adopt the freshest matching measurement once the host settles")
+    XCTAssertFalse(memory.isFrozen)
+  }
+
   func testActivityChoicesSurviveRevisionsAndParentCollapse() {
     var state = ActivityDisclosureStore<String>()
     XCTAssertTrue(state.observe("child", phase: .running, revision: 1))

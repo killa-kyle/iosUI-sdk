@@ -43,6 +43,7 @@ import XCTest
     let row = app.staticTexts["chat-" + rowID]
     XCTAssertTrue(row.exists)
     let originalY = row.frame.minY
+    let originalWidth = row.frame.width
     app.buttons["chat-append"].tap()
     app.buttons["chat-append"].tap()
     expect(app.staticTexts["chat-follow-mode"], label: "Reading earlier")
@@ -52,7 +53,9 @@ import XCTest
     expect(app.staticTexts["chat-anchor"], label: anchor)
     await expectRow(row, y: originalY)
     app.buttons["chat-layout-expanded"].tap()
+    expect(app.staticTexts["chat-layout-value"], label: "Layout: expanded")
     await expectRow(row, y: originalY)
+    XCTAssertLessThan(row.frame.width, originalWidth - 20)
     app.buttons["chat-jump-latest"].tap()
     expect(app.staticTexts["chat-follow-mode"], label: "Following latest")
   }
