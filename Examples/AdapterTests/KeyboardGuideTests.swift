@@ -37,18 +37,14 @@ import XCTest
     XCTAssertEqual(observer.snapshot.context.posture, .expanded)
     XCTAssertEqual(observer.snapshot.availableRegions.count, 2)
   }
-  func testSwiftUIObserverUpdatesPostureWithoutRecreatingWindow() async {
-    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 700))
-    var latest: KeyboardViewportSnapshot?
-    let makeRoot: (ViewportPosture, [BehaviorRect]) -> AnyView = { posture, regions in
-      AnyView(
-        Color.clear.frame(width: 390, height: 600).background {
-          BehaviorKeyboardObserver(posture: posture, reservedRegions: regions) { latest = $0 }
-        })
-    }
-    let controller = UIHostingController(rootView: makeRoot(.compact, []))
-    let previous = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-      .flatMap(\.windows).first(where: \.isKeyWindow)
+  func testSwiftUIObserverUpdatesPostureWithoutRecreatingWindow() async throws {
+    let scene = try XCTUnwrap(
+      UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+    let window = UIWindow(windowScene: scene)
+    window.frame = CGRect(x: 0, y: 0, width: 390, height: 700)
+    let fixture = KeyboardObservationFixture()
+    let controller = UIHostingController(rootView: KeyboardObservationView(fixture: fixture))
+    let previous = scene.windows.first(where: \.isKeyWindow)
     window.rootViewController = controller
     window.makeKeyAndVisible()
     controller.loadViewIfNeeded()
@@ -58,22 +54,39 @@ import XCTest
       previous?.makeKey()
     }
     for _ in 0..<50 {
-      if latest?.context.bounds.width == 390 { break }
+      if fixture.latest?.context.bounds.width == 390 { break }
       try? await Task.sleep(for: .milliseconds(100))
     }
-    XCTAssertEqual(latest?.context.posture, .compact)
-    XCTAssertEqual(latest?.context.bounds.width, 390)
-    let surface = latest?.context.surfaceID
-    controller.rootView = makeRoot(.expanded, [BehaviorRect(x: 189, width: 12, height: 600)])
+    XCTAssertEqual(fixture.latest?.context.posture, .compact)
+    XCTAssertEqual(fixture.latest?.context.bounds.width, 390)
+    let surface = fixture.latest?.context.surfaceID
+    fixture.expanded = true
     controller.view.setNeedsLayout()
     controller.view.layoutIfNeeded()
     for _ in 0..<50 {
-      if latest?.context.posture == .expanded { break }
+      if fixture.latest?.context.posture == .expanded { break }
       try? await Task.sleep(for: .milliseconds(100))
     }
-    XCTAssertEqual(latest?.context.surfaceID, surface)
-    XCTAssertEqual(latest?.context.posture, .expanded)
-    XCTAssertEqual(latest?.availableRegions.count, 2)
+    XCTAssertEqual(fixture.latest?.context.surfaceID, surface)
+    XCTAssertEqual(fixture.latest?.context.posture, .expanded)
+    XCTAssertEqual(fixture.latest?.availableRegions.count, 2)
   }
 
+}
+
+@MainActor private final class KeyboardObservationFixture: ObservableObject {
+  @Published var expanded = false
+  var latest: KeyboardViewportSnapshot?
+}
+
+private struct KeyboardObservationView: View {
+  @ObservedObject var fixture: KeyboardObservationFixture
+  var body: some View {
+    Color.clear.frame(width: 390, height: 600).background {
+      BehaviorKeyboardObserver(
+        posture: fixture.expanded ? .expanded : .compact,
+        reservedRegions: fixture.expanded ? [BehaviorRect(x: 189, width: 12, height: 600)] : []
+      ) { fixture.latest = $0 }
+    }
+  }
 }
