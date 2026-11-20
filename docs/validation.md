@@ -73,3 +73,24 @@ admits the confirmed drag, and native session identity scopes cancellation and
 transfer cleanup. Adapter regression covers an abandoned lift, stale cancellation
 and a fresh drag after cancellation. Documentary capture waits for the actual
 asynchronous drop receipt; it never substitutes a button or generated animation.
+
+## Streaming and viewport qualification — 0.3.0
+
+The core suite contains 51 passing host tests. New cases cover coalesced and
+fenced scrolling, two-pass reflow with a saved reading offset, frozen anchor
+measurement, per-activity revisions and explicit disclosure choice, keyboard
+context fencing, floating keyboards and reserved regions.
+
+The release gate builds the real catalog and runs eight native adapter tests
+and eighteen UI tests. The added adapter checks cover native keyboard observer
+reparenting and SwiftUI posture updates in the same window. The added chat UI
+checks assert row position through streamed chunks/history/reflow, explicit
+activity choice and cancellation, keyboard placement and layout previews.
+The exact-head Quality run is the authority for acceptance of the release.
+
+An earlier candidate passed the native keyboard reparenting adapter and
+reading/history replay; the pane-update and moving activity-target checks exposed
+further work. The catalog now keeps its activity control stationary and captures
+posture/action state with the visible hierarchy for diagnosis. These observations
+are separate from physical posture, VoiceOver and hardware-keyboard acceptance,
+which still require device replay.

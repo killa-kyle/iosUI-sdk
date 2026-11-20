@@ -54,7 +54,7 @@ hardware focus engine; use native focus APIs for custom hardware-keyboard routes
 
 ## Chat and viewport behavior
 
-The next package release adds `StreamScrollCoordinator`, `ReadingAnchorMemory`,
+Version 0.3.0 adds `StreamScrollCoordinator`, `ReadingAnchorMemory`,
 `ReadingAnchorTracker`, `ActivityDisclosureStore`, `KeyboardViewport` and native
 scroll-phase/keyboard adapters. See [streaming chat](chat-interactions.md) for
 contracts and the native catalog. These are independent native additions,

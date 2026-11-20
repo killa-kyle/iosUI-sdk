@@ -46,9 +46,9 @@ export const guides = [
       "Add the Swift package in Xcode and choose the products your target uses.",
     body: [
       "In Xcode, choose File → Add Package Dependencies and enter https://github.com/killa-kyle/iosUI-sdk. Select UIBehaviorCore, UIBehaviorSwiftUI and/or UIBehaviorUIKit.",
-      "Version 0.2.1 includes the behavior models and native adapters listed in the docs. Add the products your app uses.",
+      "Version 0.3.0 includes the behavior models and native adapters listed in the docs. Add the products your app uses.",
     ],
-    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.2.1"\n)',
+    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.3.0"\n)',
     notes: [
       "Pin a version or revision and use its matching API reference.",
       "UIBehaviorUIKit can host every shared SwiftUI adapter through BehaviorController; direct UIKit APIs also cover choices, values, TextKit, image crop export and measurement.",
@@ -162,7 +162,7 @@ export const guides = [
     links: [
       [
         "Read agent integration",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/agents.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.3.0/docs/agents.md",
       ],
     ],
     kind: "guide",
@@ -245,7 +245,7 @@ export const guides = [
     links: [
       [
         "Full coverage map",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/coverage.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.3.0/docs/coverage.md",
       ],
     ],
     kind: "guide",
@@ -277,7 +277,7 @@ export const guides = [
     description:
       "Compilation, state tests and interaction replay establish different things.",
     body: [
-      "Version 0.2.1 passed 37 Core tests, 6 native adapter tests and 15 simulator UI tests. The calendar, drag and crop recording cases also assert their outcomes.",
+      "Quality runs core transitions, native adapters and simulator UI replay on the release source. Calendar, drag and crop recordings assert their outcomes too. See the validation record for tested scope and device checks.",
       "Native replay covers selection, disabled controls, disclosure, sheets, calendar, navigation, drag and drop, crop, editing and other catalog interactions. Check the Quality run for the revision you use.",
       "Physical-device and accessibility coverage is tracked separately in docs/validation.md.",
     ],
@@ -293,7 +293,7 @@ export const guides = [
       ],
       [
         "Validation record",
-        "https://github.com/killa-kyle/iosUI-sdk/blob/0.2.1/docs/validation.md",
+        "https://github.com/killa-kyle/iosUI-sdk/blob/0.3.0/docs/validation.md",
       ],
     ],
     kind: "guide",

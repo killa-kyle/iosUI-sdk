@@ -30,7 +30,7 @@ motion; these are not browser previews or animated mockups.
 
 ## Streaming chat
 
-The next release adds reading-position restoration, activity expansion state and
+Version 0.3.0 adds reading-position restoration, activity expansion state and
 native keyboard/reserved-region observations. The Streaming chat catalog story
 uses real ScrollView/TextField controls and a local cancellable stream. Read the
 [composition guide](docs/chat-interactions.md) and
@@ -62,7 +62,7 @@ https://github.com/killa-kyle/iosUI-sdk
 Or add this to Package.swift:
 
 ```swift
-.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.2.1")
+.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.3.0")
 ```
 
 Choose the products your target needs:
