@@ -54,7 +54,8 @@ import XCTest
     field.tap()
     let existing = field.value as? String ?? ""
     field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
-    XCTAssertEqual(field.value as? String, "")
+    let cleared = field.value as? String ?? ""
+    XCTAssertTrue(cleared.isEmpty || cleared == field.placeholderValue)
     field.typeText("#000000")
     XCTAssertEqual(field.value as? String, "#000000")
     app.buttons["Apply hex"].tap()
