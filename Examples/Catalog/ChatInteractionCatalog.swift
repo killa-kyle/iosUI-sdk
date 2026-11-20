@@ -51,16 +51,18 @@ struct ChatInteractionCatalog: View {
             restore(viewport, reason: .history, proxy)
           }.accessibilityIdentifier("chat-load-earlier")
         }.font(.caption).buttonStyle(.bordered)
-        HStack {
-          Text("Preview layout").font(.caption)
-          ForEach([ViewportPosture.compact, .expanded, .tabletop], id: \.rawValue) { value in
-            Button(value.rawValue.capitalized) {
-              anchors.freeze()
-              posture = value
+        if !composerFocused {
+          HStack {
+            Text("Preview layout").font(.caption)
+            ForEach([ViewportPosture.compact, .expanded, .tabletop], id: \.rawValue) { value in
+              Button(value.rawValue.capitalized) {
+                anchors.freeze()
+                posture = value
+              }
+              .accessibilityIdentifier("chat-layout-" + value.rawValue)
             }
-            .accessibilityIdentifier("chat-layout-" + value.rawValue)
-          }
-        }.font(.caption).buttonStyle(.bordered)
+          }.font(.caption).buttonStyle(.bordered)
+        }
         activityToggle
         GeometryReader { geometry in
           let bounds = BehaviorRect(width: geometry.size.width, height: geometry.size.height)
@@ -139,9 +141,12 @@ struct ChatInteractionCatalog: View {
               }
             }
             .onAppear {
-              viewport = listBounds
-              anchors.resume(in: listBounds, layoutRevision: layoutRevision)
-              enqueue(.latest, .initial, proxy, replace: true)
+              restore(listBounds, reason: .initial, proxy)
+            }
+            .onDisappear {
+              anchors.freeze()
+              scrollTask?.cancel()
+              scroll.cancel()
             }
             .onChange(of: listBounds) { _, next in restore(next, reason: .viewport, proxy) }
           }
@@ -151,17 +156,19 @@ struct ChatInteractionCatalog: View {
             }
           ).allowsHitTesting(false)
         }
-        Text("Chunks: \(chunkCount)").accessibilityIdentifier("chat-chunk-count")
-        Text("Anchor: \(visibleAnchorID ?? "none")").accessibilityIdentifier("chat-anchor")
-        Text("Layout: \(posture.rawValue)").accessibilityIdentifier("chat-layout-value")
-        Text("Activity actions: \(activityActions)").accessibilityIdentifier(
-          "chat-activity-actions")
-        Text("Available panes: \(keyboard?.availableRegions.count ?? 1)")
-          .accessibilityIdentifier("chat-pane-count")
-        Text(
-          "Layout previews simulate reserved regions. The keyboard uses the native layout guide."
-        )
-        .font(.caption).foregroundStyle(.secondary)
+        if !composerFocused {
+          Text("Chunks: \(chunkCount)").accessibilityIdentifier("chat-chunk-count")
+          Text("Anchor: \(visibleAnchorID ?? "none")").accessibilityIdentifier("chat-anchor")
+          Text("Layout: \(posture.rawValue)").accessibilityIdentifier("chat-layout-value")
+          Text("Activity actions: \(activityActions)").accessibilityIdentifier(
+            "chat-activity-actions")
+          Text("Available panes: \(keyboard?.availableRegions.count ?? 1)")
+            .accessibilityIdentifier("chat-pane-count")
+          Text(
+            "Layout previews simulate reserved regions. The keyboard uses the native layout guide."
+          )
+          .font(.caption).foregroundStyle(.secondary)
+        }
       }.padding(12)
         .onChange(of: chunkCount) { _, _ in enqueue(.latest, .stream, proxy) }
         .onDisappear {
@@ -185,6 +192,7 @@ struct ChatInteractionCatalog: View {
       Label(
         "Work details",
         systemImage: activity[id].expanded(running: streaming) ? "chevron.down" : "chevron.right")
+        .frame(minHeight: 44)
     }.accessibilityIdentifier("chat-activity-toggle")
       .accessibilityValue(activity[id].expanded(running: streaming) ? "Expanded" : "Collapsed")
   }

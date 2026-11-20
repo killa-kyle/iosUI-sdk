@@ -99,6 +99,10 @@ import XCTest
     composer.typeText("Local draft")
     XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
     XCTAssertLessThanOrEqual(composer.frame.maxY, app.keyboards.firstMatch.frame.minY + 1)
+    let transcript = app.scrollViews["chat-transcript"]
+    XCTAssertGreaterThan(transcript.frame.height, 100, "Typing must leave room to read the conversation")
+    XCTAssertLessThanOrEqual(transcript.frame.maxY, composer.frame.minY)
+    XCTAssertTrue(app.staticTexts["chat-message-59"].isHittable)
     let image = XCTAttachment(screenshot: app.screenshot())
     image.name = "chat-keyboard-local-draft"
     image.lifetime = .keepAlways

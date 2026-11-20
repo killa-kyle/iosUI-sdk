@@ -76,6 +76,7 @@ struct BehaviorDemo: View {
   var body: some View {
     if story == .chat {
       ChatInteractionCatalog().navigationTitle(story.title)
+        .navigationBarTitleDisplayMode(.inline)
     } else if ProcessInfo.processInfo.arguments.contains("--showcase") {
       CatalogShowcase(title: story.title) { demo }
     } else {
