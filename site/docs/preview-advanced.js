@@ -8,26 +8,33 @@ export function advancedPreview(kind, host) {
     const blocked = "2026-11-03",
       min = "2026-11-01",
       max = "2026-12-31";
+    host.innerHTML =
+      '<div class="demo-row"><button aria-label="Previous month">←</button><strong></strong><button aria-label="Next month">→</button></div><div class="date-grid" aria-label="Date selection"></div><output aria-live="polite"></output>';
+    const controls = host.querySelectorAll(".demo-row button"),
+      grid = host.querySelector(".date-grid");
+    const updateSelection = () => {
+      for (const b of grid.querySelectorAll("button")) {
+        const iso = b.getAttribute("aria-label");
+        b.setAttribute(
+          "aria-pressed",
+          String(
+            Boolean(
+              start && (end ? iso >= start && iso <= end : iso === start),
+            ),
+          ),
+        );
+      }
+      out().textContent = message;
+    };
     const render = () => {
-      host.innerHTML =
-        '<div class="demo-row"><button aria-label="Previous month">←</button><strong></strong><button aria-label="Next month">→</button></div><div class="date-grid" aria-label="Date selection"></div><output aria-live="polite"></output>';
       host.querySelector("strong").textContent = new Intl.DateTimeFormat("en", {
         month: "long",
         year: "numeric",
         timeZone: "UTC",
       }).format(new Date(Date.UTC(2026, month, 1)));
-      const controls = host.querySelectorAll(".demo-row button");
       controls[0].disabled = month === 10;
       controls[1].disabled = month === 11;
-      controls[0].onclick = () => {
-        month--;
-        render();
-      };
-      controls[1].onclick = () => {
-        month++;
-        render();
-      };
-      const grid = host.querySelector(".date-grid");
+      grid.replaceChildren();
       for (const name of ["S", "M", "T", "W", "T", "F", "S"]) {
         const day = document.createElement("span");
         day.className = "date-week";
@@ -42,14 +49,6 @@ export function advancedPreview(kind, host) {
         b.textContent = String(date.getUTCDate());
         b.setAttribute("aria-label", iso);
         b.disabled = iso < min || iso > max || iso === blocked;
-        b.setAttribute(
-          "aria-pressed",
-          String(
-            Boolean(
-              start && (end ? iso >= start && iso <= end : iso === start),
-            ),
-          ),
-        );
         b.onclick = () => {
           if (start && !end) {
             const lo = iso < start ? iso : start,
@@ -66,11 +65,19 @@ export function advancedPreview(kind, host) {
             end = null;
             message = `Start: ${start}. Choose an end.`;
           }
-          render();
+          updateSelection();
         };
         grid.append(b);
       }
-      out().textContent = message;
+      updateSelection();
+    };
+    controls[0].onclick = () => {
+      month--;
+      render();
+    };
+    controls[1].onclick = () => {
+      month++;
+      render();
     };
     render();
     return () => {};
@@ -224,8 +231,9 @@ export function advancedPreview(kind, host) {
   }
   if (kind === "drag") {
     host.innerHTML =
-      '<div class="drag-card" tabindex="0" role="button" aria-label="Draggable card">Drag this card</div><div class="drop-zone">Archive drop zone</div><button>Move to archive</button><output aria-live="polite">No drop</output>';
+      '<div class="drag-source"><div class="drag-card" tabindex="0" role="button" aria-label="Draggable card">Drag this card</div></div><div class="drop-zone">Archive drop zone</div><button>Move to archive</button><output aria-live="polite">No drop</output>';
     const card = host.querySelector(".drag-card"),
+      source = host.querySelector(".drag-source"),
       zone = host.querySelector(".drop-zone");
     let start;
     const cancel = () => {
@@ -236,6 +244,7 @@ export function advancedPreview(kind, host) {
     };
     const commit = () => {
       cancel();
+      source.style.minHeight = `${Math.max(source.getBoundingClientRect().height, card.getBoundingClientRect().height)}px`;
       zone.append(card);
       out().textContent = "Moved card to archive";
     };

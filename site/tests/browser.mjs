@@ -273,6 +273,52 @@ try {
     await page.locator("#navigation-toggle").getAttribute("aria-expanded"),
     "false",
   );
+  // Controls stay under the pointer and retain keyboard focus as state changes.
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await visit("calendar");
+    const date = page.getByRole("button", { name: "2026-11-01", exact: true });
+    await date.click();
+    assert.ok(
+      await date.evaluate((e) => document.activeElement === e),
+      "Calendar selection must retain focus",
+    );
+    await page.keyboard.press("Tab");
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.getAttribute("aria-label"),
+      ),
+      "2026-11-02",
+    );
+    await visit("disclosure");
+    const trigger = page.locator("summary");
+    await trigger.scrollIntoViewIfNeeded();
+    const closed = await trigger.boundingBox();
+    await trigger.click();
+    const opened = await trigger.boundingBox();
+    assert.ok(
+      Math.abs(opened.y - closed.y) < 1,
+      "Disclosure trigger must stay in place",
+    );
+    await visit("drag");
+    const target = page.locator(".drop-zone");
+    await page
+      .getByRole("button", { name: "Move to archive", exact: true })
+      .scrollIntoViewIfNeeded();
+    const before = await target.boundingBox();
+    await page
+      .getByRole("button", { name: "Move to archive", exact: true })
+      .click();
+    const after = await target.boundingBox();
+    assert.ok(
+      Math.abs(after.y - before.y) < 1 &&
+        Math.abs(after.height - before.height) < 1,
+      "Drop target must retain its bounds",
+    );
+  }
   await page.goto(`${origin}/`);
   await page.getByRole("link", { name: "Docs", exact: true }).click();
   await page.locator("#title").waitFor();
