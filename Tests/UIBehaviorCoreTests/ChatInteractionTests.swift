@@ -73,7 +73,8 @@ final class ChatInteractionTests: XCTestCase {
     var state = StreamScrollCoordinator<String>(followsLatest: false)
     state.remember(try XCTUnwrap(ReadingAnchor(id: "row", top: -40, height: 100)))
     let viewport = BehaviorRect(width: 300, height: 400)
-    let locate = try XCTUnwrap(state.beginAnchorRestoration(in: viewport, layoutRevision: 7))
+    let locate = try XCTUnwrap(
+      state.beginAnchorRestoration(in: viewport, layoutRevision: 7, reason: .history))
     XCTAssertEqual(locate.target, .item("row", alignment: 0))
     XCTAssertTrue(state.finish(locate))
     XCTAssertTrue(state.isRestoringAnchor)
@@ -85,6 +86,7 @@ final class ChatInteractionTests: XCTestCase {
       ReadingAnchorMeasurement(anchor: fresh, viewport: viewport, layoutRevision: 7))
     let align = try XCTUnwrap(state.measureRestoration(measurement))
     XCTAssertEqual(align.target, .item("row", alignment: -0.2))
+    XCTAssertEqual(align.reason, .history)
     XCTAssertTrue(state.finish(align))
     XCTAssertFalse(state.isRestoringAnchor)
   }

@@ -67,6 +67,7 @@ public struct StreamScrollCoordinator<ID: Hashable & Sendable>: Sendable, Equata
     let anchor: ReadingAnchor<ID>
     let viewport: BehaviorRect
     let layoutRevision: UInt64
+    let reason: Reason
   }
   private var restoration: Restoration?
   public var restorationTarget: ID? { restoration?.anchor.id }
@@ -152,7 +153,8 @@ public struct StreamScrollCoordinator<ID: Hashable & Sendable>: Sendable, Equata
     guard !followsLatest, let anchor = readingAnchor,
       let request = request(.item(anchor.id, alignment: 0), reason: reason, replacingPending: true)
     else { return nil }
-    restoration = Restoration(anchor: anchor, viewport: viewport, layoutRevision: layoutRevision)
+    restoration = Restoration(
+      anchor: anchor, viewport: viewport, layoutRevision: layoutRevision, reason: reason)
     return request
   }
   @discardableResult public mutating func measureRestoration(
@@ -167,7 +169,7 @@ public struct StreamScrollCoordinator<ID: Hashable & Sendable>: Sendable, Equata
       let alignment = adjusted.alignment(in: restoration.viewport.height)
     else { return nil }
     return request(
-      .item(adjusted.id, alignment: alignment), reason: .viewport,
+      .item(adjusted.id, alignment: alignment), reason: restoration.reason,
       replacingPending: true)
   }
   /// Call with the complete set of live row IDs after deletion/filtering.

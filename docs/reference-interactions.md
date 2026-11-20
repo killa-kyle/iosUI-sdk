@@ -36,9 +36,16 @@ frames and cancels its pending frame on teardown. This is a static finding about
 that module; it does not establish chat-transcript behavior.
 
 The first general JavaScript graph exceeded the analysis tool's retention limit.
-Further inspection must select a smaller source boundary. The next comparison
-should replay a long fixture while scrolling back, expand activity during output,
-then change the keyboard/viewport on the iOS reference where available.
+A subsequent inspection parsed one isolated 64,872-byte request-input renderer
+module successfully. Its syntax was fully parsed; semantic coverage was bounded
+and dependencies were not analyzed. The module checks current request identity,
+visible/connected/non-inert content and trusted input before handling activity.
+Its ArrowUp handler lets a multiline editor retain normal editing before moving
+panel selection. These are static findings, with live behavior still unverified.
+
+The next comparison should replay a long fixture while scrolling back, expand
+activity during output, then change the keyboard/viewport on the iOS reference
+where available.
 
 ## Native acceptance checklist
 

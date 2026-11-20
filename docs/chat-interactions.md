@@ -85,7 +85,7 @@ window, size or posture. Native focus and keyboard animation remain platform-own
 
 `KeyboardViewportSnapshot.bottomInset` covers a full-width docked keyboard's
 intersection with that container. A viewport already shortened by the system
-has no extra overlap to add. Floating keyboards remain rectangles; use
+has no extra overlap to add. Set `followsUndockedKeyboard: true` to track floating keyboards as rectangles; use
 `availableRegions` or `adjustment(toReveal:)` instead of treating every keyboard
 as a bottom inset.
 

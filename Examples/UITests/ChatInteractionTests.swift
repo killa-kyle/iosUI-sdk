@@ -14,7 +14,14 @@ import XCTest
       predicate: NSPredicate(format: "label == %@", label), object: element)
     XCTAssertEqual(XCTWaiter.wait(for: [expected], timeout: 5), .completed)
   }
-  func testReadingDuringUpdatesAndHistoryInsertion() {
+  private func expectRow(_ row: XCUIElement, y: CGFloat) async {
+    for _ in 0..<50 {
+      if row.exists && abs(row.frame.minY - y) <= 2 { return }
+      try? await Task.sleep(for: .milliseconds(100))
+    }
+    XCTFail("The reading row did not retain its vertical offset after layout settled")
+  }
+  func testReadingDuringUpdatesAndHistoryInsertion() async {
     let app = launch()
     defer { app.terminate() }
     let transcript = app.scrollViews["chat-transcript"]
@@ -22,12 +29,20 @@ import XCTest
     expect(app.staticTexts["chat-follow-mode"], label: "Reading earlier")
     let anchor = app.staticTexts["chat-anchor"].label
     XCTAssertNotEqual(anchor, "Anchor: none")
+    let rowID = String(anchor.dropFirst("Anchor: ".count))
+    let row = app.staticTexts["chat-" + rowID]
+    XCTAssertTrue(row.exists)
+    let originalY = row.frame.minY
     app.buttons["chat-append"].tap()
     app.buttons["chat-append"].tap()
     expect(app.staticTexts["chat-follow-mode"], label: "Reading earlier")
     expect(app.staticTexts["chat-anchor"], label: anchor)
+    XCTAssertEqual(row.frame.minY, originalY, accuracy: 2)
     app.buttons["chat-load-earlier"].tap()
     expect(app.staticTexts["chat-anchor"], label: anchor)
+    await expectRow(row, y: originalY)
+    app.buttons["chat-layout-expanded"].tap()
+    await expectRow(row, y: originalY)
     app.buttons["chat-jump-latest"].tap()
     expect(app.staticTexts["chat-follow-mode"], label: "Following latest")
   }
