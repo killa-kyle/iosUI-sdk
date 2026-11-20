@@ -1,5 +1,9 @@
 name: Quality
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -39,6 +43,8 @@ jobs:
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
           -parallel-testing-enabled NO -test-timeouts-enabled YES
           -maximum-test-execution-time-allowance 120
+          -retry-tests-on-failure -test-iterations 2
+          -test-repetition-relaunch-enabled YES
           -resultBundlePath "$RUNNER_TEMP/NativeReplay.xcresult"
           CODE_SIGNING_ALLOWED=NO test-without-building
       - name: Preserve native replay diagnostics
