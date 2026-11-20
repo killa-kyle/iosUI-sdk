@@ -6,7 +6,7 @@ import UIKit
 
 enum ExtendedStory: String, CaseIterable, Identifiable {
   case calendar, color, tree, grid, drag, resize, crop, carousel, editor, menu, overlays,
-    measurements, agent
+    measurements, agent, chat
   var id: String { rawValue }
   var title: String {
     switch self {
@@ -23,6 +23,7 @@ enum ExtendedStory: String, CaseIterable, Identifiable {
     case .overlays: "Nested overlays"
     case .measurements: "Native measurements"
     case .agent: "Agent observe & act"
+    case .chat: "Streaming chat"
     }
   }
 }
@@ -73,17 +74,20 @@ struct BehaviorDemo: View {
   @AccessibilityFocusState private var restored: String?
   @State private var measurement = BehaviorRect(width: 0, height: 0)
   var body: some View {
-    if ProcessInfo.processInfo.arguments.contains("--showcase") {
+    if story == .chat {
+      ChatInteractionCatalog().navigationTitle(story.title)
+    } else if ProcessInfo.processInfo.arguments.contains("--showcase") {
       CatalogShowcase(title: story.title) { demo }
     } else {
       ScrollView {
-      VStack(alignment: .leading, spacing: 20) { demo }
-        .padding().frame(maxWidth: 600)
+        VStack(alignment: .leading, spacing: 20) { demo }
+          .padding().frame(maxWidth: 600)
       }.navigationTitle(story.title)
     }
   }
   @ViewBuilder private var demo: some View {
     switch story {
+    case .chat: EmptyView()
     case .calendar:
       BehaviorCalendar($calendar)
       Text(
@@ -110,7 +114,8 @@ struct BehaviorDemo: View {
       Button("Extend to R3 C4") { grid.focus(GridCell(2, 3), extending: true) }
       Text("Selected cells: \(grid.selected.count)").accessibilityIdentifier("grid-result")
     case .drag:
-      Text("Drag me").padding().background(CatalogPalette.accent.opacity(0.1)).accessibilityIdentifier("drag-card")
+      Text("Drag me").padding().background(CatalogPalette.accent.opacity(0.1))
+        .accessibilityIdentifier("drag-card")
         .behaviorDraggable(DragPayload(id: "card", type: "card"), session: $drag)
       Text("Archive drop zone").frame(maxWidth: .infinity, minHeight: 100).border(.secondary)
         .accessibilityIdentifier("drop-archive")

@@ -11,9 +11,16 @@ let package = Package(
   ],
   targets: [
     .target(name: "UIBehaviorCore"),
+    .target(name: "UIBehaviorNative", dependencies: ["UIBehaviorCore"]),
     .target(name: "UIBehaviorTextKit", dependencies: ["UIBehaviorCore"]),
-    .target(name: "UIBehaviorSwiftUI", dependencies: ["UIBehaviorCore", "UIBehaviorTextKit"]),
-    .target(name: "UIBehaviorUIKit", dependencies: ["UIBehaviorCore", "UIBehaviorSwiftUI", "UIBehaviorTextKit"]),
+    .target(
+      name: "UIBehaviorSwiftUI",
+      dependencies: ["UIBehaviorCore", "UIBehaviorTextKit", "UIBehaviorNative"]),
+    .target(
+      name: "UIBehaviorUIKit",
+      dependencies: [
+        "UIBehaviorCore", "UIBehaviorSwiftUI", "UIBehaviorTextKit", "UIBehaviorNative",
+      ]),
     .testTarget(name: "UIBehaviorCoreTests", dependencies: ["UIBehaviorCore"]),
   ]
 )

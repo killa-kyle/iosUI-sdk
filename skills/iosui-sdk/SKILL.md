@@ -42,6 +42,20 @@ local admitted drag IDs, pixel-based crop with quarter-turn rotation, native
 TextKit editing and native presentation. This is not a DOM compatibility layer
 or an exhaustive port of every web component recipe.
 
+## Streaming, activity and native viewports
+
+For chat or continuously updating content, read docs/chat-interactions.md when
+present in the resolved revision. StreamScrollCoordinator separates following
+from reading, coalesces requests and fences stale work. Execute requests through
+native scrolling; measure fresh row heights for restoration after reflow. Use
+ReadingAnchorTracker to avoid publishing geometry on every scrolled pixel.
+ActivityDisclosureStore preserves explicit choices across revisions; increment
+activity revisions independently of content chunks and prune against all live IDs.
+BehaviorKeyboardObserver/BehaviorKeyboardGuideView use the native keyboard guide
+in container-local points. Avoid adding overlap twice to an already adjusted
+viewport. Pass explicit host posture/reserved geometry; do not infer a hinge from
+width. Keep drafts, queued admission and cancellation confirmation host-owned.
+
 ## Validate the app, not only the model
 
 Test meaningful transition boundaries in Core. Build the actual iOS target and

@@ -51,3 +51,13 @@ not a cross-platform event/cancellation kernel. Range selection and toggle-all a
 available through core methods; the initial choice adapters do not map Shift/Cmd
 shortcuts to those methods. UIKit logical focus methods do not claim to move the
 hardware focus engine; use native focus APIs for custom hardware-keyboard routes.
+
+## Chat and viewport behavior
+
+The next package release adds `StreamScrollCoordinator`, `ReadingAnchorMemory`,
+`ReadingAnchorTracker`, `ActivityDisclosureStore`, `KeyboardViewport` and native
+scroll-phase/keyboard adapters. See [streaming chat](chat-interactions.md) for
+contracts and the native catalog. These are independent native additions,
+informed by observed interactions and Apple's native layout APIs; they do not
+import application code or implement a model provider. See
+[reference evidence](reference-interactions.md).
