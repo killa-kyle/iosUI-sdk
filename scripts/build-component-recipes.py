@@ -31,7 +31,7 @@ for key, title, name, adapter, explanation, usage in recipes:
             highlighted = highlighted.replace(token, f'<mark>{token}</mark>')
     parts.append(f'''<article class="recipe" id="{key}"><p class="eyebrow">{escape(adapter)}</p><h2>{title}</h2><p>{explanation}</p>
 <div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>{name}.swift</span><a href="{name}.swift" download>Copy the file ↗</a></div><pre><code>{highlighted}</code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>{escape(usage)}</code></pre></div></div>
-<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="{key}.png" alt="Native SwiftUI {title.lower()}, built from the source beside it" width="1320" height="2868" loading="{'eager' if key=='confirmation' else 'lazy'}"><p>Built from this Swift file with the package’s native adapters.</p></figure></div></article>''')
+<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="{key}.png" alt="Native SwiftUI {title.lower()}, captured directly from the running component" width="1320" height="980" loading="{'eager' if key=='confirmation' else 'lazy'}"><p>A direct capture of the running component. Full-screen evidence is retained in the native test report.</p></figure></div></article>''')
     if args.check:
         assert (out / f'{name}.swift').read_text() == source, f'Stale published source: {name}'
         assert (out / f'{key}.png').is_file(), f'Missing native capture: {key}'

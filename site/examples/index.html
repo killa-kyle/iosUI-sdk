@@ -30,6 +30,8 @@ struct DeleteProjectButton: View {
             }.buttonStyle(.borderedProminent).tint(.red)
           }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(&quot;confirmation-content&quot;)
         .padding(28)
         .presentationDetents([.height(300)])
       }
@@ -38,7 +40,7 @@ struct DeleteProjectButton: View {
 </code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>DeleteProjectButton(project: &quot;Weekend project&quot;) {
   deleteProject()
 }</code></pre></div></div>
-<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="confirmation.png" alt="Native SwiftUI a confirmation sheet, built from the source beside it" width="1320" height="2868" loading="eager"><p>Built from this Swift file with the package’s native adapters.</p></figure></div></article><article class="recipe" id="selection"><p class="eyebrow">Selection + BehaviorChoiceList</p><h2>A plan picker</h2><p>The adapter supplies native buttons, selection, keyboard focus and typeahead. The row closure supplies the cards you see.</p>
+<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="confirmation.png" alt="Native SwiftUI a confirmation sheet, captured directly from the running component" width="1320" height="980" loading="eager"><p>A direct capture of the running component. Full-screen evidence is retained in the native test report.</p></figure></div></article><article class="recipe" id="selection"><p class="eyebrow">Selection + BehaviorChoiceList</p><h2>A plan picker</h2><p>The adapter supplies native buttons, selection, keyboard focus and typeahead. The row closure supplies the cards you see.</p>
 <div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>PlanPicker.swift</span><a href="PlanPicker.swift" download>Copy the file ↗</a></div><pre><code>import SwiftUI
 import UIBehaviorCore
 import UIBehaviorSwiftUI
@@ -79,7 +81,7 @@ struct SettingsView: View {
     PlanPicker(selection: $plan)
   }
 }</code></pre></div></div>
-<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="selection.png" alt="Native SwiftUI a plan picker, built from the source beside it" width="1320" height="2868" loading="lazy"><p>Built from this Swift file with the package’s native adapters.</p></figure></div></article><article class="recipe" id="activity"><p class="eyebrow">Disclosure + BehaviorDisclosure</p><h2>Expandable tool activity</h2><p>Disclosure stores whether the details are open. The adapter binds it to a native DisclosureGroup. You supply both views.</p>
+<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="selection.png" alt="Native SwiftUI a plan picker, captured directly from the running component" width="1320" height="980" loading="lazy"><p>A direct capture of the running component. Full-screen evidence is retained in the native test report.</p></figure></div></article><article class="recipe" id="activity"><p class="eyebrow">Disclosure + BehaviorDisclosure</p><h2>Expandable tool activity</h2><p>Disclosure stores whether the details are open. The adapter binds it to a native DisclosureGroup. You supply both views.</p>
 <div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>ToolActivity.swift</span><a href="ToolActivity.swift" download>Copy the file ↗</a></div><pre><code>import SwiftUI
 import UIBehaviorCore
 import UIBehaviorSwiftUI
@@ -104,4 +106,4 @@ struct ToolActivity: View {
   }
 }
 </code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>ToolActivity()</code></pre></div></div>
-<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="activity.png" alt="Native SwiftUI expandable tool activity, built from the source beside it" width="1320" height="2868" loading="lazy"><p>Built from this Swift file with the package’s native adapters.</p></figure></div></article><div class="recipe-foot">Requires iosUI-sdk 0.3.0 and iOS 17+. Add <code>UIBehaviorCore</code> and <code>UIBehaviorSwiftUI</code> to your target. <a href="../#install">Install the package</a> · <a href="https://github.com/killa-kyle/iosUI-sdk/tree/main/Examples/Catalog/Recipes">Browse the compiled sources</a>.<br>These examples use disposable local state. The confirmation callback belongs to your app.</div></main></body></html>
+<figure class="recipe-result"><div class="recipe-label">ACTUAL iOS SIMULATOR</div><img src="activity.png" alt="Native SwiftUI expandable tool activity, captured directly from the running component" width="1320" height="980" loading="lazy"><p>A direct capture of the running component. Full-screen evidence is retained in the native test report.</p></figure></div></article><div class="recipe-foot">Requires iosUI-sdk 0.3.0 and iOS 17+. Add <code>UIBehaviorCore</code> and <code>UIBehaviorSwiftUI</code> to your target. <a href="../#install">Install the package</a> · <a href="https://github.com/killa-kyle/iosUI-sdk/tree/main/Examples/Catalog/Recipes">Browse the compiled sources</a>.<br>These examples use disposable local state. The confirmation callback belongs to your app.</div></main></body></html>

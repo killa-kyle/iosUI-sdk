@@ -45,6 +45,8 @@ struct DeleteProjectButton: View {
             }.buttonStyle(.borderedProminent).tint(.red)
           }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("confirmation-content")
         .padding(28)
         .presentationDetents([.height(300)])
       }

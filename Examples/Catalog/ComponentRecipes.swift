@@ -47,10 +47,12 @@ struct ComponentRecipeDemo: View {
       case .selection:
         Text("Choose your workspace").font(.title3.bold())
         PlanPicker(selection: $selection)
+          .accessibilityElement(children: .contain).accessibilityIdentifier("recipe-component")
         Text("Selected: " + selection.selected.sorted().joined(separator: ", "))
           .font(.caption).accessibilityIdentifier("recipe-result")
       case .activity:
         ToolActivity()
+          .accessibilityElement(children: .contain).accessibilityIdentifier("recipe-component")
       }
       Text("This example runs locally. No account or server needed.")
         .font(.caption).foregroundStyle(.secondary)
