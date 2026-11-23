@@ -146,3 +146,23 @@
     padding: 0 18px;
   }
 }
+
+.figure-motion {
+  margin: 0 18px 18px;
+}
+
+.full-source summary {
+  padding: 18px 22px;
+  cursor: pointer;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.recipe-result {
+  position: sticky;
+  top: 24px;
+}
+@media (max-width: 700px) {
+  .recipe-result {
+    position: static;
+  }
+}

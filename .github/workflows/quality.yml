@@ -66,7 +66,7 @@ jobs:
         run: python3 scripts/build-component-recipes.py --check
       - name: Check website scripts
         run: |
-          for source in site/demo.js site/docs/*.js; do node --check "$source"; done
+          for source in site/demo.js site/motion.js scripts/render-hero-film.mjs site/docs/*.js; do node --check "$source"; done
       - name: Install isolated browser tooling
         run: |
           npm install --prefix "$RUNNER_TEMP/docs-browser" --no-package-lock --ignore-scripts playwright@1.63.0

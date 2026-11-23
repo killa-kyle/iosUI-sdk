@@ -1,0 +1,39 @@
+{
+  "source": "Three real native recipe recordings, composed with authored code-window and typography animation",
+  "duration": 30,
+  "pixels": [
+    1280,
+    720
+  ],
+  "frames": 900,
+  "bytes": 1871550,
+  "sha256": "0365bd476463f97a6c25e0499b127b12c54eb7bdb7bcea9de75e98c712fb6d54",
+  "posterSHA256": "ca1d074b819713dab8e75e4389120b18af3826d0823c3f13493ca697aff31a60",
+  "nativeMotionReceiptSHA256": "4b04883b2f266b427379f00cb62e77e2500602d536fba0afbf61bba6ab4ae33a",
+  "graphicsSourceSHA256": "9343621dfbdfccc591dc738c43d758660ebfb0ea4bffdf8071c0656a836a4ad7",
+  "rendererSourceSHA256": "01843e8508e15170aa874240c5bc52731a97314a489cf99457a181ecb36d9f20",
+  "processing": "Browser-rendered graphic motion with actual native MP4 playback; crop/trim/resize/time scaling only for native footage; H.264 silent 30 fps fast-start output. No recreated native control animations.",
+  "chapters": [
+    {
+      "component": "MorphingPlanPicker",
+      "seconds": [
+        0,
+        10
+      ]
+    },
+    {
+      "component": "MediaWorkspace",
+      "seconds": [
+        10,
+        20
+      ]
+    },
+    {
+      "component": "ChatInteractionCatalog",
+      "seconds": [
+        20,
+        30
+      ]
+    }
+  ]
+}

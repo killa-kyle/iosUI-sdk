@@ -2,16 +2,41 @@
 
 **Interaction state for SwiftUI and UIKit.**
 
-An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/vercel-labs/ui)'s behavior-driven approach for SwiftUI and UIKit. Compose interaction rules instead of copying custom controls between apps. No JavaScript runtime, network services, or third-party package dependencies.
+An independent, Apache-2.0 native adaptation of [UI SDK](https://github.com/vercel-labs/ui)'s behavior-driven approach for SwiftUI and UIKit. Build SwiftUI and UIKit components with shared interaction state. The package has no third-party dependencies.
 
-The package includes foundational and extended native behavior families. It does not claim feature-complete parity with every web recipe. See [coverage and differences](docs/coverage.md).
+The package covers selection, disclosure, gestures, editing and chat interactions. See [coverage and differences](docs/coverage.md).
 
 [Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
+
+Version 0.4.0 adds animated choice layouts and complete component examples.
+
+## Coordinated interactions
+
+[See the code and native recordings](https://killa-kyle.github.io/iosUI-sdk/examples/).
+
+- **Morphing controls:** cards become segments, then chips. The same `Selection`
+  and `BehaviorChoiceList` keep the selected value, native buttons and keyboard input.
+- **Streaming conversation:** follow output, scroll back to read, load history,
+  change the layout and type a draft. Reading anchors, activity expansion and
+  keyboard geometry coordinate with the host's scrolling and stream tasks.
+- **Media workspace:** crop a cover, open a nested publishing sheet, choose a
+  destination and return to the crop. Cancel discards the crop draft; Publish
+  exports and commits it, then closes both sheets.
+
+![Cards morph into segments and chips while preserving the selected plan](site/examples/morph.gif)
+
+![Crop a cover and publish through nested native sheets](site/examples/workspace.gif)
+
+![Read during streaming, change the viewport and type with the native keyboard](site/examples/conversation.gif)
+
+Each example includes the complete compiling SwiftUI component. App data,
+transport and edit transactions stay with the host. SwiftUI and UIKit adapters
+use the same Core models; this example set is recorded in SwiftUI.
 
 ## Build a component with a behavior
 
 Import a behavior, bind your state, and write your SwiftUI view.
-[See three complete components beside their native iOS screenshots](https://killa-kyle.github.io/iosUI-sdk/examples/).
+[See complete components beside their native iOS recordings](https://killa-kyle.github.io/iosUI-sdk/examples/).
 
 This confirmation button uses `Disclosure` for open/dismiss state and
 `behaviorSheet` for native presentation. The view supplies its own content and actions.
@@ -62,7 +87,7 @@ DeleteProjectButton(project: "Weekend project") {
 }
 ```
 
-![The confirmation sheet running in an actual iOS simulator](site/examples/confirmation.png)
+![Open, cancel and confirm the real native confirmation sheet](site/examples/confirmation.gif)
 
 Two more complete recipes:
 
@@ -71,6 +96,16 @@ Two more complete recipes:
 | Plan picker              | `Selection` + `BehaviorChoiceList`  | [PlanPicker.swift](Examples/Catalog/Recipes/PlanPicker.swift)     |
 | Expandable tool activity | `Disclosure` + `BehaviorDisclosure` | [ToolActivity.swift](Examples/Catalog/Recipes/ToolActivity.swift) |
 
+**Plan selection · BehaviorChoiceList**
+
+![Change the selected plan using the real native adapter](site/examples/selection.gif)
+
+**Expandable tool activity · BehaviorDisclosure**
+
+![Collapse and reopen the real native tool activity](site/examples/activity.gif)
+
+[Watch the motion hero video](https://killa-kyle.github.io/iosUI-sdk/motion/hero.mp4).
+
 Each example compiles in the native catalog. The published code is generated from
 these Swift files, so the example and the running component share the same source.
 
@@ -78,7 +113,7 @@ these Swift files, so the example and the running component share the same sourc
 
 Real iOS simulator recordings of the package's SwiftUI adapters, styled with the
 same palette as the documentation site. Drag/drop and crop retain actual gesture
-motion; these are not browser previews or animated mockups.
+motion.
 
 **Calendar ranges**
 
@@ -128,7 +163,7 @@ https://github.com/killa-kyle/iosUI-sdk
 Or add this to Package.swift:
 
 ```swift
-.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.3.0")
+.package(url: "https://github.com/killa-kyle/iosUI-sdk.git", from: "0.4.0")
 ```
 
 Choose the products your target needs:
@@ -168,7 +203,7 @@ struct FrameworkPicker: View {
 }
 ```
 
-Selection, disabled options, hardware-keyboard navigation and typeahead compose in one adapter. You supply the row design. Focus does not implicitly select an option. Bindings keep state in the app; no singleton or provider is required.
+Selection, disabled options, hardware-keyboard navigation and typeahead compose in one adapter. You supply the row design. Keyboard focus and selection update independently. Bindings keep state in the app.
 
 ## Use UIKit directly
 
@@ -195,7 +230,7 @@ UIKit also includes `BehaviorValueBinding` for UISlider/UIStepper. Retain it for
 - **UIBehaviorSwiftUI**: native adapters for the behavior families, including calendar, color picker, tree/grid, drag/drop, resize handles, cropper, carousel, rich text, menus, nested sheets and point-space measurement.
 - **UIBehaviorUIKit**: native table choice/value bindings, TextKit editor, oriented UIImage crop export, measurement and UIKit hosting/factories for the shared production adapters.
 
-These are behavior building blocks, not a complete styled design system. Native controls supply platform semantics. VoiceOver, keyboard and device validation are ongoing; see [validation](docs/validation.md) for what has actually run.
+The package handles interaction state. Components define their appearance, and native controls supply platform semantics. VoiceOver, keyboard and device validation are ongoing; see [validation](docs/validation.md) for what has actually run.
 
 ## Let an agent inspect and replay behaviors
 

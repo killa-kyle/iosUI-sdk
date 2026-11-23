@@ -867,3 +867,41 @@ footer p a {
 .hero h1 {
   letter-spacing: -0.035em;
 }
+
+.hero-film {
+  align-self: center;
+  min-width: 0;
+  overflow: hidden;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 20px 55px #2227220d;
+}
+.hero-film video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--paper);
+}
+.film-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding: 12px 16px;
+  font-size: 12px;
+}
+[data-motion-toggle] {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 15px;
+  color: var(--ink);
+  font-size: 12px;
+}
+.recipe-intro [data-motion-toggle] {
+  margin-bottom: 12px;
+}

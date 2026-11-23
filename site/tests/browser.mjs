@@ -28,9 +28,14 @@ const server = createServer(async (req, res) => {
     const bytes = await readFile(file);
     res.setHeader(
       "Content-Type",
-      { ".html": "text/html", ".css": "text/css", ".js": "text/javascript" }[
-        extname(file)
-      ] || "application/octet-stream",
+      {
+        ".html": "text/html",
+        ".css": "text/css",
+        ".js": "text/javascript",
+        ".png": "image/png",
+        ".gif": "image/gif",
+        ".mp4": "video/mp4",
+      }[extname(file)] || "application/octet-stream",
     );
     res.end(bytes);
   } catch {
@@ -319,11 +324,18 @@ try {
       "Drop target must retain its bounds",
     );
   }
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto(`${origin}/examples/`);
-  assert.equal(await page.locator("article.recipe").count(), 3);
+  assert.equal(await page.locator("article.recipe").count(), 6);
   for (const image of await page.locator("article.recipe img").all()) {
     await image.scrollIntoViewIfNeeded();
-    await image.evaluate((img) => img.decode());
+    await page.waitForFunction(
+      (img) =>
+        img.complete &&
+        img.naturalWidth > 0 &&
+        img.src.endsWith(img.dataset.motionSrc),
+      await image.elementHandle(),
+    );
     assert.ok(
       await image.evaluate((img) => img.complete && img.naturalWidth > 0),
       "Real native capture must load",
@@ -350,9 +362,46 @@ try {
       );
     }
   }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page
+    .getByRole("button", { name: "Play motion", exact: true })
+    .first()
+    .waitFor();
+  assert.ok(
+    (
+      await page.locator("article.recipe img").first().getAttribute("src")
+    ).endsWith("-poster.png"),
+  );
+  await page
+    .getByRole("button", { name: "Play motion", exact: true })
+    .first()
+    .click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector("article.recipe img")
+      .getAttribute("src")
+      .endsWith(".gif"),
+  );
+  await page
+    .getByRole("button", { name: "Pause motion", exact: true })
+    .first()
+    .click();
+  assert.ok(
+    (
+      await page.locator("article.recipe img").first().getAttribute("src")
+    ).endsWith("-poster.png"),
+  );
   const swift = await page.request.get(`${origin}/examples/PlanPicker.swift`);
   assert.ok((await swift.text()).includes("BehaviorChoiceList("));
   await page.goto(`${origin}/`);
+  const hero = page.locator("video[data-motion-video]");
+  assert.equal(await hero.evaluate((video) => video.paused), true);
+  await page.getByRole("button", { name: "Play motion", exact: true }).click();
+  await page.waitForFunction(
+    () => document.querySelector("video[data-motion-video]").currentTime > 0.1,
+  );
+  await page.getByRole("button", { name: "Pause motion", exact: true }).click();
+  assert.equal(await hero.evaluate((video) => video.paused), true);
   await page.getByRole("link", { name: "Docs", exact: true }).click();
   await page.locator("#title").waitFor();
   assert.deepEqual(errors, []);

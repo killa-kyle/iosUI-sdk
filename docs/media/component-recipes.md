@@ -1,6 +1,6 @@
 # Component recipe captures
 
-The examples at `site/examples/` use the three actual SwiftUI components in
+The examples at `site/examples/` use compiled SwiftUI components in
 `Examples/Catalog/Recipes`. `ComponentRecipeTests` opens a native confirmation
 sheet, selects a plan and collapses/reopens tool activity. It attaches both the
 component's own `XCUIElement.screenshot()` and a full-screen checkpoint.
@@ -28,3 +28,29 @@ The capture script verifies committed source bytes before copying the native PNG
 It applies no image processing. `site/examples/capture.json` records runtime,
 test identifiers, source hashes and image hashes. The website check rejects stale
 source listings, stale captures and changed image bytes.
+
+## Motion examples and hero
+
+`RecipeMotionCaptureTests`, run only with the ReadmeCapture scheme, records native
+morphing choice layouts, crop publishing, streaming chat, selection changes, activity expansion and sheet presentation. The `--motion-capture`
+fixture gives activity a stable recording canvas so surrounding demo copy stays
+outside the frame while the real component animates.
+
+The existing Native example recordings workflow accepts `suite: recipes` for a
+single six-test recording job. Its artifact includes actual screen recordings,
+checkpoints, measured native bounds, a passing summary and source revision.
+
+```sh
+python3 scripts/render-recipe-motion.py "$RECIPE_EXPORTS" --staging "$RECIPE_STAGING"
+PLAYWRIGHT_MODULE="$RECIPE_PLAYWRIGHT_MODULE" node scripts/render-hero-film.mjs "$RECIPE_STAGING"
+python3 scripts/build-component-recipes.py
+python3 scripts/build-component-recipes.py --check
+```
+
+The GIF encoder matches real checkpoint pixels, retains intermediate motion,
+crops using native measurements, and encodes 12 fps loops. Hero chapters compose
+real native clips with authored typography/code animation and explicitly excerpted
+component source. The hero uses silent H.264, 30 seconds, 1280×720, 30 fps. Source and
+asset hashes are recorded in `site/examples/motion.json` and `site/motion/capture.json`.
+Motion respects the browser's reduced-motion preference and has explicit play/pause
+controls. Static posters have matching GIF aspect ratios to keep layout stable.
