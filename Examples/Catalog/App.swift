@@ -7,7 +7,12 @@ import UIBehaviorUIKit
 struct CatalogApp: App {
   var body: some Scene {
     WindowGroup {
-      if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "--story"),
+      if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "--recipe"),
+        ProcessInfo.processInfo.arguments.indices.contains(index + 1),
+        let recipe = ComponentRecipe(rawValue: ProcessInfo.processInfo.arguments[index + 1])
+      {
+        NavigationStack { ComponentRecipeDemo(recipe: recipe) }
+      } else if let index = ProcessInfo.processInfo.arguments.firstIndex(of: "--story"),
         ProcessInfo.processInfo.arguments.indices.contains(index + 1),
         let story = ExtendedStory(rawValue: ProcessInfo.processInfo.arguments[index + 1])
       {
@@ -29,6 +34,9 @@ struct Catalog: View {
   var body: some View {
     NavigationStack {
       Form {
+        Section("Build a component") {
+          NavigationLink("Component recipes") { ComponentRecipes() }
+        }
         Section("Selection + focus + typeahead") {
           BehaviorChoiceList(
             ["SwiftUI", "UIKit", "Unavailable"], selection: $selection,
