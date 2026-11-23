@@ -9,12 +9,12 @@
   FBConfiguration.sharedInstance.currentDisplayId = @([(env[@"REFERENCE_DISPLAY"] ?: @"2") longLongValue]);
   NSString *json = env[@"REFERENCE_PLAN"] ?: @"[]";
   NSError *error = nil;
-  NSArray *plan = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-  XCTAssertNil(error);
-  XCTAssertTrue([plan isKindOfClass:NSArray.class]);
+  NSArray *plan = [NSJSONSerialization JSONObjectWithData:([json dataUsingEncoding:NSUTF8StringEncoding] ?: NSData.data) options:NSJSONReadingFragmentsAllowed error:&error];
+  XCTAssertNil(error, @"Native reference operation failed");
+  XCTAssertTrue([plan isKindOfClass:NSArray.class], @"Reference plan must be an array");
   XCUIApplication *app = [[XCUIApplication alloc] initWithBundleIdentifier:bundle];
   [app activate];
-  XCTAssertTrue([app waitForState:XCUIApplicationStateRunningForeground timeout:15]);
+  XCTAssertTrue([app waitForState:XCUIApplicationStateRunningForeground timeout:15], @"Reference app must be foreground");
   NSUInteger index = 0;
   for (NSDictionary *step in plan) {
     NSString *action = step[@"action"];
@@ -30,7 +30,7 @@
       XCUIElement *element = matches.firstObject;
       if ([action isEqualToString:@"hold"]) [element pressForDuration:1.0]; else [element tap];
     } else if ([action isEqualToString:@"type"]) {
-      [app typeText:step[@"text"]];
+      [app typeText:step[@"text"] ?: @""];
     } else if ([action isEqualToString:@"point"]) {
       NSArray *point = step[@"at"];
       XCUICoordinate *coordinate = [[app coordinateWithNormalizedOffset:CGVectorMake(0, 0)] coordinateWithOffset:CGVectorMake([point[0] doubleValue], [point[1] doubleValue])];
@@ -50,7 +50,7 @@
     tree.lifetime = XCTAttachmentLifetimeKeepAlways;
     [self addAttachment:tree];
     XCUIScreen *screen = [NSClassFromString(@"FBScreen") currentScreenWithError:&error];
-    XCTAssertNil(error);
+    XCTAssertNil(error, @"Native reference operation failed");
     XCTAttachment *pixels = [XCTAttachment attachmentWithScreenshot:screen.screenshot];
     pixels.name = name;
     pixels.lifetime = XCTAttachmentLifetimeKeepAlways;
