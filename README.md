@@ -8,6 +8,70 @@ The package includes foundational and extended native behavior families. It does
 
 [Browse the documentation and interactive previews](https://killa-kyle.github.io/iosUI-sdk/docs/).
 
+## Build a component with a behavior
+
+Import a behavior, bind your state, and write your SwiftUI view.
+[See three complete components beside their native iOS screenshots](https://killa-kyle.github.io/iosUI-sdk/examples/).
+
+This confirmation button uses `Disclosure` for open/dismiss state and
+`behaviorSheet` for native presentation. The view supplies its own content and actions.
+
+```swift
+import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+struct DeleteProjectButton: View {
+  let project: String
+  let onDelete: () -> Void
+  @State private var confirmation = Disclosure()
+
+  var body: some View {
+    Button("Delete project", role: .destructive) { confirmation.open() }
+      .buttonStyle(.bordered)
+      .behaviorSheet($confirmation) {
+        VStack(alignment: .leading, spacing: 20) {
+          Image(systemName: "trash").font(.largeTitle).foregroundStyle(.red)
+          Text("Delete \(project)?").font(.title2.bold())
+          Text("The project and its files will be permanently deleted.")
+            .foregroundStyle(.secondary)
+          HStack {
+            Button("Cancel") { confirmation.dismiss(.action) }
+              .buttonStyle(.bordered)
+            Spacer()
+            Button("Delete", role: .destructive) {
+              confirmation.dismiss(.action)
+              onDelete()
+            }.buttonStyle(.borderedProminent).tint(.red)
+          }
+        }
+        .padding(28)
+        .presentationDetents([.height(300)])
+      }
+  }
+}
+```
+
+Use it in your app:
+
+```swift
+DeleteProjectButton(project: "Weekend project") {
+  deleteProject()
+}
+```
+
+![The confirmation sheet running in an actual iOS simulator](site/examples/confirmation.png)
+
+Two more complete recipes:
+
+| Component | Behavior adapter | Source |
+| --- | --- | --- |
+| Plan picker | `Selection` + `BehaviorChoiceList` | [PlanPicker.swift](Examples/Catalog/Recipes/PlanPicker.swift) |
+| Expandable tool activity | `Disclosure` + `BehaviorDisclosure` | [ToolActivity.swift](Examples/Catalog/Recipes/ToolActivity.swift) |
+
+Each example compiles in the native catalog. The published code is generated from
+these Swift files, so the example and the running component share the same source.
+
 ## Native examples
 
 Real iOS simulator recordings of the package's SwiftUI adapters, styled with the
