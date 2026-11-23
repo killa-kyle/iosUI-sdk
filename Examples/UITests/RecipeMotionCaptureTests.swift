@@ -5,7 +5,7 @@ import XCTest
   private func launch(_ recipe: String) -> XCUIApplication {
     continueAfterFailure = false
     let app = XCUIApplication()
-    app.launchArguments = ["--recipe", recipe, "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+    app.launchArguments = ["--recipe", recipe, "--motion-capture", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
     app.launch()
     return app
   }
@@ -86,6 +86,7 @@ import XCTest
     hold()
     title.tap()
     XCTAssertTrue(app.staticTexts["Package.swift"].isHittable)
+    checkpoint("MOTION-reopened")
     hold()
     title.tap()
     XCTAssertFalse(app.staticTexts["Package.swift"].exists)

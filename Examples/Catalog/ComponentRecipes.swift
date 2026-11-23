@@ -52,6 +52,9 @@ struct ComponentRecipeDemo: View {
           .font(.caption).accessibilityIdentifier("recipe-result")
       case .activity:
         ToolActivity()
+          .frame(
+            minHeight: ProcessInfo.processInfo.arguments.contains("--motion-capture") ? 200 : nil,
+            alignment: .top)
           .accessibilityElement(children: .contain).accessibilityIdentifier("recipe-component")
       }
       Text("This example runs locally. No account or server needed.")
