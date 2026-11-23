@@ -78,4 +78,28 @@ import XCTest
     capture("recipe-morph", component: app.otherElements["morph-component"])
   }
 
+  func testCropTransactionAndNestedPublish() {
+    let app = launch("workspace")
+    XCTAssertTrue(app.buttons["Edit cover"].waitForExistence(timeout: 8))
+    app.buttons["Edit cover"].tap()
+    app.buttons["Rotate"].tap()
+    XCTAssertEqual(app.staticTexts["media-draft"].label, "Draft: 90°")
+    app.buttons["Cancel edit"].tap()
+    XCTAssertEqual(app.staticTexts["media-saved"].label, "Saved rotation: 0°")
+    app.buttons["Edit cover"].tap()
+    XCTAssertEqual(app.staticTexts["media-draft"].label, "Draft: 0°")
+    app.buttons["Rotate"].tap()
+    app.buttons["Continue to publish"].tap()
+    XCTAssertTrue(app.textFields["Caption"].waitForExistence(timeout: 5))
+    app.buttons["Portfolio"].tap()
+    app.buttons["Back to crop"].tap()
+    XCTAssertEqual(app.staticTexts["media-draft"].label, "Draft: 90°")
+    app.buttons["Continue to publish"].tap()
+    XCTAssertTrue(app.buttons["Portfolio"].isSelected)
+    app.buttons["Publish cover"].tap()
+    XCTAssertTrue(app.staticTexts["media-published"].waitForExistence(timeout: 5))
+    XCTAssertEqual(app.staticTexts["media-saved"].label, "Saved rotation: 90°")
+    XCTAssertEqual(app.staticTexts["media-published"].label, "Published to Portfolio")
+  }
+
 }

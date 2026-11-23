@@ -2,10 +2,12 @@ import SwiftUI
 import UIBehaviorCore
 
 enum ComponentRecipe: String, CaseIterable, Identifiable {
-  case confirmation, selection, activity, morph
+  case confirmation, selection, activity, morph, workspace, conversation
   var id: String { rawValue }
   var title: String {
     switch self {
+    case .workspace: "Crop, review and publish"
+    case .conversation: "Streaming conversation"
     case .morph: "One behavior, three components"
     case .confirmation: "A confirmation sheet"
     case .selection: "A plan picker"
@@ -14,6 +16,8 @@ enum ComponentRecipe: String, CaseIterable, Identifiable {
   }
   var adapter: String {
     switch self {
+    case .workspace: "CropSelection + OverlayStack + Selection"
+    case .conversation: "StreamScrollCoordinator + ActivityDisclosureStore + KeyboardViewport"
     case .morph: "Selection + BehaviorChoiceList"
     case .confirmation: "Disclosure + behaviorSheet"
     case .selection: "Selection + BehaviorChoiceList"
@@ -39,6 +43,10 @@ struct ComponentRecipeDemo: View {
     CatalogShowcase(title: recipe.title) {
       Text(recipe.adapter).font(.caption.monospaced()).foregroundStyle(CatalogPalette.accent)
       switch recipe {
+      case .conversation:
+        ChatInteractionCatalog().frame(height: 660)
+      case .workspace:
+        MediaWorkspace()
       case .morph:
         MorphingPlanPicker()
       case .confirmation:
