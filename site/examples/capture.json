@@ -1,0 +1,53 @@
+{
+  "sourceRevision": "c70d29f2987aabc02f8fe6db813d6ca4bb9896e6",
+  "testedCheckout": "ce93c39a266de0b0d37a295186c550fd5ccd56c1",
+  "run": "https://github.com/killa-kyle/iosUI-sdk/actions/runs/45186601003",
+  "capture": "Unmodified XCUIElement.screenshot() from actual native SwiftUI components. Full-screen checkpoints are also attached to the test report.",
+  "runtime": [
+    {
+      "architecture": "arm64",
+      "deviceId": "27012C89-9706-4CDE-88BB-4B380B6C743A",
+      "deviceName": "iPhone 17 Pro",
+      "modelName": "iPhone 17 Pro",
+      "osBuildNumber": "23E254a",
+      "osVersion": "26.4.1",
+      "platform": "iOS Simulator"
+    }
+  ],
+  "nativeResult": "Passed",
+  "examples": {
+    "confirmation": {
+      "source": "Examples/Catalog/Recipes/DeleteProjectButton.swift",
+      "sourceSHA256": "2dc20770a96b0c13af581a2f50149aeb801e2d25661396bda05d80e1015e5654",
+      "imageSHA256": "397b131184b2374bcbbb1dce3364fceb9d22a291ecb7e1bf68582db661742c6d",
+      "test": "ComponentRecipeTests/testConfirmationCancelAndConfirm()",
+      "imagePixels": [
+        997,
+        556
+      ],
+      "bytes": 72370
+    },
+    "selection": {
+      "source": "Examples/Catalog/Recipes/PlanPicker.swift",
+      "sourceSHA256": "08225b483e505fb46d45a7396d4c9e4b6110f0e8e6e6b25b8a383e82fd352668",
+      "imageSHA256": "977a5e1babaa473d2c9ef527c744d86960741ca13bbf4555a2c2d32c0c550320",
+      "test": "ComponentRecipeTests/testPlanSelection()",
+      "imagePixels": [
+        990,
+        596
+      ],
+      "bytes": 48493
+    },
+    "activity": {
+      "source": "Examples/Catalog/Recipes/ToolActivity.swift",
+      "sourceSHA256": "ee455de116ee816c1106578c66a16c2e200298bd2edf4e3cf38d7eaf3e0aca59",
+      "imageSHA256": "bc1f87d655fe616645a562c0d394826624096993ae01ef323b9d21a31059d96d",
+      "test": "ComponentRecipeTests/testActivityDisclosure()",
+      "imagePixels": [
+        990,
+        498
+      ],
+      "bytes": 43834
+    }
+  }
+}

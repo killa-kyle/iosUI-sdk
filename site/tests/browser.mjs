@@ -319,6 +319,39 @@ try {
       "Drop target must retain its bounds",
     );
   }
+  await page.goto(`${origin}/examples/`);
+  assert.equal(await page.locator("article.recipe").count(), 3);
+  for (const image of await page.locator("article.recipe img").all()) {
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate((img) => img.decode());
+    assert.ok(
+      await image.evaluate((img) => img.complete && img.naturalWidth > 0),
+      "Real native capture must load",
+    );
+  }
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      "Recipe page must fit the viewport",
+    );
+    if (width === 390) {
+      const image = await page
+        .locator("#confirmation .recipe-result")
+        .boundingBox();
+      const source = await page
+        .locator("#confirmation .recipe-source")
+        .boundingBox();
+      assert.ok(
+        image.y < source.y,
+        "Show the native result before the complete listing on phones",
+      );
+    }
+  }
+  const swift = await page.request.get(`${origin}/examples/PlanPicker.swift`);
+  assert.ok((await swift.text()).includes("BehaviorChoiceList("));
   await page.goto(`${origin}/`);
   await page.getByRole("link", { name: "Docs", exact: true }).click();
   await page.locator("#title").waitFor();

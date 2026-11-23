@@ -66,9 +66,9 @@ DeleteProjectButton(project: "Weekend project") {
 
 Two more complete recipes:
 
-| Component | Behavior adapter | Source |
-| --- | --- | --- |
-| Plan picker | `Selection` + `BehaviorChoiceList` | [PlanPicker.swift](Examples/Catalog/Recipes/PlanPicker.swift) |
+| Component                | Behavior adapter                    | Source                                                            |
+| ------------------------ | ----------------------------------- | ----------------------------------------------------------------- |
+| Plan picker              | `Selection` + `BehaviorChoiceList`  | [PlanPicker.swift](Examples/Catalog/Recipes/PlanPicker.swift)     |
 | Expandable tool activity | `Disclosure` + `BehaviorDisclosure` | [ToolActivity.swift](Examples/Catalog/Recipes/ToolActivity.swift) |
 
 Each example compiles in the native catalog. The published code is generated from
