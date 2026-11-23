@@ -1,0 +1,670 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Build components · iosUI-sdk</title><meta name="description" content="SwiftUI examples with shared behavior, coordinated interactions and native recordings."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="recipes.css"><script src="../motion.js" defer></script></head>
+<body><a class="skip" href="#main">Skip to content</a><header><a class="wordmark" href="../">↗ iosUI-sdk</a><nav aria-label="Main"><a href="../docs/">Docs</a><a href="../#install">Install</a><a href="https://github.com/killa-kyle/iosUI-sdk">GitHub ↗</a></nav></header>
+<main id="main"><div class="recipe-intro"><p class="eyebrow">SWIFTUI COMPONENT RECIPES</p><h1>Components built<br>with shared behavior.</h1><p>Import a behavior, bind your state, and write the SwiftUI view. See state survive a layout change, a streaming update and a nested editing flow.</p><button type="button" data-motion-toggle hidden>Pause motion</button><nav class="recipe-nav" aria-label="Component examples"><a href="#morph">Morphing controls</a><a href="#conversation">Streaming conversation</a><a href="#workspace">Media workspace</a><a href="#confirmation">Confirmation sheet</a><a href="#selection">Plan picker</a><a href="#activity">Tool activity</a></nav></div>
+<article class="recipe" id="morph"><p class="eyebrow">Selection + BehaviorChoiceList + AnyLayout</p><h2>Cards, segments and chips</h2><p>Change the layout while keeping the same controls and Selection binding. SwiftUI moves the controls between cards, segments and chips. Team stays selected; choosing Studio updates the same model.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>MorphingPlanPicker.swift</span><a href="MorphingPlanPicker.swift" download>Download source ↓</a></div><pre><code>import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+struct MorphingPlanPicker: View {
+  enum Appearance: String, CaseIterable {
+    case cards = &quot;Cards&quot;, segments = &quot;Segments&quot;, chips = &quot;Chips&quot;
+  }
+  @State private var selection = <mark>Selection&lt;String&gt;</mark>(selected: [&quot;Team&quot;])
+  @State private var appearance = Appearance.cards
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  private var layout: <mark>AnyLayout</mark> {
+    appearance == .cards
+      ? <mark>AnyLayout</mark>(VStackLayout(spacing: 10))
+      : <mark>AnyLayout</mark>(HStackLayout(spacing: appearance == .segments ? 0 : 8))
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      Text(&quot;Choose a plan&quot;).font(.title2.bold())
+      <mark>BehaviorChoiceList</mark>(
+        [&quot;Personal&quot;, &quot;Team&quot;, &quot;Studio&quot;], selection: $selection,
+        layout: layout, label: { $0 }
+      ) { plan, selected in
+        HStack(spacing: 12) {
+          if appearance == .cards {
+            Image(systemName: selected ? &quot;checkmark.circle.fill&quot; : &quot;circle&quot;)
+          }
+          Text(plan).font(.system(size: appearance == .chips ? 14 : 16, weight: .semibold))
+          if appearance == .cards {
+            Spacer()
+            Text(plan == &quot;Personal&quot; ? &quot;Just you&quot; : &quot;Work together&quot;)
+              .font(.caption).foregroundStyle(.secondary)
+          }
+        }
+        .padding(.horizontal, appearance == .cards ? 18 : 14)
+        .frame(maxWidth: appearance == .chips ? nil : .infinity)
+        .frame(height: appearance == .cards ? 72 : 44)
+        .foregroundStyle(selected ? Color.white : Color.primary)
+        .background(
+          selected ? Color.indigo : Color.secondary.opacity(0.08),
+          in: RoundedRectangle(cornerRadius: appearance == .chips ? 22 : 12))
+        .padding(appearance == .segments ? 3 : 0)
+      }
+      .frame(height: 244, alignment: .top)
+      .accessibilityElement(children: .contain).accessibilityIdentifier(&quot;morph-component&quot;)
+
+      Text(&quot;Selected: &quot; + selection.selected.sorted().joined(separator: &quot;, &quot;))
+        .font(.caption.monospaced()).accessibilityIdentifier(&quot;morph-selection&quot;)
+      HStack {
+        ForEach(Appearance.allCases, id: \.self) { style in
+          Button(style.rawValue) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.7, dampingFraction: 0.8)) {
+              appearance = style
+            }
+          }
+          .buttonStyle(.bordered)
+          .accessibilityAddTraits(appearance == style ? .isSelected : [])
+        }
+      }
+      Text(&quot;Selection + <mark>BehaviorChoiceList</mark>&quot;).font(.caption.monospaced())
+    }
+  }
+}
+</code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>MorphingPlanPicker()</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="morph-poster.png" data-motion-src="morph.gif" alt="Native SwiftUI cards, segments and chips, captured directly from the running component" width="800" height="1050" loading="lazy"><p>Team stays selected through each shape change. Studio is selected at the end.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><article class="recipe" id="conversation"><p class="eyebrow">StreamScrollCoordinator + ReadingAnchorTracker + ActivityDisclosureStore + KeyboardViewport</p><h2>Read while a response streams</h2><p>The conversation follows incoming output until you scroll back. It keeps the reading row in place through history insertion and layout changes. Tool expansion survives stream updates. The composer uses the native keyboard guide. Compact, expanded and tabletop are explicit layout previews.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>ChatInteractionCatalog.swift · orchestration excerpt</span><a href="ChatInteractionCatalog.swift" download>Download source ↓</a></div><pre><code>  @State private var scroll = <mark>StreamScrollCoordinator</mark>&lt;String&gt;()
+  @State private var activity = <mark>ActivityDisclosureStore</mark>&lt;String&gt;()
+  @State private var messages = Array(20..&lt;60)
+
+    _ next: BehaviorRect, reason: <mark>StreamScrollCoordinator</mark>&lt;String&gt;.Reason, _ proxy: ScrollViewProxy
+  ) {
+    anchors.freeze()
+    if let anchor = anchors.anchor { scroll.remember(anchor) }
+    viewport = next
+    layoutRevision &amp;+= 1
+    if scroll.followsLatest {
+      enqueue(.latest, reason, proxy, replace: true)
+    } else if let request = scroll.beginAnchorRestoration(
+      in: next, layoutRevision: layoutRevision, reason: reason)
+    {
+      execute(request, proxy)
+    } else {
+      anchors.resume(in: next, layoutRevision: layoutRevision)
+    }
+  }
+
+    _ target: <mark>StreamScrollCoordinator</mark>&lt;String&gt;.Target,
+    _ reason: <mark>StreamScrollCoordinator</mark>&lt;String&gt;.Reason, _ proxy: ScrollViewProxy,
+    replace: Bool = false
+  ) {
+    guard let request = scroll.request(target, reason: reason, replacingPending: replace) else {
+      return
+    }
+    execute(request, proxy)
+  }
+  private func execute(_ request: <mark>StreamScrollCoordinator</mark>&lt;String&gt;.Request, _ proxy: ScrollViewProxy)
+  {
+    scrollTask?.cancel()
+    scrollTask = Task { @MainActor in
+      do {
+        try await Task.sleep(for: .milliseconds(45))
+        guard scroll.isCurrent(request) else { return }
+        var transaction = Transaction(
+          animation: request.animated &amp;&amp; !reduceMotion ? .easeOut(duration: 0.2) : nil)
+        transaction.disablesAnimations = !request.animated || reduceMotion</code></pre><details class="full-source"><summary>Complete component source</summary><pre><code>import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+/// Real native controls exercising the same public models an app uses.
+struct ChatInteractionCatalog: View {
+  @State private var scroll = StreamScrollCoordinator&lt;String&gt;()
+  @State private var activity = ActivityDisclosureStore&lt;String&gt;()
+  @State private var messages = Array(20..&lt;60)
+  @State private var chunkCount = 0
+  @State private var partial = &quot;&quot;
+  @State private var streaming = false
+  @State private var streamGeneration = 0
+  @State private var streamTask: Task&lt;Void, Never&gt;?
+  @State private var scrollTask: Task&lt;Void, Never&gt;?
+  @State private var draft = &quot;&quot;
+  @State private var keyboard: KeyboardViewportSnapshot?
+  @State private var posture: ViewportPosture = .compact
+  @State private var anchors = ReadingAnchorTracker&lt;String&gt;()
+  @State private var visibleAnchorID: String?
+  @State private var viewport = BehaviorRect(width: 1, height: 1)
+  @State private var layoutRevision: UInt64 = 0
+  @State private var activityRevision: UInt64 = 0
+  @State private var activityActions = 0
+  @FocusState private var composerFocused: Bool
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  var body: some View {
+    ScrollViewReader { proxy in
+      VStack(spacing: 10) {
+        HStack {
+          Text(scroll.followsLatest ? &quot;Following latest&quot; : &quot;Reading earlier&quot;)
+            .accessibilityIdentifier(&quot;chat-follow-mode&quot;)
+          Spacer()
+          Button(&quot;Latest&quot;) {
+            scroll.followLatest()
+            enqueue(.latest, .explicit, proxy, replace: true)
+          }
+          .accessibilityIdentifier(&quot;chat-jump-latest&quot;)
+        }
+        HStack {
+          Button(streaming ? &quot;Stop stream&quot; : &quot;Start stream&quot;) {
+            if streaming { streamTask?.cancel() } else { startStream() }
+          }.accessibilityIdentifier(&quot;chat-stream&quot;)
+          Button(&quot;Append chunk&quot;) { appendChunk() }.accessibilityIdentifier(&quot;chat-append&quot;)
+          Button(&quot;Earlier&quot;) {
+            guard let first = messages.first else { return }
+            scroll.beginReading(anchor: anchors.anchor)
+            anchors.freeze()
+            messages.insert(contentsOf: Array((first - 10)..&lt;first), at: 0)
+            restore(viewport, reason: .history, proxy)
+          }.accessibilityIdentifier(&quot;chat-load-earlier&quot;)
+        }.font(.caption).buttonStyle(.bordered)
+        if !composerFocused {
+          HStack {
+            Text(&quot;Preview layout&quot;).font(.caption)
+            ForEach([ViewportPosture.compact, .expanded, .tabletop], id: \.rawValue) { value in
+              Button(value.rawValue.capitalized) {
+                anchors.freeze()
+                posture = value
+              }
+              .accessibilityIdentifier(&quot;chat-layout-&quot; + value.rawValue)
+            }
+          }.font(.caption).buttonStyle(.bordered)
+        }
+        activityToggle
+        GeometryReader { geometry in
+          let bounds = BehaviorRect(width: geometry.size.width, height: geometry.size.height)
+          let reserved = reservedRegions(bounds)
+          let measured = keyboard.flatMap { value -&gt; [BehaviorRect]? in
+            abs(value.context.bounds.width - bounds.width) &lt; 0.001
+              &amp;&amp; abs(value.context.bounds.height - bounds.height) &lt; 0.001
+              &amp;&amp; value.context.posture == posture
+              ? value.availableRegions : nil
+          }
+          let regions =
+            measured ?? ViewportGeometry.availableRegions(in: bounds, excluding: reserved)
+          let ordered = regions.sorted { $0.y == $1.y ? $0.x &lt; $1.x : $0.y &lt; $1.y }
+          if let content = ordered.first {
+            let input = posture == .tabletop ? (ordered.last ?? content) : content
+            let separate = input != content
+            let height = max(0, content.height - (separate ? 0 : 60))
+            let listBounds = BehaviorRect(width: content.width, height: height)
+            ZStack(alignment: .topLeading) {
+              ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                  ForEach(messages, id: \.self) { number in
+                    Text(
+                      &quot;Message \(number). This is a local sample for reading while new content arrives.&quot;
+                    )
+                    .padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                    .id(&quot;message-\(number)&quot;).accessibilityIdentifier(&quot;chat-message-\(number)&quot;)
+                    .behaviorReadingAnchor(
+                      &quot;message-\(number)&quot;, in: .named(&quot;chat-viewport&quot;), viewport: listBounds,
+                      layoutRevision: layoutRevision, restorationTarget: scroll.restorationTarget)
+                  }
+                  VStack(alignment: .leading) { activityDetails }
+                    .id(&quot;chat-activity&quot;)
+                    .behaviorReadingAnchor(
+                      &quot;chat-activity&quot;, in: .named(&quot;chat-viewport&quot;), viewport: listBounds,
+                      layoutRevision: layoutRevision, restorationTarget: scroll.restorationTarget)
+                  if !partial.isEmpty {
+                    Text(partial).accessibilityIdentifier(&quot;chat-partial&quot;).id(&quot;chat-partial&quot;)
+                      .behaviorReadingAnchor(
+                        &quot;chat-partial&quot;, in: .named(&quot;chat-viewport&quot;), viewport: listBounds,
+                        layoutRevision: layoutRevision, restorationTarget: scroll.restorationTarget)
+                  }
+                  Color.clear.frame(height: 1).id(&quot;chat-latest&quot;)
+                }.padding(8)
+              }
+              .coordinateSpace(name: &quot;chat-viewport&quot;)
+              .behaviorScrollPhase { observation in
+                if observation.phase == .dragging {
+                  anchors.resume(in: viewport, layoutRevision: layoutRevision)
+                }
+                scroll.observePhase(observation.phase, atLatest: observation.atLatest ?? false)
+                if observation.phase.holdsAutomaticScrolling { scrollTask?.cancel() }
+                if observation.phase == .idle, scroll.followsLatest {
+                  enqueue(.latest, .stream, proxy)
+                }
+              }
+              .onPreferenceChange(BehaviorReadingAnchorPreference&lt;String&gt;.self) { measurement in
+                guard let measurement, measurement.layoutRevision == layoutRevision else { return }
+                if anchors.record(measurement) { visibleAnchorID = anchors.anchor?.id }
+                if let request = scroll.measureRestoration(measurement) { execute(request, proxy) }
+              }
+              .frame(width: content.width, height: height)
+              .offset(x: content.x, y: content.y)
+              .accessibilityIdentifier(&quot;chat-transcript&quot;)
+              TextField(&quot;Message&quot;, text: $draft)
+                .textFieldStyle(.roundedBorder).focused($composerFocused)
+                .onSubmit { composerFocused = false }
+                .frame(width: max(0, input.width - 16), height: 44)
+                .position(x: input.x + input.width / 2, y: max(input.y + 22, input.maxY - 28))
+                .accessibilityIdentifier(&quot;chat-composer&quot;)
+              ForEach(Array(reserved.enumerated()), id: \.offset) { _, rect in
+                Rectangle().fill(.secondary.opacity(0.25))
+                  .frame(width: rect.width, height: rect.height).offset(x: rect.x, y: rect.y)
+                  .allowsHitTesting(false).accessibilityHidden(true)
+              }
+            }
+            .onAppear {
+              restore(listBounds, reason: .initial, proxy)
+            }
+            .onDisappear {
+              anchors.freeze()
+              scrollTask?.cancel()
+              scroll.cancel()
+            }
+            .onChange(of: listBounds) { _, next in restore(next, reason: .viewport, proxy) }
+          }
+          Color.clear.background(
+            BehaviorKeyboardObserver(posture: posture, reservedRegions: reserved) {
+              keyboard = $0
+            }
+          ).allowsHitTesting(false)
+        }
+        if !composerFocused {
+          Text(&quot;Chunks: \(chunkCount)&quot;).accessibilityIdentifier(&quot;chat-chunk-count&quot;)
+          Text(&quot;Anchor: \(visibleAnchorID ?? &quot;none&quot;)&quot;).accessibilityIdentifier(&quot;chat-anchor&quot;)
+          Text(&quot;Layout: \(posture.rawValue)&quot;).accessibilityIdentifier(&quot;chat-layout-value&quot;)
+          Text(&quot;Activity actions: \(activityActions)&quot;).accessibilityIdentifier(
+            &quot;chat-activity-actions&quot;)
+          Text(&quot;Available panes: \(keyboard?.availableRegions.count ?? 1)&quot;)
+            .accessibilityIdentifier(&quot;chat-pane-count&quot;)
+          Text(
+            &quot;Layout previews simulate reserved regions. The keyboard uses the native layout guide.&quot;
+          )
+          .font(.caption).foregroundStyle(.secondary)
+        }
+      }.padding(12)
+        .onChange(of: chunkCount) { _, _ in enqueue(.latest, .stream, proxy) }
+        .onDisappear {
+          streamGeneration += 1
+          streamTask?.cancel()
+          scrollTask?.cancel()
+          scroll.cancel()
+        }
+    }
+  }
+
+  @ViewBuilder private var activityToggle: some View {
+    let id = &quot;reply&quot;
+    Button {
+      activityActions += 1
+      if activity[id].toggle(running: streaming) == .opened {
+        scroll.beginReading(anchor: anchors.anchor)
+        scrollTask?.cancel()
+      }
+    } label: {
+      Label(
+        &quot;Work details&quot;,
+        systemImage: activity[id].expanded(running: streaming) ? &quot;chevron.down&quot; : &quot;chevron.right&quot;)
+        .frame(minHeight: 44)
+    }.accessibilityIdentifier(&quot;chat-activity-toggle&quot;)
+      .accessibilityValue(activity[id].expanded(running: streaming) ? &quot;Expanded&quot; : &quot;Collapsed&quot;)
+  }
+  @ViewBuilder private var activityDetails: some View {
+    let id = &quot;reply&quot;
+    if activity[id].expanded(running: streaming) {
+      Text(
+        &quot;Received \(chunkCount) chunks. Phase: \(activity.phase(for: id)?.rawValue ?? &quot;pending&quot;)&quot;
+      )
+      .accessibilityIdentifier(&quot;chat-activity-details&quot;)
+    }
+  }
+  private func reservedRegions(_ bounds: BehaviorRect) -&gt; [BehaviorRect] {
+    switch posture {
+    case .expanded:
+      [BehaviorRect(x: bounds.width / 2 - 6, width: 12, height: bounds.height)]
+    case .tabletop:
+      [BehaviorRect(y: bounds.height / 2 - 6, width: bounds.width, height: 12)]
+    default: []
+    }
+  }
+  private func appendChunk() {
+    chunkCount += 1
+    partial += &quot;word\(chunkCount) &quot;
+    observeActivity(streaming ? .running : .pending)
+  }
+  private func observeActivity(_ phase: ActivityPhase) {
+    activityRevision &amp;+= 1
+    activity.observe(&quot;reply&quot;, phase: phase, revision: activityRevision)
+  }
+  private func restore(
+    _ next: BehaviorRect, reason: StreamScrollCoordinator&lt;String&gt;.Reason, _ proxy: ScrollViewProxy
+  ) {
+    anchors.freeze()
+    if let anchor = anchors.anchor { scroll.remember(anchor) }
+    viewport = next
+    layoutRevision &amp;+= 1
+    if scroll.followsLatest {
+      enqueue(.latest, reason, proxy, replace: true)
+    } else if let request = scroll.beginAnchorRestoration(
+      in: next, layoutRevision: layoutRevision, reason: reason)
+    {
+      execute(request, proxy)
+    } else {
+      anchors.resume(in: next, layoutRevision: layoutRevision)
+    }
+  }
+  private func startStream() {
+    streamTask?.cancel()
+    streamGeneration += 1
+    let generation = streamGeneration
+    streaming = true
+    observeActivity(.running)
+    streamTask = Task { @MainActor in
+      for _ in 0..&lt;300 {
+        do { try await Task.sleep(for: .milliseconds(80)) } catch { break }
+        guard !Task.isCancelled, generation == streamGeneration else { break }
+        appendChunk()
+      }
+      guard generation == streamGeneration else { return }
+      streaming = false
+      observeActivity(Task.isCancelled ? .cancelled : .completed)
+    }
+  }
+  private func enqueue(
+    _ target: StreamScrollCoordinator&lt;String&gt;.Target,
+    _ reason: StreamScrollCoordinator&lt;String&gt;.Reason, _ proxy: ScrollViewProxy,
+    replace: Bool = false
+  ) {
+    guard let request = scroll.request(target, reason: reason, replacingPending: replace) else {
+      return
+    }
+    execute(request, proxy)
+  }
+  private func execute(_ request: StreamScrollCoordinator&lt;String&gt;.Request, _ proxy: ScrollViewProxy)
+  {
+    scrollTask?.cancel()
+    scrollTask = Task { @MainActor in
+      do {
+        try await Task.sleep(for: .milliseconds(45))
+        guard scroll.isCurrent(request) else { return }
+        var transaction = Transaction(
+          animation: request.animated &amp;&amp; !reduceMotion ? .easeOut(duration: 0.2) : nil)
+        transaction.disablesAnimations = !request.animated || reduceMotion
+        withTransaction(transaction) {
+          switch request.target {
+          case .latest: proxy.scrollTo(&quot;chat-latest&quot;, anchor: .bottom)
+          case .item(let id, let alignment):
+            proxy.scrollTo(id, anchor: UnitPoint(x: 0, y: alignment))
+          }
+        }
+      } catch {}
+      if scroll.finish(request) {
+        scrollTask = nil
+        if !scroll.isRestoringAnchor {
+          anchors.resume(in: viewport, layoutRevision: layoutRevision)
+          visibleAnchorID = anchors.anchor?.id
+        }
+      }
+    }
+  }
+}
+</code></pre></details><div class="recipe-use"><p>Use it in your app</p><pre><code>ChatInteractionCatalog()</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="conversation-poster.png" data-motion-src="conversation.gif" alt="Native SwiftUI read while a response streams, captured directly from the running component" width="800" height="1738" loading="lazy"><p>Scroll back during streaming, load history, return to latest, change the layout and type a draft.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><article class="recipe" id="workspace"><p class="eyebrow">CropSelection + OverlayStack + Selection</p><h2>Crop, review and publish</h2><p>Edit a draft crop, open a nested publishing sheet, and return to the crop without losing edits. Cancel keeps the saved cover. Publish exports the crop, commits the draft and dismisses both sheets. The host owns the transaction and caption; the package handles crop geometry, selection and overlay transitions.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>MediaWorkspace.swift · orchestration excerpt</span><a href="MediaWorkspace.swift" download>Download source ↓</a></div><pre><code>  @State private var savedCrop = <mark>CropSelection</mark>(width: 600, height: 400, aspect: 1)
+  @State private var draftCrop = <mark>CropSelection</mark>(width: 600, height: 400, aspect: 1)
+  @State private var overlays = <mark>OverlayStack</mark>()
+  @State private var caption = &quot;Weekend on the coast&quot;
+  @State private var destination = <mark>Selection&lt;String&gt;</mark>(selected: [&quot;Journal&quot;])
+  @State private var savedImage: UIImage?
+  @State private var published = false
+  @AccessibilityFocusState private var focused: String?
+
+
+              Button(&quot;Rotate&quot;) { draftCrop.rotateClockwise() }
+                .buttonStyle(.bordered)
+              Spacer()
+              Text(&quot;Draft: \(draftCrop.rotation)°&quot;).accessibilityIdentifier(&quot;media-draft&quot;)
+            }
+            Text(&quot;Drag the crop handles to reframe the cover.&quot;).foregroundStyle(.secondary)
+            Button(&quot;Continue to publish&quot;) {
+              _ = overlays.present(BehaviorOverlay(&quot;publish&quot;, parent: entry.id, restoreFocus: &quot;continue&quot;))
+            }.buttonStyle(.borderedProminent)
+              .accessibilityFocused($focused, equals: &quot;continue&quot;)
+            Spacer()
+          }.padding(24).navigationTitle(&quot;Edit cover&quot;)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(&quot;Cancel edit&quot;) { overlays.dismiss(&quot;editor&quot;) }
+              }
+
+                published = true
+                overlays.dismiss(&quot;editor&quot;)
+              }.disabled(caption.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+          }.navigationTitle(&quot;Publish cover&quot;)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(&quot;Back to crop&quot;) { overlays.dismiss(&quot;publish&quot;) }
+              }
+            }
+        }</code></pre><details class="full-source"><summary>Complete component source</summary><pre><code>import SwiftUI
+import UIKit
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+import UIBehaviorUIKit
+
+/// The host owns the edit transaction. The SDK owns crop and overlay transitions.
+struct MediaWorkspace: View {
+  @State private var savedCrop = CropSelection(width: 600, height: 400, aspect: 1)
+  @State private var draftCrop = CropSelection(width: 600, height: 400, aspect: 1)
+  @State private var overlays = OverlayStack()
+  @State private var caption = &quot;Weekend on the coast&quot;
+  @State private var destination = Selection&lt;String&gt;(selected: [&quot;Journal&quot;])
+  @State private var savedImage: UIImage?
+  @State private var published = false
+  @AccessibilityFocusState private var focused: String?
+
+  var body: some View {
+    BehaviorOverlayHost($overlays) {
+      VStack(alignment: .leading, spacing: 20) {
+        Text(&quot;Coastal journal&quot;).font(.title2.bold())
+        Image(uiImage: savedImage ?? Self.image).resizable().scaledToFit()
+          .clipShape(RoundedRectangle(cornerRadius: 18))
+        HStack {
+          Label(&quot;Cover image&quot;, systemImage: &quot;photo&quot;)
+          Spacer()
+          Button(&quot;Edit cover&quot;) {
+            draftCrop = savedCrop
+            _ = overlays.present(BehaviorOverlay(&quot;editor&quot;, restoreFocus: &quot;edit&quot;))
+          }.buttonStyle(.borderedProminent)
+            .accessibilityFocused($focused, equals: &quot;edit&quot;)
+        }
+        Text(&quot;Saved rotation: \(savedCrop.rotation)°&quot;)
+          .font(.caption.monospaced()).accessibilityIdentifier(&quot;media-saved&quot;)
+        if published {
+          Label(&quot;Published to &quot; + destination.selected.sorted().joined(separator: &quot;, &quot;), systemImage: &quot;checkmark.circle.fill&quot;)
+            .foregroundStyle(.green).accessibilityIdentifier(&quot;media-published&quot;)
+        }
+      }
+    } overlay: { entry in
+      NavigationStack {
+        if entry.id == &quot;editor&quot; {
+          VStack(alignment: .leading, spacing: 24) {
+            BehaviorCropper($draftCrop, image: Image(uiImage: Self.image))
+              .frame(height: 300)
+            HStack {
+              Button(&quot;Rotate&quot;) { draftCrop.rotateClockwise() }
+                .buttonStyle(.bordered)
+              Spacer()
+              Text(&quot;Draft: \(draftCrop.rotation)°&quot;).accessibilityIdentifier(&quot;media-draft&quot;)
+            }
+            Text(&quot;Drag the crop handles to reframe the cover.&quot;).foregroundStyle(.secondary)
+            Button(&quot;Continue to publish&quot;) {
+              _ = overlays.present(BehaviorOverlay(&quot;publish&quot;, parent: entry.id, restoreFocus: &quot;continue&quot;))
+            }.buttonStyle(.borderedProminent)
+              .accessibilityFocused($focused, equals: &quot;continue&quot;)
+            Spacer()
+          }.padding(24).navigationTitle(&quot;Edit cover&quot;)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(&quot;Cancel edit&quot;) { overlays.dismiss(&quot;editor&quot;) }
+              }
+            }
+        } else {
+          Form {
+            Section(&quot;Caption&quot;) { TextField(&quot;Caption&quot;, text: $caption) }
+            Section(&quot;Destination&quot;) {
+              BehaviorChoiceList([&quot;Journal&quot;, &quot;Portfolio&quot;], selection: $destination, label: { $0 }) { name, selected in
+                HStack {
+                  Text(name)
+                  Spacer()
+                  if selected { Image(systemName: &quot;checkmark&quot;) }
+                }.frame(minHeight: 44)
+              }
+            }
+            Section {
+              Button(&quot;Publish cover&quot;) {
+                // Commit only after the final action; closing either sheet keeps the saved crop.
+                savedCrop = draftCrop
+                savedImage = BehaviorImageCrop.image(Self.image, selection: savedCrop)
+                published = true
+                overlays.dismiss(&quot;editor&quot;)
+              }.disabled(caption.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+          }.navigationTitle(&quot;Publish cover&quot;)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(&quot;Back to crop&quot;) { overlays.dismiss(&quot;publish&quot;) }
+              }
+            }
+        }
+      }
+    } restoreFocus: { focused = $0 }
+  }
+
+  static var image: UIImage {
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 1
+    return UIGraphicsImageRenderer(size: CGSize(width: 600, height: 400), format: format).image { ctx in
+      UIColor(red: 0.74, green: 0.86, blue: 0.94, alpha: 1).setFill()
+      ctx.fill(CGRect(x: 0, y: 0, width: 600, height: 400))
+      UIColor(red: 0.98, green: 0.76, blue: 0.38, alpha: 1).setFill()
+      UIBezierPath(ovalIn: CGRect(x: 430, y: 48, width: 90, height: 90)).fill()
+      UIColor(red: 0.16, green: 0.43, blue: 0.53, alpha: 1).setFill()
+      let coast = UIBezierPath()
+      coast.move(to: CGPoint(x: 0, y: 250))
+      coast.addLine(to: CGPoint(x: 200, y: 120))
+      coast.addLine(to: CGPoint(x: 340, y: 270))
+      coast.addLine(to: CGPoint(x: 600, y: 210))
+      coast.addLine(to: CGPoint(x: 600, y: 400))
+      coast.addLine(to: CGPoint(x: 0, y: 400))
+      coast.close(); coast.fill()
+      UIColor(red: 0.24, green: 0.64, blue: 0.74, alpha: 1).setFill()
+      ctx.fill(CGRect(x: 0, y: 300, width: 600, height: 100))
+    }
+  }
+}
+</code></pre></details><div class="recipe-use"><p>Use it in your app</p><pre><code>MediaWorkspace()</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="workspace-poster.png" data-motion-src="workspace.gif" alt="Native SwiftUI crop, review and publish, captured directly from the running component" width="800" height="1738" loading="lazy"><p>Rotate the draft, choose a destination, return to the crop, then publish.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><article class="recipe" id="confirmation"><p class="eyebrow">Disclosure + behaviorSheet</p><h2>A confirmation sheet</h2><p>Disclosure owns open and dismiss state. SwiftUI presents the sheet. Your view supplies the title, actions and layout.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>DeleteProjectButton.swift</span><a href="DeleteProjectButton.swift" download>Download source ↓</a></div><pre><code>import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+struct DeleteProjectButton: View {
+  let project: String
+  let onDelete: () -&gt; Void
+  @State private var confirmation = Disclosure()
+
+  var body: some View {
+    Button(&quot;Delete project&quot;, role: .destructive) { confirmation.open() }
+      .buttonStyle(.bordered)
+      .<mark>behaviorSheet</mark>($confirmation) {
+        VStack(alignment: .leading, spacing: 20) {
+          Image(systemName: &quot;trash&quot;).font(.largeTitle).foregroundStyle(.red)
+          Text(&quot;Delete \(project)?&quot;).font(.title2.bold())
+          Text(&quot;The project and its files will be permanently deleted.&quot;)
+            .foregroundStyle(.secondary)
+          HStack {
+            Button(&quot;Cancel&quot;) { confirmation.dismiss(.action) }
+              .buttonStyle(.bordered)
+            Spacer()
+            Button(&quot;Delete&quot;, role: .destructive) {
+              confirmation.dismiss(.action)
+              onDelete()
+            }.buttonStyle(.borderedProminent).tint(.red)
+          }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(&quot;confirmation-content&quot;)
+        .padding(28)
+        .presentationDetents([.height(300)])
+      }
+  }
+}
+</code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>DeleteProjectButton(project: &quot;Weekend project&quot;) {
+  deleteProject()
+}</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="confirmation-poster.png" data-motion-src="confirmation.gif" alt="Native SwiftUI a confirmation sheet, captured directly from the running component" width="800" height="1304" loading="eager"><p>Open with Delete project. Cancel keeps the project; Delete calls your callback.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><article class="recipe" id="selection"><p class="eyebrow">Selection + BehaviorChoiceList</p><h2>A plan picker</h2><p>The adapter supplies native buttons, selection, keyboard focus and typeahead. The row closure supplies the cards you see.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>PlanPicker.swift</span><a href="PlanPicker.swift" download>Download source ↓</a></div><pre><code>import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+struct PlanPicker: View {
+  @Binding var selection: <mark>Selection&lt;String&gt;</mark>
+
+  var body: some View {
+    <mark>BehaviorChoiceList</mark>(
+      [&quot;Personal&quot;, &quot;Team&quot;, &quot;Studio&quot;], selection: $selection,
+      label: { &quot;\($0), \($0 == &quot;Personal&quot; ? &quot;Just you&quot; : &quot;Work together&quot;)&quot; }
+    ) { plan, selected in
+      HStack(spacing: 14) {
+        Image(systemName: selected ? &quot;checkmark.circle.fill&quot; : &quot;circle&quot;)
+          .foregroundStyle(selected ? Color.indigo : Color.secondary)
+        Text(plan).font(.headline)
+        Spacer()
+        Text(plan == &quot;Personal&quot; ? &quot;Just you&quot; : &quot;Work together&quot;)
+          .font(.caption).foregroundStyle(.secondary)
+      }
+      .padding(18).frame(minHeight: 56)
+      .background(
+        selected ? Color.indigo.opacity(0.08) : Color.secondary.opacity(0.04),
+        in: RoundedRectangle(cornerRadius: 14))
+      .overlay(RoundedRectangle(cornerRadius: 14)
+        .stroke(selected ? Color.indigo : Color.secondary.opacity(0.2)))
+      .padding(.vertical, 5)
+    }
+  }
+}
+</code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>import SwiftUI
+import UIBehaviorCore
+
+struct SettingsView: View {
+  @State private var plan = Selection&lt;String&gt;(selected: [&quot;Personal&quot;])
+
+  var body: some View {
+    PlanPicker(selection: $plan)
+  }
+}</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="selection-poster.png" data-motion-src="selection.gif" alt="Native SwiftUI a plan picker, captured directly from the running component" width="800" height="448" loading="lazy"><p>Team selected after a native tap. Only one plan stays selected.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><article class="recipe" id="activity"><p class="eyebrow">Disclosure + BehaviorDisclosure</p><h2>Expandable tool activity</h2><p>Disclosure stores whether the details are open. The adapter binds it to a native DisclosureGroup. You supply both views.</p>
+<div class="recipe-grid"><div class="recipe-source"><div class="recipe-label"><span>ToolActivity.swift</span><a href="ToolActivity.swift" download>Download source ↓</a></div><pre><code>import SwiftUI
+import UIBehaviorCore
+import UIBehaviorSwiftUI
+
+struct ToolActivity: View {
+  @State private var details = Disclosure(isOpen: true)
+
+  var body: some View {
+    <mark>BehaviorDisclosure</mark>($details) {
+      Label(&quot;Read project files&quot;, systemImage: &quot;checkmark.circle.fill&quot;)
+        .font(.headline)
+    } content: {
+      VStack(alignment: .leading, spacing: 14) {
+        ForEach([&quot;Package.swift&quot;, &quot;Sources/App.swift&quot;, &quot;README.md&quot;], id: \.self) { file in
+          Label(file, systemImage: &quot;doc.text&quot;)
+            .font(.subheadline.monospaced()).foregroundStyle(.secondary)
+        }
+      }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, 16)
+    }
+    .tint(.indigo).padding(20)
+    .background(Color.secondary.opacity(0.05), in: RoundedRectangle(cornerRadius: 16))
+  }
+}
+</code></pre><div class="recipe-use"><p>Use it in your app</p><pre><code>ToolActivity()</code></pre></div></div>
+<figure class="recipe-result"><div class="recipe-label">iOS SIMULATOR RECORDING</div><img src="activity-poster.png" data-motion-src="activity.gif" alt="Native SwiftUI expandable tool activity, captured directly from the running component" width="800" height="384" loading="lazy"><p>Tap the heading to hide or show the files.</p><button class="figure-motion" type="button" data-motion-toggle hidden>Pause motion</button></figure></div></article><div class="recipe-foot">Requires iosUI-sdk 0.4.0 and iOS 17+. Add <code>UIBehaviorCore</code> and <code>UIBehaviorSwiftUI</code> to your target. <a href="../#install">Install the package</a> · <a href="https://github.com/killa-kyle/iosUI-sdk/tree/main/Examples/Catalog/Recipes">Browse the compiled sources</a>.<br>These examples use disposable local state. The confirmation callback belongs to your app.</div></main></body></html>

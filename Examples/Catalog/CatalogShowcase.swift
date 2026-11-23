@@ -25,7 +25,7 @@ struct CatalogShowcase<Content: View>: View {
           Text("SwiftUI").font(.caption.monospaced()).foregroundStyle(CatalogPalette.muted)
         }
         Text(title).font(.system(size: 30, weight: .bold)).accessibilityAddTraits(.isHeader)
-        Text("Small behaviors. Native interfaces. Your design.")
+        Text("SwiftUI components using iosUI-sdk.")
           .foregroundStyle(CatalogPalette.muted).font(.subheadline)
         VStack(alignment: .leading, spacing: 20) { content }
           .font(.system(size: 15))

@@ -60,7 +60,7 @@ schemes:
       targets:
         - BehaviorAdapterTests
         - name: BehaviorCatalogUITests
-          skippedTests: [ReadmeCaptureTests]
+          skippedTests: [ReadmeCaptureTests, RecipeMotionCaptureTests]
       captureScreenshotsAutomatically: true
       deleteScreenshotsWhenEachTestSucceeds: true
       preferredScreenCaptureFormat: screenshots

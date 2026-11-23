@@ -1,0 +1,254 @@
+{
+  "capture": "Actual native iOS simulator screen recordings of the compiled SwiftUI recipes",
+  "processing": "Pixel-match native checkpoints, trim idle lead-in, crop by measured native bounds, resize and encode. GIFs preserve native motion; no generated interaction frames.",
+  "examples": {
+    "morph": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/Recipes/MorphingPlanPicker.swift",
+      "sourceSHA256": "4c351f2caef8fed838ad1ff4ee7b5cde6c2ca2f195b1b2ee234b10d5bb5fcd22",
+      "test": "RecipeMotionCaptureTests/testMorphVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "752ca36de0ff809ace81572f63b819895089b71f3cb96f9b86525c9f2a633c84",
+      "sourceVideoFrames": 407,
+      "trimSeconds": [
+        7.767,
+        13.872
+      ],
+      "cropPixels": [
+        59,
+        803,
+        1201,
+        1577
+      ],
+      "heroTrimSeconds": [
+        7.767,
+        13.872
+      ],
+      "gifSHA256": "e7e7bfce90d249270606221ef7963dda2a5cdbc203d3db55611a6ddbbdf00589",
+      "posterSHA256": "6cf048b6eaa058f7a1e7d32a6eb0395207aefbc73321ee9628114084007fe24e",
+      "gifBytes": 467475,
+      "posterPixels": [
+        800,
+        1050
+      ]
+    },
+    "workspace": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/Recipes/MediaWorkspace.swift",
+      "sourceSHA256": "b39252f694481b212649210ee8ebf12c7d020a0cebeae7371a4d5d197e46275a",
+      "test": "RecipeMotionCaptureTests/testWorkspaceVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "3f1082e91313b2334c053827c63bd0bf28613bef4d3a6ab427ac49f17922fa75",
+      "sourceVideoFrames": 494,
+      "trimSeconds": [
+        4.6,
+        17.693
+      ],
+      "cropPixels": [
+        0,
+        0,
+        1320,
+        2868
+      ],
+      "heroTrimSeconds": [
+        4.6,
+        17.693
+      ],
+      "gifSHA256": "5febe6de51f385f4bf3904e67036e6c6835220196e04c014330e61465400fbc4",
+      "posterSHA256": "e773fb58d0f6319c1fb90a79d4a762ea180ae696ec6dc082e76b1e660e9b0e6d",
+      "gifBytes": 1445425,
+      "posterPixels": [
+        800,
+        1738
+      ]
+    },
+    "conversation": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/ChatInteractionCatalog.swift",
+      "sourceSHA256": "a703247ea9bbbad6ffcda47d69cb9d85d6c70f2397424318f19239398111c774",
+      "test": "RecipeMotionCaptureTests/testConversationVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "2187862ca01a335f281005cb1b0dfc175ebd6a54036f923f336be230661223c6",
+      "sourceVideoFrames": 477,
+      "trimSeconds": [
+        10.1,
+        21.667
+      ],
+      "cropPixels": [
+        0,
+        0,
+        1320,
+        2868
+      ],
+      "heroTrimSeconds": [
+        10.1,
+        21.667
+      ],
+      "gifSHA256": "68942e8e026b4026ae9742224e5de636b4a3d2409490c28354affd3bdf499c95",
+      "posterSHA256": "a5fa0c1495e25076799c5c3327a25f967a290b8cf733d5ed095d22f0254117a2",
+      "gifBytes": 2384041,
+      "posterPixels": [
+        800,
+        1738
+      ]
+    },
+    "selection": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/Recipes/PlanPicker.swift",
+      "sourceSHA256": "08225b483e505fb46d45a7396d4c9e4b6110f0e8e6e6b25b8a383e82fd352668",
+      "test": "RecipeMotionCaptureTests/testSelectionVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "5e702a57e958ca15c8cd6ddcc3ddc728febe75fd6380e99d1b64802f35deac11",
+      "sourceVideoFrames": 165,
+      "trimSeconds": [
+        8.6,
+        10.843
+      ],
+      "cropPixels": [
+        84,
+        955,
+        1152,
+        644
+      ],
+      "heroTrimSeconds": [
+        8.6,
+        10.843
+      ],
+      "gifSHA256": "0a2e30a594741a5beb34253d9bfdb502e742c9b8e36765a97c2afd87daa5d778",
+      "posterSHA256": "55edf7e568d67550f8878323485d400b3b8672140f1706c00ac23577fa7c1507",
+      "gifBytes": 71752,
+      "posterPixels": [
+        800,
+        448
+      ]
+    },
+    "activity": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/Recipes/ToolActivity.swift",
+      "sourceSHA256": "ee455de116ee816c1106578c66a16c2e200298bd2edf4e3cf38d7eaf3e0aca59",
+      "test": "RecipeMotionCaptureTests/testActivityVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "4e5855f81124a9d144fd37067523a4b9435841a1365a585090df5a09df05e4dc",
+      "sourceVideoFrames": 267,
+      "trimSeconds": [
+        10.933,
+        14.757
+      ],
+      "cropPixels": [
+        84,
+        823,
+        1152,
+        553
+      ],
+      "heroTrimSeconds": [
+        10.933,
+        13.9
+      ],
+      "gifSHA256": "759aaa6adc1e4004fa64a28326f845aff2af8d33422d48ec0d27f5c3737c937c",
+      "posterSHA256": "90563a4293b524880dd0264eb1af8ac9291f61735569593100540e947dadacef",
+      "gifBytes": 93554,
+      "posterPixels": [
+        800,
+        384
+      ]
+    },
+    "confirmation": {
+      "sourceRevision": "b8a648dd1422785191fb032930a91ca5386959d7",
+      "source": "Examples/Catalog/Recipes/DeleteProjectButton.swift",
+      "sourceSHA256": "2dc20770a96b0c13af581a2f50149aeb801e2d25661396bda05d80e1015e5654",
+      "test": "RecipeMotionCaptureTests/testConfirmationVideo()",
+      "runtime": [
+        {
+          "architecture": "arm64",
+          "deviceId": "8837B49A-A051-485D-BD63-9BAA99D8BFC4",
+          "deviceName": "iPhone 18 Pro Max",
+          "modelName": "iPhone 18 Pro Max",
+          "osBuildNumber": "24B114",
+          "osVersion": "27.2",
+          "platform": "iOS Simulator"
+        }
+      ],
+      "sourceVideoSHA256": "2ddf0a22c1afea05ce270198cc4dcbc2d3eed5294683c204a657d9b9e81579cc",
+      "sourceVideoFrames": 281,
+      "trimSeconds": [
+        9.767,
+        19.135
+      ],
+      "cropPixels": [
+        0,
+        717,
+        1320,
+        2151
+      ],
+      "heroTrimSeconds": [
+        9.767,
+        12.1
+      ],
+      "gifSHA256": "5afd28fcfcefe613c6b65257932c1a1315e2a642c6a12aa4bc6cb3ba728c7704",
+      "posterSHA256": "d661e33ecd518306f2222b5bca381c6b0056f3614007a167b739fb03bfb6fcc0",
+      "gifBytes": 807977,
+      "posterPixels": [
+        800,
+        1304
+      ]
+    }
+  },
+  "producerInputsSHA256": {
+    "Examples/Catalog/ComponentRecipes.swift": "a4309948c298a15ed9ed9c929f86adfebcfcac17f0521fb88e1a06d2b02cd5cd",
+    "Examples/Catalog/CatalogShowcase.swift": "8a76fb9ae4cc2cead8ca53a3ce485a17f4b04abe175e2b5ec633bf08093b4588",
+    "Examples/Catalog/App.swift": "8ec1ad0c7c24de6a2b32494b89a85286f1cf3ffaae48240bc1a687917fcaeec5",
+    "Examples/Catalog/ChatInteractionCatalog.swift": "a703247ea9bbbad6ffcda47d69cb9d85d6c70f2397424318f19239398111c774",
+    "Sources/UIBehaviorSwiftUI/BehaviorChoiceList.swift": "a37634f73e93cc22b7438e6f75a57d5ecaa350be5910bdcd1138d6e9d0da84d7",
+    "Examples/UITests/RecipeMotionCaptureTests.swift": "907aac514d5bccc10c382fefb98711640981fb8f5614e6cae1cbc7c7ddb919e3"
+  }
+}

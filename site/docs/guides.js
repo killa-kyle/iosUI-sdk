@@ -46,9 +46,9 @@ export const guides = [
       "Add the Swift package in Xcode and choose the products your target uses.",
     body: [
       "In Xcode, choose File → Add Package Dependencies and enter https://github.com/killa-kyle/iosUI-sdk. Select UIBehaviorCore, UIBehaviorSwiftUI and/or UIBehaviorUIKit.",
-      "Version 0.3.0 includes the behavior models and native adapters listed in the docs. Add the products your app uses.",
+      "Version 0.4.0 includes the behavior models and native adapters listed in the docs. Add the products your app uses.",
     ],
-    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.3.0"\n)',
+    code: '.package(\n    url: "https://github.com/killa-kyle/iosUI-sdk.git",\n    from: "0.4.0"\n)',
     notes: [
       "Pin a version or revision and use its matching API reference.",
       "UIBehaviorUIKit can host every shared SwiftUI adapter through BehaviorController; direct UIKit APIs also cover choices, values, TextKit, image crop export and measurement.",

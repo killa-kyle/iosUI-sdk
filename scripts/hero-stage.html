@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><title>iosUI-sdk native motion film</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      margin: 0;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      background: #f8f7ef;
+      color: #222722;
+      font-family:
+        ui-rounded,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+    }
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(#22272218 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(110deg, #0003, transparent 65%);
+    }
+    .brand {
+      position: absolute;
+      left: 64px;
+      top: 46px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      font-size: 30px;
+      font-weight: 750;
+      letter-spacing: -1px;
+    }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #2345ed;
+      color: #fff;
+      font-size: 38px;
+    }
+    .edition {
+      position: absolute;
+      right: 64px;
+      top: 58px;
+      font:
+        17px ui-monospace,
+        monospace;
+      color: #62675e;
+    }
+    .scene {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+    }
+    .kicker {
+      position: absolute;
+      left: 64px;
+      top: 136px;
+      font:
+        600 17px ui-monospace,
+        monospace;
+      letter-spacing: 2px;
+      color: #2345ed;
+    }
+    .title {
+      position: absolute;
+      left: 60px;
+      top: 164px;
+      font-size: 64px;
+      font-weight: 750;
+      letter-spacing: -2.5px;
+      margin: 0;
+      line-height: 1.05;
+    }
+    .subtitle {
+      position: absolute;
+      left: 66px;
+      top: 246px;
+      font-size: 24px;
+      color: #62675e;
+    }
+    .code-window {
+      position: absolute;
+      left: 64px;
+      top: 310px;
+      width: 724px;
+      height: 470px;
+      border-radius: 20px;
+      background: #20251f;
+      overflow: hidden;
+      box-shadow: 0 18px 55px #2227220d;
+    }
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 54px;
+      padding: 0 24px;
+      background: #fff;
+      border: 1px solid #d9dcd0;
+      border-radius: 20px 20px 0 0;
+      font:
+        17px ui-monospace,
+        monospace;
+      color: #62675e;
+    }
+    .window-bar i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #d9dcd0;
+    }
+    .window-bar span {
+      margin-left: 8px;
+    }
+    .code {
+      position: relative;
+      padding: 24px 22px;
+      font:
+        17px/1.5 ui-monospace,
+        SFMono-Regular,
+        monospace;
+      color: #eef1e8;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      height: 416px;
+    }
+    .code::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: linear-gradient(transparent, #20251f);
+    }
+    .code-line {
+      padding: 0 10px;
+      border-left: 3px solid transparent;
+    }
+    .code-line.focus {
+      border-color: #2345ed;
+      background: #ffffff08;
+    }
+    .code mark {
+      background: #d9ed9c;
+      color: #222722;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+    .native-window {
+      position: absolute;
+      left: 890px;
+      top: 310px;
+      width: 646px;
+      height: 470px;
+      background: #fff;
+      border: 1px solid #d9dcd0;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 70px #22272210;
+      display: flex;
+      flex-direction: column;
+    }
+    .native-bar {
+      height: 54px;
+      flex: 0 0 54px;
+      border-bottom: 1px solid #d9dcd0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font:
+        17px ui-monospace,
+        monospace;
+    }
+    .native-bar b {
+      font-weight: 400;
+      color: #62675e;
+    }
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .live::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: #2345ed;
+      border-radius: 50%;
+    }
+    .native-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+    }
+    .native-content video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .confirmation .native-window {
+      top: 276px;
+      height: 532px;
+    }
+    .confirmation .native-content {
+      padding: 12px;
+      background: #fafaf8;
+    }
+    .confirmation video {
+      object-fit: contain;
+    }
+    .connector {
+      position: absolute;
+      left: 804px;
+      top: 526px;
+      width: 70px;
+      height: 42px;
+    }
+    .connector svg {
+      width: 70px;
+      height: 42px;
+    }
+    .spark {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2345ed;
+    }
+    .footer {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font:
+        17px ui-monospace,
+        monospace;
+      color: #62675e;
+    }
+    .chapters {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+    }
+    .chapter {
+      height: 4px;
+      flex: 1;
+      background: #d9dcd0;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+    .chapter div {
+      height: 100%;
+      background: #2345ed;
+      width: 0;
+    }
+    .footer strong {
+      font-weight: 500;
+      color: #222722;
+    }
+    .corner {
+      position: absolute;
+      right: -80px;
+      top: 100px;
+      width: 440px;
+      height: 170px;
+      border-radius: 90px;
+      background: #d9ed9c44;
+      transform: rotate(-18deg);
+    }
+  </style>
+  <div class="grid"></div>
+  <div class="corner"></div>
+  <div class="brand">
+    <div class="mark">↗</div>
+    iosUI-sdk
+  </div>
+  <div class="edition">SWIFTUI · iOS 17+</div>
+  <div id="scenes"></div>
+  <div class="footer">
+    <strong id="counter">01 / 03</strong>
+    <div class="chapters">
+      <div class="chapter"><div></div></div>
+      <div class="chapter"><div></div></div>
+      <div class="chapter"><div></div></div>
+    </div>
+    <span>SwiftUI code → iOS component</span>
+  </div>
+  <script>
+    window.filmReady = (async () => {
+      const data = await (await fetch("/film-data.json")).json();
+      const container = document.querySelector("#scenes");
+      const escape = (text) =>
+        text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;");
+      for (const item of data) {
+        const scene = document.createElement("section");
+        scene.className = "scene " + item.key;
+        const lines = item.source
+          .split("\n")
+          .map(
+            (line) =>
+              '<div class="code-line ' +
+              (/BehaviorChoiceList|StreamScrollCoordinator|ActivityDisclosureStore|ReadingAnchorTracker|CropSelection|OverlayStack|BehaviorCropper|AnyLayout|BehaviorDisclosure|behaviorSheet|Disclosure\(|Selection&lt;String&gt;/.test(
+                escape(line),
+              )
+                ? "focus"
+                : "") +
+              '">' +
+              escape(line).replace(
+                /(BehaviorChoiceList|StreamScrollCoordinator|ActivityDisclosureStore|ReadingAnchorTracker|CropSelection|OverlayStack|BehaviorCropper|AnyLayout|BehaviorDisclosure|behaviorSheet|Disclosure|Selection&lt;String&gt;)/g,
+                "<mark>$1</mark>",
+              ) +
+              "</div>",
+          )
+          .join("");
+        scene.innerHTML = `<div class="kicker">${item.adapter}</div><h1 class="title">${item.title}</h1><div class="subtitle">${item.description}</div><div class="code-window"><div class="window-bar"><i></i><i></i><i></i><span>${item.component}.swift · excerpt</span></div><div class="code">${lines}</div></div><div class="connector"><svg viewBox="0 0 70 42"><path d="M2 22H64M53 11L65 22 53 33" stroke="#2345ed" stroke-width="2" fill="none"/></svg><div class="spark"></div></div><div class="native-window"><div class="native-bar"><span class="live">Actual iOS capture</span><b>${item.component}</b></div><div class="native-content"><video muted playsinline preload="auto" src="/native-media/${item.key}.mp4"></video></div></div>`;
+        container.append(scene);
+      }
+      const scenes = [...document.querySelectorAll(".scene")],
+        videos = scenes.map((scene) => scene.querySelector("video"));
+      await Promise.all(
+        videos.map((video) =>
+          video.readyState >= 2
+            ? Promise.resolve()
+            : new Promise((resolve, reject) => {
+                video.addEventListener("loadeddata", resolve, { once: true });
+                video.addEventListener(
+                  "error",
+                  () => reject(new Error("Native video failed")),
+                  { once: true },
+                );
+              }),
+        ),
+      );
+      let active = -1;
+      const ease = (x) => 1 - Math.pow(1 - x, 3);
+      function paint(time, playing) {
+        const index = Math.min(2, Math.floor(time / 10)),
+          local = Math.min(10, time - index * 10);
+        if (index !== active) {
+          videos.forEach((v) => v.pause());
+          active = index;
+          videos[index].currentTime = 0;
+          videos[index].playbackRate = Math.max(
+            0.5,
+            Math.min(4, videos[index].duration / 9.35),
+          );
+          if (playing) videos[index].play();
+        }
+        const enter = ease(Math.min(1, local / 0.65)),
+          leave = Math.min(1, (10 - local) / 0.4);
+        scenes.forEach((scene, i) => {
+          scene.style.opacity =
+            i === index ? Math.max(0, Math.min(enter, leave)) : 0;
+        });
+        const scene = scenes[index];
+        scene.querySelector(".title").style.transform =
+          `translateY(${16 * (1 - enter)}px)`;
+        scene.querySelector(".code-window").style.transform =
+          `translateX(${-26 * (1 - enter)}px)`;
+        scene.querySelector(".native-window").style.transform =
+          `translateY(${28 * (1 - enter)}px)`;
+        scene.querySelector(".spark").style.transform =
+          `translateX(${((local % 1.6) / 1.6) * 56}px)`;
+        document.querySelector("#counter").textContent =
+          String(index + 1).padStart(2, "0") + " / 03";
+        document
+          .querySelectorAll(".chapter div")
+          .forEach(
+            (bar, i) =>
+              (bar.style.width =
+                (i < index ? 100 : i > index ? 0 : (local / 10) * 100) + "%"),
+          );
+      }
+      paint(1, false);
+      window.playFilm = () =>
+        new Promise((resolve) => {
+          active = -1;
+          const start = performance.now();
+          function tick() {
+            const time = (performance.now() - start) / 1000;
+            if (time >= 30) {
+              paint(29.99, false);
+              videos.forEach((v) => v.pause());
+              resolve();
+              return;
+            }
+            paint(time, true);
+            requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      return true;
+    })();
+  </script>
+</html>

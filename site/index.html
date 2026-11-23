@@ -17,6 +17,7 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script src="demo.js" defer></script>
+    <script src="motion.js" defer></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -25,8 +26,8 @@
         ><span class="mark" aria-hidden="true">↗</span>iosUI-sdk</a
       >
       <nav aria-label="Main">
-        <a href="docs/">Docs</a><a href="#playground">Playground</a
-        ><a href="#install">Install</a
+        <a href="examples/">Examples</a><a href="docs/">Docs</a
+        ><a href="#playground">Playground</a><a href="#install">Install</a
         ><a href="https://github.com/killa-kyle/iosUI-sdk">GitHub ↗</a>
       </nav>
     </header>
@@ -40,25 +41,34 @@
             UI behavior for<br /><span>SwiftUI<br />and UIKit.</span>
           </h1>
           <p class="lede">
-            Shared state and interaction rules for custom controls. Use them for
-            selection, focus, drag and drop, resizing, cropping and more.
+            Keep selection through a component change. Hold a reading position
+            while output streams. Carry a crop draft through nested sheets. See
+            the SwiftUI code and watch it run.
           </p>
-          <a class="cta" href="#playground"
-            >Try the examples <span aria-hidden="true">↘</span></a
+          <a class="cta" href="examples/"
+            >See the code and components <span aria-hidden="true">↘</span></a
           >
           <p class="small">Swift 6 · iOS 17+ · Apache 2.0</p>
         </div>
-        <div class="hero-toy" aria-label="Interactive behavior illustration">
-          <div class="toy-caption">SELECTION, FOCUS AND DISCLOSURE</div>
-          <div class="chip chip-focus">focus <span>↗</span></div>
-          <div class="chip chip-select">selection <span>✓</span></div>
-          <div class="chip chip-disclose">disclosure <span>＋</span></div>
-          <div class="toy-result">
-            <span class="toy-kicker">COMPONENT STATE</span
-            ><strong>Selection and<br />keyboard focus.</strong>
-            <div class="toy-dots"><i></i><i></i><i></i></div>
+        <div class="hero-film">
+          <video
+            data-motion-video
+            muted
+            loop
+            playsinline
+            preload="none"
+            poster="motion/poster.png"
+            aria-label="SwiftUI code and native recordings of morphing controls, crop publishing and streaming chat"
+          >
+            <source src="motion/hero.mp4" type="video/mp4" />
+          </video>
+          <div class="film-controls">
+            <button type="button" data-motion-toggle hidden>
+              Pause motion
+            </button>
+            <a href="motion/hero.mp4">Open video ↗</a>
+            <a href="examples/">See the source ↗</a>
           </div>
-          <div class="scribble">Works with your views.</div>
         </div>
       </section>
       <div class="ticker" aria-label="Package foundations">
@@ -219,7 +229,7 @@
           </div>
           <pre><code id="dependency">.package(
     url: "https://github.com/killa-kyle/iosUI-sdk.git",
-    from: "0.3.0"
+    from: "0.4.0"
 )</code></pre>
           <div class="code-divider"></div>
           <pre><code><span class="code-comment">// A choice list with a custom row.</span>
@@ -266,9 +276,7 @@ BehaviorChoiceList(
         Inspired by <a href="https://ui-sdk.dev/">UI SDK</a>.<br />
         Independent project · Apache 2.0.
       </p>
-      <a href="https://github.com/killa-kyle/iosUI-sdk"
-        >Make something. Share it. ↗</a
-      >
+      <a href="https://github.com/killa-kyle/iosUI-sdk">GitHub ↗</a>
     </footer>
   </body>
 </html>
