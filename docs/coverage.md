@@ -61,3 +61,12 @@ contracts and the native catalog. These are independent native additions,
 informed by observed interactions and Apple's native layout APIs; they do not
 import application code or implement a model provider. See
 [reference evidence](reference-interactions.md).
+
+### Animated choice layouts
+
+`BehaviorChoiceList` accepts an `AnyLayout`, defaulting to a vertical stack.
+Keep the same list and `Selection` binding while changing between stack layouts;
+SwiftUI animates the existing controls between positions. The catalog's
+`MorphingPlanPicker` demonstrates cards, segments and chips, preserves selection,
+and respects Reduce Motion. Layout changes belong to the view; selection, focus
+and typeahead remain in the behavior adapter.

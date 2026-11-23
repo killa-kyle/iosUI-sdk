@@ -61,4 +61,21 @@ import XCTest
     title.tap()
     XCTAssertTrue(app.staticTexts["Package.swift"].isHittable)
   }
+  func testSelectionSurvivesComponentMorph() {
+    let app = launch("morph")
+    XCTAssertTrue(app.buttons["Team"].waitForExistence(timeout: 8))
+    XCTAssertTrue(app.buttons["Team"].isSelected)
+    for style in ["Segments", "Chips", "Cards"] {
+      app.buttons[style].tap()
+      XCTAssertTrue(app.buttons["Team"].isSelected)
+      XCTAssertEqual(app.staticTexts["morph-selection"].label, "Selected: Team")
+    }
+    app.buttons["Studio"].tap()
+    app.buttons["Chips"].tap()
+    XCTAssertTrue(app.buttons["Studio"].isSelected)
+    XCTAssertFalse(app.buttons["Team"].isSelected)
+    XCTAssertEqual(app.staticTexts["morph-selection"].label, "Selected: Studio")
+    capture("recipe-morph", component: app.otherElements["morph-component"])
+  }
+
 }

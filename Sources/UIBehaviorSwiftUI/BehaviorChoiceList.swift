@@ -4,6 +4,7 @@ import UIBehaviorCore
 /// Composes selection, roving keyboard focus and typeahead with caller-owned state.
 /// Rows use native buttons; appearance comes entirely from `row` and button styles.
 public struct BehaviorChoiceList<ID: Hashable & Sendable, Row: View>: View {
+  private let layout: AnyLayout
   private let ids: [ID]
   private let disabled: Set<ID>
   private let label: (ID) -> String
@@ -15,10 +16,12 @@ public struct BehaviorChoiceList<ID: Hashable & Sendable, Row: View>: View {
 
   public init(
     _ ids: [ID], selection: Binding<Selection<ID>>, disabled: Set<ID> = [],
+    layout: AnyLayout = AnyLayout(VStackLayout(alignment: .leading, spacing: 0)),
     label: @escaping (ID) -> String,
     @ViewBuilder row: @escaping (ID, Bool) -> Row
   ) {
     precondition(Set(ids).count == ids.count, "Choice IDs must be unique")
+    self.layout = layout
     self.ids = ids
     self._selection = selection
     self.disabled = disabled
@@ -27,7 +30,7 @@ public struct BehaviorChoiceList<ID: Hashable & Sendable, Row: View>: View {
   }
 
   public var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
+    layout {
       ForEach(ids, id: \.self) { id in
         Button {
           if selection.mode == .multiple {

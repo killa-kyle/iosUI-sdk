@@ -2,10 +2,11 @@ import SwiftUI
 import UIBehaviorCore
 
 enum ComponentRecipe: String, CaseIterable, Identifiable {
-  case confirmation, selection, activity
+  case confirmation, selection, activity, morph
   var id: String { rawValue }
   var title: String {
     switch self {
+    case .morph: "One behavior, three components"
     case .confirmation: "A confirmation sheet"
     case .selection: "A plan picker"
     case .activity: "Expandable tool activity"
@@ -13,6 +14,7 @@ enum ComponentRecipe: String, CaseIterable, Identifiable {
   }
   var adapter: String {
     switch self {
+    case .morph: "Selection + BehaviorChoiceList"
     case .confirmation: "Disclosure + behaviorSheet"
     case .selection: "Selection + BehaviorChoiceList"
     case .activity: "Disclosure + BehaviorDisclosure"
@@ -37,6 +39,8 @@ struct ComponentRecipeDemo: View {
     CatalogShowcase(title: recipe.title) {
       Text(recipe.adapter).font(.caption.monospaced()).foregroundStyle(CatalogPalette.accent)
       switch recipe {
+      case .morph:
+        MorphingPlanPicker()
       case .confirmation:
         Label("Weekend project", systemImage: "folder.fill").font(.title3.bold())
         Text("A reusable button with a native confirmation sheet.")

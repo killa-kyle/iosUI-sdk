@@ -93,4 +93,24 @@ import XCTest
     hold()
     checkpoint("MOTION-end")
   }
+  func testMorphVideo() throws {
+    let app = launch("morph")
+    XCTAssertTrue(app.buttons["Team"].waitForExistence(timeout: 8))
+    try geometry(app)
+    checkpoint("MOTION-start")
+    hold()
+    for style in ["Segments", "Chips", "Cards"] {
+      app.buttons[style].tap()
+      XCTAssertTrue(app.buttons["Team"].isSelected)
+      XCTAssertEqual(app.staticTexts["morph-selection"].label, "Selected: Team")
+      hold()
+      checkpoint("MOTION-" + style)
+    }
+    app.buttons["Studio"].tap()
+    app.buttons["Segments"].tap()
+    XCTAssertTrue(app.buttons["Studio"].isSelected)
+    hold()
+    checkpoint("MOTION-end")
+  }
+
 }
