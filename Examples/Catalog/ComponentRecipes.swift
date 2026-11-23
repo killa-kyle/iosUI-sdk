@@ -40,6 +40,9 @@ struct ComponentRecipeDemo: View {
   @State private var deletions = 0
 
   var body: some View {
+    if recipe == .conversation {
+      ChatInteractionCatalog()
+    } else {
     CatalogShowcase(title: recipe.title) {
       Text(recipe.adapter).font(.caption.monospaced()).foregroundStyle(CatalogPalette.accent)
       switch recipe {
@@ -71,6 +74,7 @@ struct ComponentRecipeDemo: View {
       }
       Text("This example runs locally. No account or server needed.")
         .font(.caption).foregroundStyle(.secondary)
+    }
     }
   }
 }
