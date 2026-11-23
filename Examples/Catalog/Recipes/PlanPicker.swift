@@ -7,7 +7,8 @@ struct PlanPicker: View {
 
   var body: some View {
     BehaviorChoiceList(
-      ["Personal", "Team", "Studio"], selection: $selection, label: { $0 }
+      ["Personal", "Team", "Studio"], selection: $selection,
+      label: { "\($0), \($0 == "Personal" ? "Just you" : "Work together")" }
     ) { plan, selected in
       HStack(spacing: 14) {
         Image(systemName: selected ? "checkmark.circle.fill" : "circle")
