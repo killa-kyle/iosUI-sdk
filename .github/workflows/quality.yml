@@ -8,11 +8,21 @@ permissions:
   contents: read
 jobs:
   native:
+    name: Native (${{ matrix.suite }})
     runs-on: macos-26
-    timeout-minutes: 35
+    timeout-minutes: 28
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: extended catalog
+            filter: -only-testing:BehaviorCatalogUITests/ExtendedCatalogTests
+          - suite: adapters and catalog
+            filter: -skip-testing:BehaviorCatalogUITests/ExtendedCatalogTests
     steps:
       - uses: actions/checkout@v4
       - run: swift test
+        if: matrix.suite == 'adapters and catalog'
       - run: brew install xcodegen
       - run: xcodegen generate --spec Examples/project.yml
       - name: Start simulator
@@ -28,21 +38,23 @@ jobs:
           -scheme BehaviorCatalog
           -destination 'generic/platform=iOS Simulator'
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
-          CODE_SIGNING_ALLOWED=NO build-for-testing
+          ARCHS="$(uname -m)" CODE_SIGNING_ALLOWED=NO build-for-testing
       - name: Await simulator startup
         timeout-minutes: 8
         run: xcrun simctl bootstatus "$SIMULATOR_ID" -b
       - name: Simulator replay
-        # Cold test-runner startup can take four minutes before the first test.
-        # Bound native launch/input time and retry at most once in a fresh process.
-        # Original attempts remain in the result bundle.
-        timeout-minutes: 15
+        # Each runner uses its own simulator. Keep retries and result bundles
+        # while each suite stays below the former serial replay budget.
+        timeout-minutes: 12
+        env:
+          TEST_FILTER: ${{ matrix.filter }}
         run: >-
           xcodebuild -project Examples/BehaviorCatalog.xcodeproj
           -scheme BehaviorCatalog
           -destination "platform=iOS Simulator,id=$SIMULATOR_ID,arch=$(uname -m)"
           -derivedDataPath "$RUNNER_TEMP/DerivedData"
-          -parallel-testing-enabled NO -test-timeouts-enabled YES
+          "$TEST_FILTER" -parallel-testing-enabled NO -test-timeouts-enabled YES
+          -collect-test-diagnostics never
           -maximum-test-execution-time-allowance 120
           -retry-tests-on-failure -test-iterations 2
           -test-repetition-relaunch-enabled YES
@@ -52,7 +64,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: native-replay
+          name: native-replay-${{ strategy.job-index }}
           path: ${{ runner.temp }}/NativeReplay.xcresult
           retention-days: 2
   landing:

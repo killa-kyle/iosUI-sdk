@@ -5,6 +5,10 @@ import UIBehaviorSwiftUI
 @MainActor private final class AgentDemoState: ObservableObject {
   @Published var carousel = CarouselBehavior(count: 3)
   @Published var output = "Capture a snapshot, then dispatch a registered action."
+  @Published var waiting = false
+  private var pending: Task<Void, Never>?
+  @Published private var decision: AsyncStream<Bool>.Continuation?
+  var canApprove: Bool { decision != nil }
   var bounds: BehaviorRect?
   let agent: BehaviorAgent
   var captured: AgentSnapshot?
@@ -31,12 +35,48 @@ import UIBehaviorSwiftUI
     output = String(decoding: try! JSONEncoder().encode(captured), as: UTF8.self)
   }
   func next() {
+    guard !waiting else { return }
     let snapshot = agent.snapshot()
     do {
       try agent.act(AgentStep(ref: "demo-carousel", action: "next"), revision: snapshot.revision)
       output = "Agent moved to slide \(carousel.index+1)"
     } catch { output = String(describing: error) }
   }
+  func requestNext() {
+    guard !waiting else { return }
+    waiting = true
+    output = "Waiting for approval"
+    pending = Task {
+      defer {
+        pending = nil
+        decision = nil
+        waiting = false
+      }
+      do {
+        try await agent.act(
+          AgentStep(ref: "demo-carousel", action: "next"), revision: agent.snapshot().revision,
+          confirming: { [weak self] _, _ in
+            guard let self else { return false }
+            let (answers, response) = AsyncStream.makeStream(of: Bool.self)
+            decision = response
+            var iterator = answers.makeAsyncIterator()
+            return await iterator.next() ?? false
+          })
+        output = "Agent moved to slide \(carousel.index + 1)"
+      } catch is CancellationError {
+        output = "Agent action cancelled"
+      } catch {
+        output = "Agent action refused: \(error)"
+      }
+    }
+  }
+
+  func approve() {
+    decision?.yield(true)
+    decision?.finish()
+  }
+
+  func stop() { pending?.cancel() }
 }
 struct AgentCatalogDemo: View {
   @StateObject private var model = AgentDemoState()
@@ -44,15 +84,22 @@ struct AgentCatalogDemo: View {
     VStack(spacing: 20) {
       BehaviorCarousel($model.carousel) { Text("Scenery \($0+1)").font(.title) }
         .behaviorMeasure {
+          guard model.bounds != $0 else { return }
           model.bounds = $0
           model.agent.invalidate()
         }
       Button("Capture agent snapshot") { model.capture() }
-      Button("Agent next") { model.next() }
+      Button("Agent next") { model.next() }.disabled(model.waiting)
+      Button("Request agent next") { model.requestNext() }.disabled(model.waiting)
+      HStack {
+        Button("Approve agent action") { model.approve() }.disabled(!model.canApprove)
+        Button("Stop agent action") { model.stop() }.disabled(!model.waiting)
+      }
       Text(model.output).font(.caption.monospaced()).textSelection(.enabled)
         .accessibilityIdentifier("agent-result")
       Text("Local, opt-in actions only. This demo does not connect to an AI provider.").font(
         .caption)
-    }.onChange(of: model.carousel.index) { _, _ in model.agent.invalidate() }
+    }.onDisappear { model.stop() }
+      .onChange(of: model.carousel.index) { _, _ in model.agent.invalidate() }
   }
 }

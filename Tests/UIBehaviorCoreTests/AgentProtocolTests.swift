@@ -100,4 +100,76 @@ final class AgentProtocolTests: XCTestCase {
     agent.unregister("one")
     XCTAssertTrue(agent.snapshot().components.isEmpty)
   }
+  @MainActor func testCancellationReleasesDispatchBeforeAnUnresponsiveApprovalReturns() async throws
+  {
+    let (prompts, started) = AsyncStream.makeStream(of: Void.self)
+    var respond: CheckedContinuation<Bool, Never>?
+    var calls = 0
+    let agent = BehaviorAgent { _, _ in true }
+    try agent.register(
+      ref: "one",
+      read: { AgentComponent(ref: "one", component: "button", label: "One", actions: ["press"]) },
+      perform: { _ in calls += 1 })
+    let step = AgentStep(ref: "one", action: "press")
+    let initialRevision = agent.snapshot().revision
+    let turn = Task {
+      try await agent.act(step, revision: initialRevision) { _, _ in
+        await withCheckedContinuation { continuation in
+          respond = continuation
+          started.yield(())
+        }
+      }
+    }
+    defer {
+      respond?.resume(returning: true)
+      started.finish()
+    }
+    var prompt = prompts.makeAsyncIterator()
+    _ = await prompt.next()
+    XCTAssertThrowsError(try agent.act(step, revision: initialRevision)) {
+      XCTAssertEqual($0 as? AgentProtocolError, .reentrant)
+    }
+    turn.cancel()
+    do {
+      try await turn.value
+      XCTFail("A cancelled action dispatched")
+    } catch is CancellationError {}
+    XCTAssertEqual(calls, 0)
+    try agent.act(step, revision: agent.snapshot().revision)
+    XCTAssertEqual(calls, 1)
+    respond?.resume(returning: true)
+    respond = nil
+    await Task.yield()
+    XCTAssertEqual(calls, 1)
+  }
+
+  @MainActor func testAsyncConfirmationStillChecksAdmissionAndRevision() async throws {
+    var allowed = false
+    var calls = 0
+    let agent = BehaviorAgent { _, _ in allowed }
+    try agent.register(
+      ref: "one",
+      read: { AgentComponent(ref: "one", component: "button", label: "One", actions: ["press"]) },
+      perform: { _ in calls += 1 })
+    let step = AgentStep(ref: "One", action: "press")
+    do {
+      try await agent.act(step, revision: agent.snapshot().revision) { _, resolved in
+        XCTAssertEqual(resolved.ref, "one")
+        return true
+      }
+      XCTFail("Confirmation bypassed host authorization")
+    } catch AgentProtocolError.denied {}
+    allowed = true
+    do {
+      try await agent.act(step, revision: agent.snapshot().revision) { _, _ in
+        agent.invalidate()
+        return true
+      }
+      XCTFail("Confirmation used a stale revision")
+    } catch AgentProtocolError.staleSnapshot {}
+    XCTAssertEqual(calls, 0)
+    try await agent.act(step, revision: agent.snapshot().revision) { _, _ in true }
+    XCTAssertEqual(calls, 1)
+  }
+
 }
