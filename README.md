@@ -255,7 +255,7 @@ xcodebuild -project Examples/BehaviorCatalog.xcodeproj \
   -scheme BehaviorCatalog -destination 'platform=iOS Simulator,name=iPhone 16' test
 ```
 
-Use an available simulator name on your machine. CI runs Swift tests, an iOS simulator build, and a deterministic simulator interaction replay.
+Use an available simulator name on your machine. CI runs Swift tests and replays the full functional iOS suite across two parallel simulator jobs. The Native example recordings workflow handles media capture.
 
 ## Contribute
 
