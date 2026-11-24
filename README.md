@@ -234,7 +234,7 @@ The package handles interaction state. Components define their appearance, and n
 
 ## Let an agent inspect and replay behaviors
 
-`BehaviorAgent` exposes only controls you explicitly register. Agents receive stable references, accessible names, native measurements and allowed actions; the host authorizes every action. Snapshots carry revisions so stale actions fail. The catalog demonstrates an agent action changing the same carousel a person uses. See [the integration guide](docs/agents.md). No provider, credentials or network server is included.
+`BehaviorAgent` exposes only controls you explicitly register. Agents receive stable references, accessible names, native measurements and allowed actions; the host authorizes every action. A Swift task can cancel an action waiting for host confirmation. Snapshots carry revisions so stale actions fail. The catalog demonstrates an agent action changing the same carousel a person uses. See [the integration guide](docs/agents.md). No provider, credentials or network server is included.
 
 ## Run the catalog
 

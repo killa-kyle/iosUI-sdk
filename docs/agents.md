@@ -8,7 +8,8 @@ or browser replay for acceptance. A successful tap alone does not establish the
 expected state change.
 
 `BehaviorAgent` makes the native side inspectable without a DOM. It is opt-in,
-local and synchronous. It has no network listener, model provider, application
+local and supports both immediate actions and asynchronous host confirmation.
+It has no network listener, model provider, application
 service, credentials or implicit access to arbitrary views.
 
 ## Register real application state
@@ -75,6 +76,34 @@ Disabled and read-only components expose no actions. Mark sensitive controls
 Register only data that the observing agent is authorized to see. Registration
 is not an authorization grant, and the package does not infer which app fields
 contain credentials.
+
+## Cancel a pending confirmation
+
+Use the async overload when the host needs to wait for a person to approve.
+Keep the task in the owning view or session so a Stop control or teardown can
+cancel it:
+
+```swift
+let turn = Task { @MainActor in
+    try await session.agent.act(step, revision: snapshot.revision) { component, action in
+        await approvals.requestConfirmation(for: component, action: action)
+    }
+}
+// In the Stop handler:
+turn.cancel()
+```
+
+Cancelling while waiting throws `CancellationError` and releases the agent for
+another action. A late approval cannot run the cancelled action. Have the
+confirmation callback dismiss its own prompt when cancelled. A confirmed action
+still passes the agent's regular host authorization and revalidates the original
+snapshot. If you sequence multiple actions, stop the sequence on the first
+error and capture a fresh revision after each successful step. Once a synchronous
+handler starts, cancellation cannot reverse its effects.
+
+The Agent catalog story has a local approval example. Request a move, stop it,
+and verify the carousel stays on its current slide. Request again and approve
+to move one slide.
 
 ## Measure native controls
 

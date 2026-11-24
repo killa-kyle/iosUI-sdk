@@ -102,9 +102,11 @@ public enum AgentProtocolError: Error {
   case duplicateRef, staleSnapshot, unknownRef, ambiguousLabel, unavailableAction, denied, reentrant
 }
 
-/// Opt-in, synchronous local dispatch. No network server, injected JS or implicit authority.
+/// Opt-in local dispatch. No network server, injected JS or implicit authority.
 @MainActor public final class BehaviorAgent {
   public typealias Action = (_ component: AgentComponent, _ step: AgentStep) -> Bool
+  public typealias Confirmation =
+    @MainActor (_ component: AgentComponent, _ step: AgentStep) async -> Bool
   private struct Registration {
     let read: () -> AgentComponent
     let perform: (AgentStep) throws -> Void
@@ -142,20 +144,71 @@ public enum AgentProtocolError: Error {
   }
   public func act(_ step: AgentStep, revision expected: UInt64) throws {
     guard !dispatching else { throw AgentProtocolError.reentrant }
-    guard expected == revision else { throw AgentProtocolError.staleSnapshot }
-    let matches = snapshot().components.filter { $0.ref == step.ref }
-    let labels = matches.isEmpty ? snapshot().components.filter { $0.label == step.ref } : matches
-    guard !labels.isEmpty, let component = labels.first else { throw AgentProtocolError.unknownRef }
-    guard labels.count == 1 else { throw AgentProtocolError.ambiguousLabel }
-    guard component.actions.contains(step.action), let entry = entries[component.ref]
-    else { throw AgentProtocolError.unavailableAction }
+    let component = try resolve(step, revision: expected)
     dispatching = true
-    defer {
-      dispatching = false
-      invalidate()
+    defer { finishDispatch() }
+    try perform(step, on: component, revision: expected)
+  }
+
+  /// Waits for host confirmation. Cancel the calling Task to stop waiting.
+  /// A late approval cannot dispatch an action, even if the callback ignores cancellation.
+  public func act(
+    _ step: AgentStep, revision expected: UInt64, confirming confirmation: @escaping Confirmation
+  ) async throws {
+    try Task.checkCancellation()
+    guard !dispatching else { throw AgentProtocolError.reentrant }
+    let component = try resolve(step, revision: expected)
+    dispatching = true
+    defer { finishDispatch() }
+
+    let (decisions, response) = AsyncStream.makeStream(of: Bool.self)
+    let canonicalStep = AgentStep(ref: component.ref, action: step.action, args: step.args)
+    let prompt = Task { @MainActor in
+      guard !Task.isCancelled else { return }
+      response.yield(await confirmation(component, canonicalStep))
+      response.finish()
     }
-    guard authorize(component, step) else { throw AgentProtocolError.denied }
+    defer {
+      response.finish()
+      prompt.cancel()
+    }
+    var iterator = decisions.makeAsyncIterator()
+    let approved = await iterator.next()
+    try Task.checkCancellation()
+    guard approved == true else { throw AgentProtocolError.denied }
+    guard try resolve(step, revision: expected) == component else {
+      throw AgentProtocolError.staleSnapshot
+    }
+    try perform(step, on: component, revision: expected, cancellable: true)
+  }
+
+  private func resolve(_ step: AgentStep, revision expected: UInt64) throws -> AgentComponent {
     guard expected == revision else { throw AgentProtocolError.staleSnapshot }
+    let components = snapshot().components
+    let matches = components.filter { $0.ref == step.ref }
+    let labels = matches.isEmpty ? components.filter { $0.label == step.ref } : matches
+    guard let component = labels.first else { throw AgentProtocolError.unknownRef }
+    guard labels.count == 1 else { throw AgentProtocolError.ambiguousLabel }
+    guard component.actions.contains(step.action), entries[component.ref] != nil else {
+      throw AgentProtocolError.unavailableAction
+    }
+    return component
+  }
+
+  private func perform(
+    _ step: AgentStep, on component: AgentComponent, revision expected: UInt64,
+    cancellable: Bool = false
+  ) throws {
+    guard authorize(component, step) else { throw AgentProtocolError.denied }
+    guard expected == revision, let entry = entries[component.ref] else {
+      throw AgentProtocolError.staleSnapshot
+    }
+    if cancellable { try Task.checkCancellation() }
     try entry.perform(AgentStep(ref: component.ref, action: step.action, args: step.args))
+  }
+
+  private func finishDispatch() {
+    dispatching = false
+    invalidate()
   }
 }

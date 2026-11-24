@@ -1,7 +1,23 @@
 # Behavior coverage
 
-Upstream reference: [vercel-labs/ui at 63df19a](https://github.com/vercel-labs/ui/tree/63df19ae09452fb185d54275404da044f0addda2).
+Original upstream reference: [vercel-labs/ui at 63df19a](https://github.com/vercel-labs/ui/tree/63df19ae09452fb185d54275404da044f0addda2).
 This is a semantic native adaptation, not a GitHub source fork or drop-in binding.
+
+## Upstream sync
+
+Reviewed [Vercel UI SDK changes through 926dab8](https://github.com/vercel-labs/ui/compare/63df19ae09452fb185d54275404da044f0addda2...926dab872d1f2aa23df4bd9b5cf21c879c9abac9).
+The new capability in this range is [cancellable agent approval](https://github.com/vercel-labs/ui/pull/906)
+in `packages/core/src/page/agent/agent.ts`. Native callers cancel the Swift task
+awaiting `BehaviorAgent.act(_:revision:confirming:)`. The agent releases its
+dispatch lock promptly and ignores late approval. A successful confirmation
+still requires current host authorization and the original snapshot revision.
+
+The remaining changes in this range are fixes and maintenance across browser
+renderers, CSS, input, accessibility, agent discovery and packaging. Browser
+sheet gestures, focus containment and accessibility attributes are handled by
+native presentation and controls in this package. Web-specific components,
+including OTP Input, remain outside the native component catalog. The native
+agent continues to resolve explicitly registered controls by exact ref or label.
 
 | Foundation         | Native core       | SwiftUI                              | UIKit                                             | Differences / upstream reference                                                                                                              |
 | ------------------ | ----------------- | ------------------------------------ | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |

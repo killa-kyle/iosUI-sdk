@@ -178,4 +178,19 @@ import XCTest
     expect(app.staticTexts["agent-result"], label: "Agent moved to slide 2")
     expect(app.staticTexts["carousel-position"], label: "2 of 3")
   }
+  func testCancelAgentApproval() {
+    let app = launch("agent")
+    defer { app.terminate() }
+    app.buttons["Request agent next"].tap()
+    expect(app.staticTexts["agent-result"], label: "Waiting for approval")
+    app.buttons["Stop agent action"].tap()
+    expect(app.staticTexts["agent-result"], label: "Agent action cancelled")
+    expect(app.staticTexts["carousel-position"], label: "1 of 3")
+    app.buttons["Request agent next"].tap()
+    let approve = app.buttons["Approve agent action"]
+    XCTAssertTrue(approve.wait(for: \.isEnabled, toEqual: true, timeout: 5))
+    approve.tap()
+    expect(app.staticTexts["carousel-position"], label: "2 of 3")
+  }
+
 }
