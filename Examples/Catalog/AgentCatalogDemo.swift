@@ -46,7 +46,6 @@ import UIBehaviorSwiftUI
     guard !waiting else { return }
     waiting = true
     output = "Waiting for approval"
-    let revision = agent.snapshot().revision
     pending = Task {
       defer {
         pending = nil
@@ -55,7 +54,7 @@ import UIBehaviorSwiftUI
       }
       do {
         try await agent.act(
-          AgentStep(ref: "demo-carousel", action: "next"), revision: revision,
+          AgentStep(ref: "demo-carousel", action: "next"), revision: agent.snapshot().revision,
           confirming: { [weak self] _, _ in
             guard let self else { return false }
             let (answers, response) = AsyncStream.makeStream(of: Bool.self)
@@ -67,7 +66,7 @@ import UIBehaviorSwiftUI
       } catch is CancellationError {
         output = "Agent action cancelled"
       } catch {
-        output = "Agent action refused"
+        output = "Agent action refused: \(error)"
       }
     }
   }
@@ -78,7 +77,6 @@ import UIBehaviorSwiftUI
   }
 
   func stop() { pending?.cancel() }
-
 }
 struct AgentCatalogDemo: View {
   @StateObject private var model = AgentDemoState()
@@ -86,17 +84,16 @@ struct AgentCatalogDemo: View {
     VStack(spacing: 20) {
       BehaviorCarousel($model.carousel) { Text("Scenery \($0+1)").font(.title) }
         .behaviorMeasure {
+          guard model.bounds != $0 else { return }
           model.bounds = $0
           model.agent.invalidate()
         }
       Button("Capture agent snapshot") { model.capture() }
       Button("Agent next") { model.next() }.disabled(model.waiting)
       Button("Request agent next") { model.requestNext() }.disabled(model.waiting)
-      if model.waiting {
-        HStack {
-          Button("Approve agent action") { model.approve() }.disabled(!model.canApprove)
-          Button("Stop agent action") { model.stop() }
-        }
+      HStack {
+        Button("Approve agent action") { model.approve() }.disabled(!model.canApprove)
+        Button("Stop agent action") { model.stop() }.disabled(!model.waiting)
       }
       Text(model.output).font(.caption.monospaced()).textSelection(.enabled)
         .accessibilityIdentifier("agent-result")
